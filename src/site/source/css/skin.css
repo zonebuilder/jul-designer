@@ -1,0 +1,44 @@
+.xul-menuitem_hover {
+	background-color: Highlight;
+	/*background-color: #8a8a8a;*/
+	color: HighlightText;
+	/*color: white;*/
+}
+.xul-menuitem_selected {
+	background-color: Highlight;
+	/*background-color: #8a8a8a;*/
+	color: HighlightText;
+	/*color: white;*/
+}
+.xul-menu_hover {
+	background-color: Highlight;
+	/*background-color: #8a8a8a;*/
+	color: HighlightText;
+	/*color: white;*/
+}
+.xul-menu_selected {
+	background-color: Highlight;
+	/*background-color: #8a8a8a;*/
+	color: HighlightText;
+	/*color: white;*/
+}
+.xul-listitem_hover,.xul-treerow_hover {
+	background-color: #dedede;
+}
+.xul-listitem_hover_selected,.xul-treerow_hover_selected {
+	background-color: gray;
+}
+.xul-listbox_focus .xul-listitem_selected,.xul-tree_focus .xul-treeitem_selected {
+	background-color: Highlight;
+	/*background-color: #646464;*/
+	color: HighlightText;
+	/*color: white;*/
+}
+.xul-dialog--head,.xul-wizard--head,.xul-window--head {
+	background-color: ActiveCaption;
+	/*background-color: #5e5e5e;*/
+}
+.xul-dialog--title,.xul-wizard--title,.xul-window--title {
+	color: CaptionText;
+	/*color: white;*/
+}

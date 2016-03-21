@@ -1,0 +1,32 @@
+v1.7 (2016-03-21):
+  * moving to opensource while keeping it free for any use
+  * JavaScript strict mode & jshint compliance
+v1.6 (2015-10-31):
+  * added downloading project & app
+  * added JUL Comment System sample app
+  * bugfixes
+v1.5.3 (2015-05-19):
+  * sync 'New project' with the current app
+  * restoring 'new' expressions from the saved data
+  * minor enhancements
+v1.5.2 (2015-05-16):
+  * added support for JavaScript Date fields
+v1.5.1 (2015-04-28):
+  * updated project links
+v1.5 (2015-04-18):
+  * complex applications made from multiple modules (projects)
+  * copy & paste multiple components from the component tree
+  * load speed improvement, various bugfixes
+v1.1.5 (2015-02-18):
+  * scrollable 'add component' menu
+  * enhanced JavaScript & XML code generation
+v1.1 (2015-02-09):
+  * more flexible & persistent UI
+  * exporting XML layout for a project
+  * examples for the mobile targets
+  * self-deploying of assets for new installations
+v1.0.5 (2014-11-24):
+  * more flexible UI
+  * faster testing updates
+v1.0 (2014-11-01):
+  * initial release

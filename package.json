@@ -1,0 +1,37 @@
+{
+  "name": "jul-designer",
+  "version": "1.7.0",
+  "description": "JUL Designer - a RAD tool for JavaScript",
+  "main": "index.php",
+  "scripts": {
+    "deps": "node_modules/.bin/bower install",
+    "make": "node_modules/.bin/gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zonebuilder/jul-designer.git"
+  },
+  "keywords": [
+    "UI",
+    "builder"
+  ],
+  "author": "The Zonebuilder",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/zonebuilder/jul-designer/issues"
+  },
+  "homepage": "https://github.com/zonebuilder/jul-designer#readme",
+  "devDependencies": {
+    "bower": "*",
+    "gulp": "*",
+    "gulp-add-src": "*",
+    "gulp-clean": "*",
+    "gulp-concat": "*",
+    "gulp-jshint": "*",
+    "gulp-load-plugins": "*",
+    "gulp-rename": "*",
+    "gulp-strip-comments": "*",
+    "merge-stream": "*"
+  }
+}

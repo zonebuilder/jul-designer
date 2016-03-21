@@ -1,0 +1,28 @@
+{
+  "name": "bower install jul-designer",
+  "authors": [
+    "The Zonebuilder"
+  ],
+  "description": "JUL Designer",
+  "main": "index.php",
+  "moduleType": [
+    "es5"
+  ],
+  "keywords": [
+    "designer",
+    "jul"
+  ],
+  "license": "LGPL-3.0",
+  "homepage": "https://github.com/zonebuilder/jul-designer#readme",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "kohana-core": "kohana/core#v3.2.3.1",
+    "asset-merger": "OpenBuildings/asset-merger#57746424f3b26375c95ee8ceebd9649c00953ae3"
+  }
+}

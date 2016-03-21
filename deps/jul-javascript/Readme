@@ -1,0 +1,25 @@
+ === JUL - The JavaScript UI Language ===
+
+ = About = 
+
+The JavaScript UI Language (JUL) is a configuration and instantiation module 
+for the JavaScript frameworks.
+It can be used with any framework that accepts a configuration object 
+as a constructor parameter, or with a custom factory for the other frameworks.
+
+ = License =
+ 
+ Licensed under GPLv2 or later and under LGPLv3 or later. See enclosed 'licenses' folder.
+ 
+ = Browser support =
+
+JUL supports all major browsers including FF2+, IE7+, Safari3+, Chrome1+, Opera9+
+
+ = Installation =
+
+  * Extract this archive in a directory on your web server (JUL directory).
+  * Navigate with your web browser to JUL directory.
+
+ = Support =
+
+Project site: http://sourceforge.net/projects/jul-javascript/

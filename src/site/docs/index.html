@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>JUL Designer Help</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" href="../media/favicon.ico" />
+    <link type="text/css"
+      href="https://fonts.googleapis.com/css?family=Roboto+Condensed%7CVarela"
+      rel="stylesheet" />
+    <style type="text/css">
+html, body, h1, h2, h3, p, div, li {
+	margin: 0;
+	padding: 0;
+}
+body {
+	padding: 1em;
+	font-family: "Helvetica", Helvetica, sans-serif;
+	font-size: 13px;
+	color: #1c1c1c;
+	background-color: #f3f3f3;
+}
+div.section {
+	margin: 1.5em 0;
+}
+div.section-2 {
+	margin: 1em 0;
+}
+div.section-3 {
+	margin: 0.5em 0;
+}
+.section ul {
+	margin-top: 0;
+	margin-bottom: 0;
+	line-height: 1.2em;
+}
+#content {
+	max-width: 960px;
+	margin: 0 auto;
+}
+#logo {
+	height: 260px;
+}
+#logo-left {
+	padding: 10px;
+	float: left;
+}
+#logo-right {
+	padding: 60px 0 0 20px;
+	float: left;
+}
+logo-clear {
+	clear: both;
+}
+h1 {
+	font-family: "Roboto Condensed", Arial, sans-serif;
+	font-size: 48px;
+}
+</style>
+  </head>
+  <body>
+    <div id="content">
+      <div id="top" class="section">
+        <div id="logo">
+          <div id="logo-left"> <img alt="JUL Designer"
+              src="../media/jul224.png" width="240" height="224" /> </div>
+          <div id="logo-right">
+            <h1>JUL Designer</h1>
+            <p>Version 1.7</p>
+            <p>Copyright © 2014 - 2016 <a target="_blank"
+href="http://www.google.com/search?hl=en&amp;num=50&amp;start=0&amp;safe=0&amp;filter=0&amp;nfpr=1&amp;q=The+Zonebuilder+web+development+programming+IT+society+philosophy+politics">
+                The Zonebuilder</a></p>
+          </div>
+        </div>
+      </div>
+      <div id="toc" class="section">
+        <h2>Table of contents</h2>
+        <ul>
+          <li><a href="#about">About JUL Designer</a>
+            <ul>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#requirements">System requirements</a></li>
+              <li><a href="#install">Installation</a></li>
+            </ul>
+          </li>
+          <li><a href="#app-modules">Application, modules and projects</a>
+          </li>
+          <li><a href="#new-project">Building a new project</a>
+            <ul>
+              <li><a href="#project-settings">Project settings</a></li>
+              <li><a href="#parser-settings">Parser settings</a></li>
+              <li><a href="#template">Choosing a template</a></li>
+            </ul>
+          </li>
+          <li><a href="#frameworks">Frameworks</a>
+            <ul>
+              <li><a href="#framework-relation">Relation with a project</a></li>
+              <li><a href="#framework-configuration">Configuring a
+                  framework</a></li>
+            </ul>
+          </li>
+          <li><a href="#advanced">Advanced topics</a>
+            <ul>
+              <li><a href="#separation">UI and logic separation</a></li>
+              <li><a href="#tag">Class and tag names</a></li>
+              <li><a href="#namespaces">Namespaces</a></li>
+            </ul>
+          </li>
+          <li><a href="#interface">Elements of the interface</a>
+            <ul>
+              <li><a href="#value-box">The value box</a></li>
+              <li><a href="#code-dialog">The code dialog</a></li>
+              <li><a href="#find-name">The find box and the name box</a></li>
+              <li><a href="#component-selects">Component select boxes</a></li>
+              <li><a href="#copy-paste">Copy, paste and undo operations</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div id="about" class="section">
+        <h2>About JUL Designer</h2>
+        <p><a target="_blank"
+            href="http://sourceforge.net/projects/jul-javascript/">JUL</a>
+          Designer is a <a target="_blank"
+            href="http://en.wikipedia.org/wiki/Rapid_application_development">RAD</a>
+          tool used to visually build a JavaScript application.<br />
+          Given a component based application running in an event-driven
+          environment, JUL Designer helps you to generate the component
+          tree with the attached event listeners. It also generates the
+          JavaScript code for the current component tree.<br />
+        </p>
+        <div id="features" class="section-2">
+          <h3>Features</h3>
+          <ul>
+            <li>visually building and live testing a JavaScript application</li>
+            <li>working with your preferred JavaScript component
+              framework</li>
+            <li>can be used with tag based languages (HTML, XUL, SVG
+              etc.)</li>
+            <li>generates the JavaScript code with option to separate UI
+              layout and logic</li>
+            <li>copy, paste and undo operations for the components and
+              their members</li>
+            <li>downloading generated code, exporting XML layout</li>
+          </ul>
+        </div>
+        <div id="requirements" class="section-2">
+          <h3>System requirements</h3>
+          <ul>
+            <li>A CSS2 compliant web browser with JavaScript 1.5 or
+              later engine</li>
+            <li> A web server with PHP 5.2.0 or later extension</li>
+            <li>1024x768 minimum resolution</li>
+          </ul>
+        </div>
+        <div id="install" class="section-2">
+          <h3>Installation</h3>
+          <p>Unpack the distribution archive to a directory of your web
+            site. If necessary, give the web server process write
+            permissions over the 'assets' directory (e.g. on Linux type
+            as root: <code>chmod 777 assets</code> or <code>chown
+              www-data assets</code>). Navigate to the installation
+            directory using a web browser. The examples and other assets
+            will be automatically installed with the first use of the
+            application.</p>
+        </div>
+        <div><a class="to-top" href="#top">Back to top</a></div>
+      </div>
+      <div id="app-modules" class="section">
+        <h2>Application, modules and projects</h2>
+        <p>An application is an HTML page that loads a set of style and
+          script resources to render a complete and useful user
+          interface (UI). The parts of the UI that have an autonomous
+          structure and behavior are called modules and usually reside
+          inside separate source files. In JUL Designer, a module is a
+          separate JavaScript file that generates a part of the UI. The
+          module has a specific parser that iterates over a
+          configuration tree to generate the interface. More details
+          about generation of UI from a configuration can be found in
+          the articles about JUL.<br />
+          You can create an application from the "New application ..."
+          menu. The default parser configuration of the application will
+          be copied for any new module using the 'Switch module' menu.
+          The application has a customizable template page that loads
+          the module scripts in the appropriate order. It also has an
+          initialization routine that can be customized and that, by
+          default, calls each module's parser to create the module UI.<br />
+          A module is identified by a namespace which is a dotted string
+          representing the path to the JavaScript configuration root
+          object of the module. The namespace can start with a dot,
+          meaning that it is relative to the application's namespace.
+          Each module corresponds to one JUL Designer project which is
+          used to visually build the module source file. When switching to
+          a new module, the 'New project' dialog appears to facilitate
+          the creation of the project associated with the module.<br />
+        </p>
+      </div>
+      <div><a class="to-top" href="#top">Back to top</a></div>
+    <div id="new-project" class="section">
+      <h2>Building a new project</h2>
+      <p>A project is a component tree that, when instantiated, creates
+        the JavaScript application.<br />
+        In order to achieve this, JUL Designer generates the required
+        JavaScript code on the fly, at every step when you are building
+        the project. You can see and copy the code from the menu Project
+        -&gt; View JavaScript.<br />
+        Adding components to the component tree requires that you also
+        configure the current framework to work with. To do this, please
+        take a look at the topic about frameworks.<br />
+      </p>
+      <div id="project-settings" class="section-2">
+        <h3>Project settings</h3>
+        <p>The project settings are:<br />
+        </p>
+        <ul>
+          <li> title (string) - the title of the project</li>
+          <li>ns (string) - a unique dotted path that is the JavaScript
+            namespace of the project. See more at <a href="#namespaces">Namespaces</a>
+            topic.</li>
+          <li>init (function) - an entry point for launching the
+            project. See the default value for a starting point.</li>
+          <li>suggestedFramework (string) - a dotted path which is the
+            JavaScript namespace of the framework to open when opening
+            this project.<br />
+          </li>
+          <li>listenersProperty (string) - for an event-driven
+            environments, the event listeners for each component will be
+            grouped under this property</li>
+          <li>noLogic (boolean) - do not separate logic from UI in the
+            generated JavaScript code. This can be switched also during
+            the project building from the menu Project -&gt; Don't
+            separate logic.<br />
+          </li>
+        </ul>
+      </div>
+      <div id="parser-settings" class="section-2">
+        <h3>Parser settings</h3>
+        <p>These are the settings that allow the <a target="_blank"
+            href="http://sourceforge.net/p/jul-javascript/">JUL</a> parser
+          to create and instantiate the component tree.<br />
+        </p>
+        <ul>
+          <li>classProperty (string) - the name of the class property of
+            the component</li>
+          <li>defaultClass (string) - the name of the default class of
+            the component when the class property is empty</li>
+          <li>childrenProperty (string) - the name of the component
+            property that contains its children components</li>
+          <li>membersProperties (array) - Array of zero or more property
+            names for other categories of component members</li>
+          <li>idProperty (string) - the name of the ID property of the
+            component<br />
+          </li>
+          <li>bindingProperty (string) -&nbsp; the name of the binding
+            ID property of the component. See the JUL documentation for
+            more details.</li>
+          <li>useTags (boolean) -&nbsp; whether the components are
+            identified by a tag name besides their class</li>
+          <li>tagProperty (string) - the name of the tag property if
+            present</li>
+          <li>customFactory (function) - by default, the components are
+            instantiated using the 'new' constructor with the name of
+            their class. Use a custom factory that gets the component
+            config as an argument to return your component instance.</li>
+          <li>topDown (boolean) - by default, the instantiation is done
+            first for children, then for their parent. Set this true for
+            a top-down instantiation.</li>
+          <li>parentProperty (string) - the name of the property that
+            will contain the parent instance of the component. Only
+            relevant for the top-down instantiation.<br />
+          </li>
+        </ul>
+      </div>
+      <div id="template" class="section-2">
+        <h3>Choosing a template</h3>
+        <p>A template is an HTML page used to generate live testing of
+          the project. The page accepts several template variables that
+          are replaced server-side with the actual values. Besides these
+          variables, you should include in the page any scripts and
+          styles required to actually draw the components of the
+          project.<br />
+          The template variables are:<br />
+          <br />
+        </p>
+        <ul>
+          <li>jul_script - script tag of the JUL library</li>
+          <li>project_script - script tag referring to the current
+            project code</li>
+          <li>project_&lt;property&gt; - variables that match the
+            properties in the project settings</li>
+        </ul>
+      </div>
+      <div><a class="to-top" href="#top">Back to top</a></div>
+    </div>
+    <div id="frameworks" class="section">
+      <h2>Frameworks</h2>
+      <p>Frameworks are configuration objects that describe collections
+        of components such as widget libraries or component libraries.</p>
+      <div id="framework-relation" class="section-2">
+        <h3>Relation with a project</h3>
+        <p>Using a framework allows the user to add its components to
+          the current project. The available components will appear in
+          the 'Add component' scroll box. Also, if the framework
+          specifies the means to get the component bounding rectangle,
+          the component tree and the test panel will visually hint the
+          selected component with a red rectangle.<br />
+          The current framework will filter the list of available
+          components in the 'Add component' scroll box depending on the
+          selected component in the project.</p>
+      </div>
+      <div id="framework-configuration" class="section-2">
+        <h3>Configuring a framework</h3>
+        <p>The framework settings are:<br />
+        </p>
+        <ul>
+          <li>title (string) - the title of the framework</li>
+          <li>ns (string) - a unique dotted path representing the
+            JavaScript namespace of the framework</li>
+          <li>prependNS (boolean) - if true, the components will be
+            added to the project with their full namespace as the class
+            name. This has no effect if the project is using tags.</li>
+          <li>getBoundingRect (function) - a custom function that gets
+            the component instance as the parameter and returns its
+            bounding rectangle</li>
+        </ul>
+        The framework components are managed from the 'Components' tab.
+        Several members of a component configuration can inherit from
+        similar members of one or more components. These inheritable
+        members are: 'getBoundingRect', 'members', 'events.<br />
+        The members of a component configuration are:<br />
+        <ul>
+          <li>description (string) - component description</li>
+          <li>restictParent array)_ - a name or an array of component
+            names that can be the parent of the current component.
+            Special value 'document' indicate the body element of the
+            HTML page.</li>
+          <li>inherits (string) - a name or an array of component names
+            this component inherits from. All the component members and
+            events will be calculated through inheritance when the
+            component is added to the project's component tree.</li>
+          <li>getBoundingRect (string) - the name of the component
+            method or a custom function that returns its bounding
+            rectangle. This inherits from the 'inherits' property and
+            replaces the global function of the framework if specified.<br />
+          </li>
+        </ul>
+        The descriptions of the component members and events are managed
+        in the 'Members' and 'Events' tabs for each component.<br />
+        For a component member, the description is:<br />
+        <ul>
+          <li>name (string) - member name</li>
+          <li>description (string) - member description</li>
+          <li>logic (boolean) - whether the member belongs to the logic
+            part of the project</li>
+          <li>required (boolean) - whether the member is required or not</li>
+          <li>defaultValue (mixed) - a JavaScript value used for
+            initialization</li>
+          <li>template (string) - a format string used as a hint for
+            editing</li>
+        </ul>
+        For a component event, the description is:<br />
+        <ul>
+          <li>name (string) - event name</li>
+          <li>description (string) - event description</li>
+          <li>template (string) - format string used as a hint for
+            editing</li>
+        </ul>
+      </div>
+      <div><a class="to-top" href="#top">Back to top</a></div>
+    </div>
+    <div id="advanced" class="section">
+      <h2>Advanced topics</h2>
+      <p>JUL Designer uses a JUL parser to render the component tree. To
+        better understand using the designer, one should get accustomed
+        with the parser specifics.<br />
+      </p>
+      <div id="separation" class="section-2">
+        <h3>UI and logic separation</h3>
+        <p>By default, a project separates the UI and logic members of
+          each component into two properties of the project named 'ui'
+          and 'logic'. The separation can be turned off from the project
+          settings or on the fly from the menu Project -&gt; Don't
+          separate logic.<br />
+          The 'ui' property of the project contains the c9components as
+          a tree of configuration objects. Each configuration object may
+          have an ID or a binding ID which links the object with its
+          logic part.<br />
+          The 'logic' property of the project is a configuration object
+          which has properties named the same as the IDs of the
+          configuration objects in the 'ui' property. Inside these logic
+          configuration objects, the designer puts all the members of
+          the component marked as logic. Also, the listeners property
+          goes in this place if not empty.<br />
+          If the separation is turned off for some components, all their
+          members go to the 'ui'&nbsp; property of the project.<br />
+        </p>
+      </div>
+      <div id="tag" class="section-2">
+        <h3>Class and tag names</h3>
+        <p>There are two categories of frameworks the parser and,
+          consequently, the designer works with: the frameworks where
+          components are class instances, and XML based languages where
+          components are identified by tags.<br />
+          For the first category, the class name of a component is the
+          name from the component configuration, optionally prefixed
+          with the namespace of the framework (if prependNS is true).
+          This name is also displayed as the label of the component in
+          the component tree panel.<br />
+          For the second category, the class name is always the XML
+          namespace of the framework (e.g. 'html', 'svg', 'xul' etc.). In
+          addition, each component has a tag property which is the
+          component name from the framework. The 'prependNS' setting is
+          ignored, but, in the component tree panel, the components with
+          a different XML namespace than the default class of the
+          project are prefixed with their class name and a colon (e.g.
+          'svg:path' ).<br />
+          For both categories, if a component has the same class as the
+          default class of the project, the class property will be
+          stripped from the component configuration.<br />
+        </p>
+      </div>
+      <div id="namespaces" class="section-2">
+        <h3>Namespaces</h3>
+        <p>Both projects and frameworks are uniquely identified with
+          their JavaScript namespaces.<br />
+          A namespace is a string of identifiers or integers separated
+          with dots.<br />
+          Starting from the global object in the page (i.e. the window),
+          these segments separated by dots are objects that can be found
+          by resolving the current segment as the property of the
+          current object.<br />
+          The project uses its namespace to generate and to separate its
+          JavaScript code from the other scripts. The project namespace
+          also has the following properties:<br />
+        </p>
+        <ul>
+          <li>'parserConfig' - the parser configuration</li>
+          <li>'ui' - the UI part of the project</li>
+          <li>'logic' - the logic part of the project</li>
+        </ul>
+        <p>The framework namespace is mostly informative to what
+          concerns the generated code, but may be used to construct a
+          full class name for the components.<br />
+        </p>
+      </div>
+      <div><a class="to-top" href="#top">Back to top</a></div>
+    </div>
+    <div id="interface" class="section">
+      <h2>Elements of the interface</h2>
+      <p>The interface manipulates JavaScript objects, so, some elements
+        are specific to that scope.<br />
+        Editing operations (copy, cut, paste, remove etc.), all work
+        with JavaScript objects, aiming complete control over the
+        generated code.<br />
+      </p>
+      <div id="value-box" class="section-2">
+        <h3>The value box</h3>
+        <p>Several parts of the interface have a 'Value' column with
+          value boxes, one for each row. The type of value box depends
+          on the JavaScript type of the value behind it.<br />
+          The types of value boxes are:<br />
+        </p>
+        <ul>
+          <li>editable text box - for JavaScript types 'String' and
+            'Number'</li>
+          <li>check box - for JavaScript type 'Boolean'</li>
+          <li>read-only text box - for the rest of JavaScript types</li>
+        </ul>
+        When possible. the text for complex types is displayed in a
+        friendly format.<br />
+        If a field is empty but it has a default value, the text box
+        will hint that value as italics text.<br />
+        For the fields with read-only box, the only means of editing is
+        the code button next to the value box.<br />
+      </div>
+      <div id="code-dialog" class="section-2">
+        <h3>The code dialog</h3>
+        <p>The values in the value boxes can also be edited using the
+          code buttons (...) in the 'Code' column. This launches the
+          code dialog that allows editing a JavaScript expression.<br />
+          You may fill any JavaScript code that evaluates to a valid
+          expression. If the type of resulting value differs from the
+          original, the corresponding value box will reflect the change.<br />
+          Clearing the dialog box will delete the object member unless
+          the field has a required default value which, in that case,
+          will be assigned to the member.<br />
+        </p>
+      </div>
+      <div id="find-name" class="section-2">
+        <h3>The find box and the name box</h3>
+        <p>At the top of the component tree, near the buttons 'Up',
+          'Down', 'Remove', 'Find', there is the find text box. It
+          performs a cyclic search for the next component with an ID or
+          a binding ID the same as that entered in the box.<br />
+          At several parts in the interface, near the buttons 'Add',
+          'Remove', 'Change', there is the name text box. It acts on the
+          items of the list box in the selected tab below. If an item is
+          selected and you press 'Enter' in the name text box, the item
+          name will change if possible. If no item is selected or if you
+          press 'Shift+Enter' a new item is added. If the name isn't
+          valid, it will be automatically generated.<br />
+        </p>
+      </div>
+      <div id="component-selects" class="section-2">
+        <h3>The Component select boxes</h3>
+        <p>At the top of the component tree, there is a series of three
+          select boxes that spells: "Show 'children' in 'UI' as
+          'Array'".<br />
+          The first select box chooses what category of descendents to
+          show for the current component.<br />
+          The second select box changes the belonging of the previous
+          category either to UI or to logic.<br />
+          The third select box changes the type of selected category
+          either to 'Array' or to 'Object'. Look at the generated
+          JavaScript to see the results.<br />
+        </p>
+      </div>
+      <div id="copy-paste" class="section-2">
+        <h3>Copy, paste and undo operations</h3>
+        <p>The copy, cut, paste, remove operations are split in two
+          groups. First group operates on the components in the
+          component tree, the second one processes the members of a
+          component.<br />
+          A component is copied and pasted with all its descendant
+          components. Also, any operation in the component tree takes a
+          component together with its sub-tree.</p>
+        <p>The copy-paste operations on the component members allow
+          copying and pasting multiple members to any component in the
+          project. They exclude however certain special properties
+          meaningful to the JUL parser such as: the class, the tag, the
+          children property, other 'members' properties, ID properties.<br />
+          The undo operation undoes the last altering operation
+          regardless of its kind.<br />
+        </p>
+      </div>
+      <div><a class="to-top" href="#top">Back to top</a></div>
+    </div>
+    </div>
+  </body>
+</html>
