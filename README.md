@@ -34,7 +34,7 @@ System requirements
 Build and install
 -----------------
 
-Install [https://nodejs.org/](Node.js) and [https://git-scm.com/](Git) command line in your system.
+Install [Node.js](https://nodejs.org/) and [Git](https://git-scm.com/) command line in your system.
 Rub the following shell commands in order:
 
 ``` bash
