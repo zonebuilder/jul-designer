@@ -44,8 +44,8 @@ Rub the following shell commands in order:
 ```
 The release will be in 'build' folder.
 
- Downloads & User support
- ------------------------
+Downloads & User support
+------------------------
 
-[http://sourceforge.net/projects/jul-designer/](http://sourceforge.net/projects/jul-designer/)
+[jul-designer project on SourceForge](http://sourceforge.net/projects/jul-designer/)
 
