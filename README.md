@@ -1,8 +1,8 @@
 JUL Designer - a RAD tool for JavaScript
 ========================================
 
- About
- ------ 
+About
+------ 
 
 JUL Designer is a RAD tool used to visually build a JavaScript application.
 Given a component based application running in an event-driven environment, 
