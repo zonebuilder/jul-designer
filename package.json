@@ -32,6 +32,7 @@
     "gulp-load-plugins": "*",
     "gulp-rename": "*",
     "gulp-strip-comments": "*",
+    "jshint": "*",
     "merge-stream": "*"
   }
 }
