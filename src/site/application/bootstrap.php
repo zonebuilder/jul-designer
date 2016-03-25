@@ -81,6 +81,10 @@ if (isset($_SERVER['KOHANA_ENV']))
  * - boolean  caching     enable or disable internal caching                 FALSE
  * - boolean  expose      set the X-Powered-By header                        FALSE
  */
+		if (!is_dir(DOCROOT.'assets') && !@mkdir(DOCROOT.'assets', 0755)) {
+			echo "Please create a '".DOCROOT."assets' directory and make it writable for the web server process.";
+			exit;
+		}
 		if (!is_writable(DOCROOT.'assets')) {
 			echo "Please make the '".DOCROOT."assets' directory writable for the web server process.";
 			exit;

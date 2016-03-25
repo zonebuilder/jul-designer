@@ -1,5 +1,5 @@
 /*
-	JUL - The JavaScript UI Language module version 1.2
+	JUL - The JavaScript UI Language module version 1.2.1
 	Copyright (c) 2012 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-javascript/
 	Licenses: GPLv2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-javascript/wiki/License/)
@@ -107,7 +107,7 @@ JUL = {};
 
 
 JUL = {
-	version: '1.2',
+	version: '1.2.1',
 	apply: function(oSource, oAdd, bDontReplace) {
 		if (!oAdd || typeof oAdd !== 'object') { return oSource; }
 		var aMembers = [].concat(oAdd);
@@ -148,9 +148,10 @@ JUL = {
 		}
 		return oCurrent;
 	},
-	trim: function(sText, sWhat) {
+	trim: function(sText, sWhat, bFromMap) {
 		if (typeof sText !== 'string') { sText = sText.toString(); }
 		if (!sText) { return sText; }
+		if (bFromMap) { sWhat = ''; }
 		if (!sWhat && sWhat !== 0) {
 			if (typeof String.prototype.trim === 'function') {
 				return sText.trim();
