@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /*
-	JUL Designer version 1.7.1
+	JUL Designer version 1.7.5
 	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GPL2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -83,7 +83,7 @@ class Controller_Main extends Controller {
 			case 'save':
 			case 'save_js':
 				if (!file_exists($sDir) || !is_dir($sDir)) {
-					@mkdir($sDir, 0777, true);
+					@mkdir($sDir, 0755, true);
 				}
 				if ($this->request->post('json')) {
 					$bReturn = @file_put_contents($sPath.'.json', $this->request->post('json'));

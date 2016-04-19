@@ -1,10 +1,10 @@
 {
   "name": "jul-designer",
-  "version": "1.7.1",
+  "version": "1.7.5",
   "description": "JUL Designer - a RAD tool for JavaScript",
   "main": "index.php",
   "scripts": {
-    "deps": "node_modules/.bin/bower install",
+    "deps": "node_modules/.bin/bower --allow-root install",
     "make": "node_modules/.bin/gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

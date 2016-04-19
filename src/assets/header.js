@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.7.1
+	JUL Designer version 1.7.5
 	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GPLv2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -26,3 +26,6 @@
 	  * A web server with PHP 5.2.0 or later extension 
 	  * 1024x768 minimum resolution
 */
+/* jshint browser: true, curly: true, eqeqeq: true, evil: true, expr: true, funcscope: true, immed: true, latedef: true, loopfunc: true,  
+	onevar: true, newcap: true, noarg: true, node: true, strict: true, trailing: true, undef: true, unused: vars, wsh: true */
+/* globals ample, JUL */

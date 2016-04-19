@@ -1,5 +1,5 @@
 /*
-	JUL - The JavaScript UI Language module version 1.2.1
+	JUL - The JavaScript UI Language module version 1.2.5
 	Copyright (c) 2012 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-javascript/
 	Licenses: GPLv2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-javascript/wiki/License/)
@@ -107,7 +107,7 @@ JUL = {};
 
 
 JUL = {
-	version: '1.2.1',
+	version: '1.2.5',
 	apply: function(oSource, oAdd, bDontReplace) {
 		if (!oAdd || typeof oAdd !== 'object') { return oSource; }
 		var aMembers = [].concat(oAdd);
@@ -151,8 +151,7 @@ JUL = {
 	trim: function(sText, sWhat, bFromMap) {
 		if (typeof sText !== 'string') { sText = sText.toString(); }
 		if (!sText) { return sText; }
-		if (bFromMap) { sWhat = ''; }
-		if (!sWhat && sWhat !== 0) {
+		if (bFromMap || !(sWhat || sWhat === 0)) {
 			if (typeof String.prototype.trim === 'function') {
 				return sText.trim();
 			}
@@ -204,6 +203,7 @@ if (typeof Array.prototype.map !== 'function') {
 'use strict';
 
 
+JUL.ns('JUL.Ref');
 
 JUL.Ref = function(oRef, sKey) {
 	if (!(this instanceof JUL.Ref)) {
@@ -225,7 +225,8 @@ JUL.Ref = function(oRef, sKey) {
 		}
 	}
 };
-JUL.Ref.prototype = {
+
+JUL.apply(JUL.Ref.prototype,  {
 	del: function() {
 		delete this._ref[this._key];
 		return this;
@@ -251,9 +252,7 @@ JUL.Ref.prototype = {
 		}
 		return this._ref[this._key];
 	}
-};
-
-JUL.Ref.prototype.constructor = JUL.Ref;
+});
 
 })();
 
@@ -262,7 +261,9 @@ JUL.Ref.prototype.constructor = JUL.Ref;
 'use strict';
 
 
-JUL.UI = {
+JUL.ns('JUL.UI');
+
+JUL.apply(JUL.UI,  {
 	bindingProperty: 'cid',
 	childrenProperty: 'children',
 	classProperty: 'xclass',
@@ -275,13 +276,18 @@ JUL.UI = {
 	membersProperties: [],
 	parentProperty: 'parent',
 	parserProperty: 'parserConfig',
+	referencePrefix: '#ref:',
 	tagProperty: 'tag',
 	topDown: false,
 	useTags: false,
 	xmlNS: {
-		aml: 'http://www.amplesdk.com/ns/aml', aui: 'http://www.amplesdk.com/ns/aui', chart: 'http://www.amplesdk.com/ns/chart', html: 'http://www.w3.org/1999/xhtml', svg: 'http://www.w3.org/2000/svg', xform: 'http://www.w3.org/2002/xforms', xul: 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
+		aml: 'http://www.amplesdk.com/ns/aml', aui: 'http://www.amplesdk.com/ns/aui', chart: 'http://www.amplesdk.com/ns/chart',
+		 html: 'http://www.w3.org/1999/xhtml', svg: 'http://www.w3.org/2000/svg', xform: 'http://www.w3.org/2002/xforms',
+		 xul: 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
 	},
 	Parser: function(oConfig) {
+			var oThis = this;
+			this.Parser = function(oConfig) { JUL.UI.Parser.call(oThis, oConfig); };
 			this.Parser.prototype = this;
 		JUL.apply(this, oConfig);
 	},
@@ -387,23 +393,30 @@ JUL.UI = {
 				}
 				oCurrent.val(oNew);
 				for (var sItem in oNew) {
-					if (oNew.hasOwnProperty(sItem) && typeof oNew[sItem] === 'object' &&
-						[].concat(this.childrenProperty, this.membersProperties).indexOf(sItem) > -1) {
-						var aMembers = [].concat(oNew[sItem]);
-						var sType = JUL.typeOf(oNew[sItem]);
-						if (sType === 'Array' || this.topDown) {
-							for (var n = 0; n < aMembers.length; n++) {
-									aNextNodes.push(new JUL.Ref({ref: aMembers, key: n, parent: oCurrent}));
+					if (oNew.hasOwnProperty(sItem)) {
+						if (this.referencePrefix && typeof oNew[sItem] === 'string' &&
+							oNew[sItem].substr(0, this.referencePrefix.length) === this.referencePrefix) {
+								var sGet = JUL.trim(oNew[sItem].substr(this.referencePrefix.length));
+								oNew[sItem] = sGet ? JUL.get(sGet) : null;
 							}
-						}
-						else {
-								aNextNodes.push(new JUL.Ref({ref: oNew, key: sItem, parent: oCurrent}));
-						}
-						if (this.topDown) {
-							delete oNew[sItem];
-						}
-						else {
-							if (sType === 'Array') { oNew[sItem] = aMembers; }
+						if (typeof oNew[sItem] === 'object' &&
+							[].concat(this.childrenProperty, this.membersProperties).indexOf(sItem) > -1) {
+							var aMembers = [].concat(oNew[sItem]);
+							var sType = JUL.typeOf(oNew[sItem]);
+							if (sType === 'Array' || this.topDown) {
+								for (var n = 0; n < aMembers.length; n++) {
+										aNextNodes.push(new JUL.Ref({ref: aMembers, key: n, parent: oCurrent}));
+								}
+							}
+							else {
+									aNextNodes.push(new JUL.Ref({ref: oNew, key: sItem, parent: oCurrent}));
+							}
+							if (this.topDown) {
+								delete oNew[sItem];
+							}
+							else {
+								if (sType === 'Array') { oNew[sItem] = aMembers; }
+							}
 						}
 					}
 				}
@@ -473,8 +486,7 @@ JUL.UI = {
 					}
 				}
 			}
-
-				}
+		}
 		for (sItem in oConfig) {
 			if (oConfig.hasOwnProperty(sItem) && [].concat(this.childrenProperty, this.membersProperties).indexOf(sItem) < 0 &&
 				['listeners', this.cssProperty, 'style', this.htmlProperty, this.tagProperty, this.classProperty, this.parentProperty].indexOf(sItem) < 0)
@@ -617,6 +629,8 @@ JUL.UI = {
 		var aStack = [];
 		var aPath = [];
 		var iStart = 0;
+		var nLn = 0;
+		var nLastComma = 0;
 		for (var i = 0; i < sData.length; i++) {
 			c = sData.substr(i, 1);
 			if (c === '"' && ca !== '\\') {
@@ -669,16 +683,24 @@ JUL.UI = {
 					(c === '[' && (sData.substr(i + 1, 1) === '{' || sData.substr(i + 1, 1) === '['))) {
 					sIndent = sIndent + this._tabString;
 					sResult = sResult + c + this._newlineString + sIndent;
+					nLn = sResult.length;
 				}
 				else {
 					sResult = sResult + c;
 				}
 			}
 			else if (c === ',') {
+				if (this._phraseLength && nLastComma && sResult.length > nLn + this._phraseLength) {
+					sResult = sResult.slice(0, nLastComma) + this._newlineString + sIndent + sResult.substr(nLastComma);
+					nLn = nLastComma + this._newlineString.length + sIndent.length;
+				}
+				nLastComma = sResult.length + 1;
 				if (!bQuote && fDecorator && aStack.length && aStack[aStack.length - 1] === '[') { aPath[aPath.length - 1]++; }
 				if (aStack.length === 1 || ca === '~' || ((ca === '}' || ca === ']') &&
 					sData.substr(i - 2, 1) !== '{' && sData.substr(i - 2, 1) !== '[')) {
 					sResult = sResult + c + this._newlineString + sIndent;
+					nLn = sResult.length;
+					nLastComma = 0;
 				}
 				else if(!bQuote) {
 					sResult = sResult + c + this._spaceString;
@@ -688,6 +710,11 @@ JUL.UI = {
 				}
 			}
 			else if (c === '}' || c === ']') {
+				if (this._phraseLength &&  nLastComma && sResult.length > nLn + this._phraseLength) {
+					sResult = sResult.slice(0, nLastComma) + this._newlineString + sIndent + sResult.substr(nLastComma);
+					nLn = nLastComma + this._newlineString.length + sIndent.length;
+				}
+				nLastComma = 0;
 				if (!bQuote && fDecorator) { aPath.pop(); }
 				aStack.pop();
 				if ((!aStack.length && ca !== '{' && ca !== '[') ||
@@ -695,6 +722,7 @@ JUL.UI = {
 					(c === ']' && (ca === '}'  || ca === ']'))) {
 					sIndent = sIndent.substr(this._tabString.length);
 					sResult = sResult + this._newlineString + sIndent + c;
+					nLn = sResult.length - 1;
 				}
 				else {
 					sResult = sResult + c;
@@ -797,8 +825,13 @@ JUL.UI = {
 	_instanceProperty: '_instance',
 	_keepInstance: false,
 	_newlineString: '\n',
+	_phraseLength: 120,
 	_regExps: {
-		variable: /^[a-z$_][\w$]*$/i, number: /^[\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?$/, uint: /^(\d|[1-9]\d+)$/, functionStart: /^function\s*\(/, newStart: /^new\s+[A-Z$_][\w$]*\s*\(/, isoDateStart: /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d/, regexp: /^\/(\s|\S)+\/[gim]{0,3}$/, special: /^(true|false|null)$/, autoUseStrict: /(\{)\r?\n?"use strict";\r?\n?/, keyword: /^(break|case|catch|continue|debugger|default|delete|do|else||finally|for|function|if|in|instanceof|new|return|switch|this|throw|try|typeof|var|void|while|with|class|enum|export|extends|import|super|implements|interface|let|package|private|protected|public|static|yield)$/
+		variable: /^[a-z$_][\w$]*$/i, number: /^[\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?$/, uint: /^(\d|[1-9]\d+)$/,
+		 functionStart: /^function\s*\(/, newStart: /^new\s+[A-Z$_][\w$]*\s*\(/,
+		 isoDateStart: /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d/, regexp: /^\/(\s|\S)+\/[gim]{0,3}$/,
+		 special: /^(true|false|null)$/, autoUseStrict: /(\{)\r?\n?"use strict";\r?\n?/,
+		 keyword: /^(break|case|catch|continue|debugger|default|delete|do|else||finally|for|function|if|in|instanceof|new|return|switch|this|throw|try|typeof|var|void|while|with|class|enum|export|extends|import|super|implements|interface|let|package|private|protected|public|static|yield)$/
 	},
 	_spaceString: ' ',
 	_tabString: '\t',
@@ -868,7 +901,7 @@ JUL.UI = {
 			return this._jsonReplacer.call(oData && typeof oData === 'object' ? oData : window, _sKey, oValue);
 		}
 	}
-};
+});
 
 JUL.UI.Parser.prototype = JUL.UI;
 

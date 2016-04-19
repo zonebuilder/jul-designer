@@ -18,7 +18,7 @@
 		->js($jul_root.'jul.js')
 		->js_block('JUL.Designer = '.json_encode($app).';')
 		->js('designer.js')
-		->js('defaults.js')
+		->js('defaults.js', array('processor' => false))
 ?>
 </head>
 <body>
