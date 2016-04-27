@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.7.5
+	JUL Designer version 1.7.9
 	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GPL2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -494,6 +494,7 @@ JUL.apply(JUL.Designer.app, /** @lends JUL.Designer.app */ {
 				window.alert(oResult.error);
 				return;
 			}
+			JUL.Designer.makeCompat(oResult, sResponse);
 			var oApp = JUL.Designer.app;
 			JUL.Designer.panels.browse.hide();
 			oApp.current = oResult.result;
@@ -533,7 +534,7 @@ JUL.apply(JUL.Designer.app, /** @lends JUL.Designer.app */ {
 			window.alert('Invalid namespace');
 			return;
 		}
-		oApp.version = '0.' + (new Date()).getTime();
+		oApp.version = '1.' + (new Date()).getTime();
 		if (this.state.currentOperation !== 'save') { oApp = this.cleanApp(oApp); }
 		var oScript = JUL.apply({}, oApp);
 		delete oScript.template;

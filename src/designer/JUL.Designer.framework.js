@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.7.5
+	JUL Designer version 1.7.9
 	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GPL2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -456,6 +456,7 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 		var oResult = sResponse ? JSON.parse(sResponse, JUL.Designer.jsonReviver) : null;
 		oResult = oResult && !oResult.error ? oResult.result : null;
 		if (oResult) {
+			JUL.Designer.makeCompat(oResult, sResponse);
 			oFramework.current.getetBoundingRect = oFramework.current.getetBoundingRect || oResult.getBoundingRect;
 			oFramework.current.augments = oResult.augments;
 			oResult.components = oResult.components || {};
@@ -759,6 +760,7 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 				window.alert(oResult.error);
 				return;
 			}
+			JUL.Designer.makeCompat(oResult, sResponse);
 			var oFramework = JUL.Designer.framework;
 			oFramework.state.origFramework = oResult.result;
 			 oFramework.current = JUL.Designer.designer.copy(oFramework.state.origFramework);
@@ -810,7 +812,7 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 			window.alert('Invalid augments namespace');
 			return;
 		}
-		oCurrent.version = '0.' + (new Date()).getTime();
+		oCurrent.version = '1.' + (new Date()).getTime();
 		JUL.Designer.applyRequired(this.fields, oCurrent);
 		oCurrent = JUL.Designer.keySort(oCurrent, 'components');
 		if (oCurrent.components) {

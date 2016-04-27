@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.7.5
+	JUL Designer version 1.7.9
 	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GPL2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -755,7 +755,7 @@ JUL.Designer.designer.logic = {
 		}
 	},
 	'menu-edit': {
-		children: '#ref: JUL.Designer.designer.editUi'
+		children: '=ref: JUL.Designer.designer.editUi'
 	},
 	'menuliist-designer-members': {
 		listeners: {
@@ -827,7 +827,7 @@ JUL.Designer.designer.logic = {
 		}
 	},
 	'menupopup-edit': {
-		children: '#ref: JUL.Designer.designer.editUi'
+		children: '=ref: JUL.Designer.designer.editUi'
 	},
 	'splitter-test': {
 		listeners: {
@@ -2709,6 +2709,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 				}
 				return;
 			}
+			JUL.Designer.makeCompat(oResult, sResponse);
 			JUL.Designer.panels.browse.hide();
 			oProject.onSelectNode();
 			oProject.removeTree();
@@ -2852,7 +2853,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			return;
 		}
 		if (!bJsOnly) {
-			oCurrent.version = '0.' + (new Date()).getTime();
+			oCurrent.version = '1.' + (new Date()).getTime();
 			if (JUL.Designer.app.current.ns) {
 				var oModules = JUL.Designer.app.current.modules;
 				for (var sModule in oModules) {

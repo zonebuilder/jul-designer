@@ -1,6 +1,6 @@
 {
   "name": "jul-designer",
-  "version": "1.7.5",
+  "version": "1.7.9",
   "description": "JUL Designer - a RAD tool for JavaScript",
   "main": "index.php",
   "scripts": {

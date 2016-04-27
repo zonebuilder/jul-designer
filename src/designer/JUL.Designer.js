@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.7.5
+	JUL Designer version 1.7.9
 	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GPL2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -495,7 +495,7 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		@type	Object
 	*/
 	parserConfig: {
-		defaultClass: 'xul', useTags: true, customFactory: 'JUL.UI.createDom', topDown: true
+		defaultClass: 'xul', useTags: true, customFactory: 'JUL.UI.createDom', topDown: true, _usePrefixes: true
 	},
 	/**
 		Runtime state for the current module
@@ -947,13 +947,27 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		@returns	{Mixed}	The restored JavaScript value
 	*/
 	jsonReviver: function(sKey, oValue) {
-		if (sKey && typeof oValue === 'string' && (JUL.Designer.parser._regExps.regexp.test(oValue) ||
-			JUL.Designer.parser._regExps.functionStart.test(oValue) || JUL.Designer.parser._regExps.newStart.test(oValue))) {
-			try {
-				return eval('(function(){return ' + oValue + '})()');
+		if (sKey && typeof oValue === 'string') {
+			var oParser = JUL.Designer.parser;
+			var bPrefix = false;
+			if (oParser._usePrefixes) {
+				for (var sItem in oParser._jsonPrefixes) {
+					if (oParser._jsonPrefixes.hasOwnProperty(sItem) &&
+						oValue.substr(0, oParser._jsonPrefixes[sItem].length) === oParser._jsonPrefixes[sItem]) {
+						bPrefix = true;
+						oValue = oValue.substr(oParser._jsonPrefixes[sItem].length);
+						break;
+					}
+				}
 			}
-			catch(e) {
-				return oValue;
+			if (bPrefix || (!oParser._usePrefixes && (oParser._regExps.regexp.test(oValue) ||
+				oParser._regExps.functionStart.test(oValue) || oParser._regExps.newStart.test(oValue)))) {
+				try {
+					return eval('(function(){return ' + oValue + '})()');
+				}
+				catch(e) {
+					return oValue;
+				}
 			}
 		}
 		return oValue;
@@ -998,6 +1012,18 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 			if (typeof oTemp[sKey] !== 'undefined') { oNew[sKey] = oTemp[sKey]; }
 		}
 		return oNew;
+	},
+	/**
+		Ensures compatibility for files saved in earlier version
+		@param	{Object}	oResult	Result object to be verified
+		@param	{String}	sResponse	AJAX text response
+	*/
+	makeCompat: function(oResult, sResponse) {
+		if (!oResult.result.version || oResult.result.version.substr(0, 2) === '0.') {
+			this.parser._usePrefixes = false;
+			JUL.apply(oResult, JSON.parse(sResponse, this.jsonReviver));
+			this.parser._usePrefixes = true;
+		}
 	},
 	/**
 		Custom on-blur handler for all value fields
