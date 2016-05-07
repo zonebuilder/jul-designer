@@ -1,3 +1,5 @@
+v1.8 (2016-05-07):
+  * updated to JUL v1.3.0
 v1.7.9 (2016-04-27):
   * upgraded to prefixed JSON serialization
   * compatibility with files saved in the previous versions

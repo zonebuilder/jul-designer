@@ -1,5 +1,5 @@
 /*
-	JUL - The JavaScript UI Language module version 1.2.9
+	JUL - The JavaScript UI Language module version 1.3
 	Copyright (c) 2012 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-javascript/
 	Licenses: GPLv2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-javascript/wiki/License/)
@@ -107,7 +107,7 @@ JUL = {};
 
 
 JUL = {
-	version: '1.2.9',
+	version: '1.3',
 	apply: function(oSource, oAdd, bDontReplace) {
 		if (!oAdd || typeof oAdd !== 'object') { return oSource; }
 		var aMembers = [].concat(oAdd);
@@ -121,7 +121,7 @@ JUL = {
 		}
 		return oSource;
 	},
-	get: function (sPath, oRoot) {
+	get: function(sPath, oRoot) {
 		var oCurrent = oRoot || window;
 		if (!sPath) { return oCurrent; }
 		if (typeof sPath !== 'string') { return sPath; }
@@ -133,6 +133,23 @@ JUL = {
 			oCurrent = oCurrent[sItem];
 		}
 		return oCurrent;
+	},
+	makeCaller: function(oScope, fCall, bAppendThis) {
+		if (!oScope || !fCall) { return null; }
+		if (typeof fCall !== 'function') {
+			fCall = oScope[fCall];
+			if (typeof fCall !== 'function') { return null; }
+		}
+		bAppendThis = (bAppendThis || false) && true;
+		this._callers = this._callers || [];
+		for (var i = 0; i < this._callers.length; i++) {
+			if (oScope === this._callers[i][0] && fCall === this._callers[i][1] && bAppendThis === this._callers[i][2]) { return this._callers[i][3]; }
+		}
+		var fCaller = bAppendThis ? function() { return fCall.apply(oScope, [].slice.call(arguments).concat([this])); } :
+			function() { return fCall.apply(oScope, [].slice.call(arguments)); };
+		if (this._callers.length > 16383) { this._callers = this._callers.slice(1024, 16384); }
+		this._callers.push([oScope, fCall, bAppendThis, fCaller]);
+		return fCaller;
 	},
 	ns: function(sPath, oInit, oRoot) {
 		var aNames = sPath ? sPath.replace(/\\\./g, ':::::').split('.') : [];
@@ -148,10 +165,10 @@ JUL = {
 		}
 		return oCurrent;
 	},
-	trim: function(sText, sWhat, bFromMap) {
+	trim: function(sText, sWhat, _bFromMap) {
 		if (typeof sText !== 'string') { sText = sText.toString(); }
 		if (!sText) { return sText; }
-		if (bFromMap || !(sWhat || sWhat === 0)) {
+		if (_bFromMap || !(sWhat || sWhat === 0)) {
 			if (typeof String.prototype.trim === 'function') {
 				return sText.trim();
 			}
@@ -291,7 +308,7 @@ JUL.apply(JUL.UI,  {
 			this.Parser.prototype = this;
 		JUL.apply(this, oConfig);
 	},
-	compact: function(oData, bAuto, _iLength) {
+	compact: function(oData, bAuto, _nLength) {
 		oData = this.include(oData);
 		if (JUL.typeOf(oData[this.childrenProperty]) !== 'Array') { return oData; }
 		var aItems = [];
@@ -314,7 +331,7 @@ JUL.apply(JUL.UI,  {
 			}
 		}
 		var oAdd = {};
-		if (typeof _iLength === 'undefined') { _iLength = this.membersProperties.length; }
+		if (typeof _nLength === 'undefined') { _nLength = this.membersProperties.length; }
 		for (i = 0; i < oData[this.childrenProperty].length; i++) {
 			oChild = oData[this.childrenProperty][i];
 			sClass = oChild[this.classProperty] || this.defaultClass;
@@ -322,7 +339,7 @@ JUL.apply(JUL.UI,  {
 			var sTag = this.useTags && sClass === this.defaultClass ? oChild[this.tagProperty] : sName;
 			var bCompact = typeof oChild[this.childrenProperty] === 'object' && oChild[this.childrenProperty].length;
 			var iPos = this.membersProperties.indexOf(sTag);
-			if (bCompact && (iPos < 0 || iPos >= _iLength)) {
+			if (bCompact && (iPos < 0 || iPos >= _nLength)) {
 				if (bAuto) {
 					for (sItem in oChild) {
 						if (oChild.hasOwnProperty(sItem) && sItem !== this.classProperty &&
@@ -351,7 +368,7 @@ JUL.apply(JUL.UI,  {
 					this.membersProperties.push(sItem);
 				}
 				for (i = 0; i < oAdd[sItem].length; i++) {
-					oAdd[sItem][i] = this.compact(oAdd[sItem][i], bAuto, _iLength);
+					oAdd[sItem][i] = this.compact(oAdd[sItem][i], bAuto, _nLength);
 				}
 			}
 		}
@@ -466,14 +483,14 @@ JUL.apply(JUL.UI,  {
 	},
 	createDom: function(oConfig) {
 		if (!oConfig) { return null; }
-		var iNS = oConfig[this.classProperty].indexOf(':');
-		var sNS = iNS > -1 ? oConfig[this.classProperty].substr(0, iNS) : oConfig[this.classProperty];
+		var nNS = oConfig[this.classProperty].indexOf(':');
+		var sNS = nNS > -1 ? oConfig[this.classProperty].substr(0, nNS) : oConfig[this.classProperty];
 		if (!this.xmlNS[sNS]) { sNS = 'html'; }
 		var oDocument = document;
 		var bAmple = typeof window.ample === 'object';
 		if (bAmple) { oDocument = ample; }
-		var oWidget = sNS === 'html' ? oDocument.createElement(iNS > -1 ? oConfig[this.classProperty].substr(iNS + 1) : oConfig[this.tagProperty]) :
-			oDocument.createElementNS(this.xmlNS[sNS], iNS > -1 ? oConfig[this.classProperty] : sNS + ':' + oConfig[this.tagProperty]);
+		var oWidget = sNS === 'html' ? oDocument.createElement(nNS > -1 ? oConfig[this.classProperty].substr(nNS + 1) : oConfig[this.tagProperty]) :
+			oDocument.createElementNS(this.xmlNS[sNS], nNS > -1 ? oConfig[this.classProperty] : sNS + ':' + oConfig[this.tagProperty]);
 		if (!oWidget) { return null; }
 		if (oConfig.listeners && typeof oConfig.listeners === 'object') {
 			var oListeners = oConfig.listeners;
@@ -491,10 +508,10 @@ JUL.apply(JUL.UI,  {
 			if (oConfig.hasOwnProperty(sItem) && [].concat(this.childrenProperty, this.membersProperties).indexOf(sItem) < 0 &&
 				['listeners', this.cssProperty, 'style', this.htmlProperty, this.tagProperty, this.classProperty, this.parentProperty].indexOf(sItem) < 0)
 			{
-				iNS = sItem.indexOf(':');
+				nNS = sItem.indexOf(':');
 				var sAttr = ['Array', 'Date', 'Function', 'Object', 'Null', 'RegExp'].indexOf(JUL.typeOf(oConfig[sItem])) > -1 ? this.obj2str(oConfig[sItem]) : oConfig[sItem];
-				if (iNS > -1) {
-					oWidget.setAttributeNS(this.xmlNS[sItem.substr(0, iNS)], sItem, sAttr);
+				if (nNS > -1) {
+					oWidget.setAttributeNS(this.xmlNS[sItem.substr(0, nNS)], sItem, sAttr);
 				}
 				else {
 					oWidget.setAttribute(sItem, sAttr);
@@ -527,10 +544,10 @@ JUL.apply(JUL.UI,  {
 				var aMembers = oConfig[sItem];
 				var oMembersWidget =  oWidget;
 				if (sItem !== this.childrenProperty) {
-					iNS = sItem.indexOf(':');
-					if (iNS > -1) { sNS = sItem.substr(0, iNS);	}
-					oMembersWidget = sNS === 'html' ? oDocument.createElement(iNS > -1 ? sItem.substr(iNS + 1) : sItem) :
-						oDocument.createElementNS(this.xmlNS[sNS], iNS > -1 ? sItem : sNS + ':' + sItem);
+					nNS = sItem.indexOf(':');
+					if (nNS > -1) { sNS = sItem.substr(0, nNS);	}
+					oMembersWidget = sNS === 'html' ? oDocument.createElement(nNS > -1 ? sItem.substr(nNS + 1) : sItem) :
+						oDocument.createElementNS(this.xmlNS[sNS], nNS > -1 ? sItem : sNS + ':' + sItem);
 				}
 				for (var k = 0; k < aMembers.length; k++) {
 					oMembersWidget.appendChild(aMembers[k]);
@@ -559,9 +576,9 @@ JUL.apply(JUL.UI,  {
 					var oNew = {};
 					if (!this.useTags && sItem !== this.defaultClass) { oNew[this.classProperty] = sItem; }
 					if (this.useTags) {
-						var iNS = sItem.indexOf(':');
-						if (iNS > -1 && sItem.substr(0, iNS) !== this.defaultClass) { oNew[this.classProperty] = sItem.substr(0, iNS); }
-						oNew[this.tagProperty] = iNS > -1 ? sItem.substr(iNS + 1) : sItem;
+						var nNS = sItem.indexOf(':');
+						if (nNS > -1 && sItem.substr(0, nNS) !== this.defaultClass) { oNew[this.classProperty] = sItem.substr(0, nNS); }
+						oNew[this.tagProperty] = nNS > -1 ? sItem.substr(nNS + 1) : sItem;
 					}
 					oNew[this.childrenProperty] = [].concat(oData[sItem]);
 					delete oData[sItem];
@@ -577,7 +594,7 @@ JUL.apply(JUL.UI,  {
 		}
 		return oData;
 	},
-	factory: function (sClass, oArgs) {
+	factory: function(sClass, oArgs) {
 		var aNames = sClass.split('.');
 		var oCurrent = window;
 		var sItem = '';
@@ -616,11 +633,9 @@ JUL.apply(JUL.UI,  {
 	obj2str: function(oData, bQuote, fDecorator) {
 		if (typeof this._useJsonize === 'undefined') {
 			var fEmpty = function() {};
-			this._useJsonize = JSON.stringify({o: fEmpty}, this._jsonReplacer).indexOf('function') < 0;
+			this._useJsonize = JSON.stringify({o: fEmpty}, JUL.makeCaller(JUL.UI, '_jsonReplacer')).indexOf('function') < 0;
 		}
-		JUL.UI._this_ = this;
-		var sData = this._useJsonize ? JSON.stringify(this._jsonize(oData)) : JSON.stringify(oData, this._jsonReplacer);
-		delete JUL.UI._this_;
+		var sData = this._useJsonize ? JSON.stringify(this._jsonize(oData)) : JSON.stringify(oData, JUL.makeCaller(this, '_jsonReplacer'));
 		if (!sData) { return ''; }
 		var ca = '#';
 		var c = '';
@@ -630,14 +645,14 @@ JUL.apply(JUL.UI,  {
 		var bString = false;
 		var aStack = [];
 		var aPath = [];
-		var iStart = 0;
+		var nStart = 0;
 		var nLn = 0;
 		var nLastComma = 0;
 		for (var i = 0; i < sData.length; i++) {
 			c = sData.substr(i, 1);
 			if (c === '"' && ca !== '\\') {
 				bString = !bString;
-				if (bString) { iStart = i; }
+				if (bString) { nStart = i; }
 			}
 			if (bString) {
 				if (bQuote) { sResult = sResult + c; }
@@ -650,12 +665,12 @@ JUL.apply(JUL.UI,  {
 				sContent = '';
 			}
 			if (c === '"' && !bQuote) {
-				var sItem = JSON.parse(sData.substr(iStart, i - iStart + 1));
+				var sItem = JSON.parse(sData.substr(nStart, i - nStart + 1));
 				if (sData.substr(i + 1, 1) === ':') {
 					if (fDecorator) { aPath[aPath.length - 1] = sItem; }
 					sContent = sContent + (!this._regExps.keyword.test(sItem) && (this._regExps.variable.test(sItem) || this._regExps.uint.test(sItem)) ?
-						sItem : (this._useDoubleQuotes ? sData.substr(iStart, i - iStart + 1) :
-						"'" + sData.substr(iStart + 1, i - iStart - 1).replace(/\\"/g, '"').replace(/'/g, "\\'") + "'"));
+						sItem : (this._useDoubleQuotes ? sData.substr(nStart, i - nStart + 1) :
+						"'" + sData.substr(nStart + 1, i - nStart - 1).replace(/\\"/g, '"').replace(/'/g, "\\'") + "'"));
 				}
 				else {
 					var bPrefix = false;
@@ -689,8 +704,8 @@ JUL.apply(JUL.UI,  {
 							sItem = sItem.substr(this._jsonPrefixes.regex.length).replace(/^\s+/, '');
 						}
 						sContent = sContent + (bPrefix || (!this._usePrefixes && this._regExps.regexp.test(sItem)) ?
-							sItem : (this._useDoubleQuotes ? sData.substr(iStart, i - iStart + 1) :
-							"'" + sData.substr(iStart + 1, i - iStart - 1).replace(/\\"/g, '"').replace(/'/g, "\\'") + "'"));
+							sItem : (this._useDoubleQuotes ? sData.substr(nStart, i - nStart + 1) :
+							"'" + sData.substr(nStart + 1, i - nStart - 1).replace(/\\"/g, '"').replace(/'/g, "\\'") + "'"));
 					}
 				}
 			}
@@ -774,12 +789,12 @@ JUL.apply(JUL.UI,  {
 				oData.error = oNode.textContent;
 				return;
 				}
-			var iNS = oNode.nodeName.indexOf(':');
-			if (!bNoTag && iNS > -1) {
-				if (this.defaultClass !== oNode.nodeName.substr(0, iNS)) {
-					oData[this.classProperty] = oNode.nodeName.substr(0, iNS);
+			var nNS = oNode.nodeName.indexOf(':');
+			if (!bNoTag && nNS > -1) {
+				if (this.defaultClass !== oNode.nodeName.substr(0, nNS)) {
+					oData[this.classProperty] = oNode.nodeName.substr(0, nNS);
 				}
-				oData[this.tagProperty] = oNode.nodeName.substr(iNS + 1);
+				oData[this.tagProperty] = oNode.nodeName.substr(nNS + 1);
 			}
 			else {
 				if (!bNoTag || this.defaultClass !== oNode.nodeName) {
@@ -814,9 +829,9 @@ JUL.apply(JUL.UI,  {
 			for (i = 0; i < oNode.childNodes.length; i++) {
 				oChild = oNode.childNodes[i];
 				if (oChild.nodeType === 1) {
-					iNS = oChild.nodeName.indexOf(':');
-					var sTag = !bNoTag && iNS > -1 && this.defaultClass === oChild.nodeName.substr(0, iNS) ?
-						oChild.nodeName.substr(iNS + 1) : oChild.nodeName;
+					nNS = oChild.nodeName.indexOf(':');
+					var sTag = !bNoTag && nNS > -1 && this.defaultClass === oChild.nodeName.substr(0, nNS) ?
+						oChild.nodeName.substr(nNS + 1) : oChild.nodeName;
 					if (!oRepeat[oChild.nodeName] &&
 						[].concat(this.childrenProperty, this.membersProperties).indexOf(sTag) > -1) {
 						var aMembers = [];
@@ -861,19 +876,19 @@ JUL.apply(JUL.UI,  {
 	_usePrefixes: false,
 	_createXml: function(sXml) {
 		if (window.DOMParser) {
-			this._xmlParser = this._xmlParser || new DOMParser();
+			JUL.UI._xmlParser = JUL.UI._xmlParser || new DOMParser();
 			try {
-				return this._xmlParser.parseFromString(sXml, 'application/xhtml+xml');
+				return JUL.UI._xmlParser.parseFromString(sXml, 'application/xhtml+xml');
 			}
 			catch(e) {
 				return {error: e.message};
 			}
 		}
 		else {
-			this._xmlParser = this._xmlParser || new ActiveXObject('Msxml2.DOMDocument.3.0');
-			 this._xmlParser.async = false;
-			 this._xmlParser.loadXML(sXml);
-			return  this._xmlParser; 
+			JUL.UI._xmlParser = JUL.UI._xmlParser || new ActiveXObject('Msxml2.DOMDocument.3.0');
+			 JUL.UI._xmlParser.async = false;
+			 JUL.UI._xmlParser.loadXML(sXml);
+			return  JUL.UI._xmlParser; 
 		}
 	},
 	_jsonReplacer: function(sKey, oValue) {
@@ -881,16 +896,15 @@ JUL.apply(JUL.UI,  {
 			oValue = new Date(Date.UTC(parseInt(oValue.substr(0, 4)), parseInt(oValue.substr(5, 2)) - 1, parseInt(oValue.substr(8, 2)),
 				parseInt(oValue.substr(11, 2)), parseInt(oValue.substr(14, 2)), parseInt(oValue.substr(17, 2)), oValue.substr(19, 1) === '.' ? parseInt(oValue.substr(20, 3)) : 0));
 		}
-		var oInstance = JUL.UI._this_ || false;
 		switch (JUL.typeOf(oValue)) {
 		case 'Function':
-			return (oInstance && oInstance._usePrefixes ? oInstance._jsonPrefixes.func + ' ' : '') +
+			return (this._usePrefixes ? this._jsonPrefixes.func + ' ' : '') +
 				oValue.toString().replace(JUL.UI._regExps.autoUseStrict, '$1');
 		case 'RegExp':
-			return (oInstance && oInstance._usePrefixes ? oInstance._jsonPrefixes.regex + ' ' : '') +
+			return (this._usePrefixes ? this._jsonPrefixes.regex + ' ' : '') +
 				oValue.toString();
 		case 'Date':
-			return (oInstance && oInstance._usePrefixes ? oInstance._jsonPrefixes.newop + ' ' : '') +
+			return (this._usePrefixes ? this._jsonPrefixes.newop + ' ' : '') +
 				'new Date(/*' + oValue.toUTCString().replace('UTC', 'GMT') + '*/' + oValue.getTime() + ')';
 		default:
 			return oValue;
@@ -901,7 +915,7 @@ JUL.apply(JUL.UI,  {
 		if (typeof _sKey === 'undefined') { _sKey = ''; }
 		else { oValue = oData[_sKey]; }
 		if (oValue && typeof oValue === 'object' && typeof oValue.toJSON === 'function') {
-			return this._jsonReplacer.call(oData && typeof oData === 'object' ? oData : window, _sKey, oValue.toJSON());
+			return this._jsonReplacer(_sKey, oValue.toJSON());
 		}
 		switch (JUL.typeOf(oValue)) {
 		case 'Array':
@@ -925,7 +939,7 @@ JUL.apply(JUL.UI,  {
 			}
 			return oOut;
 		default:
-			return this._jsonReplacer.call(oData && typeof oData === 'object' ? oData : window, _sKey, oValue);
+			return this._jsonReplacer(_sKey, oValue);
 		}
 	}
 });
