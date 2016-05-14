@@ -12,7 +12,7 @@ It also generates the JavaScript code for the current component tree.
 License
 -------
  
- Licensed under GPLv2 or later and under LGPLv3 or later. See enclosed 'licenses' folder.
+ Licensed under GNU GPLv2 or later and under GNU LGPLv3 or later. See enclosed 'licenses' folder.
  
 Features
 --------
@@ -31,11 +31,11 @@ System requirements
 * A web server with PHP 5.2.0 or later extension 
 * 1024x768 minimum resolution 
 
-Build and install
------------------
+Build & install
+---------------
 
 Install [Node.js](https://nodejs.org/) and [Git](https://git-scm.com/) command line in your system.
-Rub the following shell commands in order:
+Run the following shell commands in order:
 
 ``` bash
 	npm install
