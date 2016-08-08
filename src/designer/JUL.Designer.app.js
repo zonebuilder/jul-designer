@@ -1,8 +1,8 @@
 /*
-	JUL Designer version 1.8
+	JUL Designer version 1.8.5
 	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-designer/
-	Licenses: GPL2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
+	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
 */
 /**
 	@fileOverview	This file configures the 'Application' dialog
@@ -100,7 +100,7 @@ JUL.Designer.app.ui = {
 			]},
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'description',
-				 value: 'Testing HTML page. Besides {jul_script}, {app_script} and {modules_scripts}, all {app_<property>} properties are available.'},
+				 value: 'Testing HTML page. Besides {jul_script}, {app_script} and {modules_scripts}, all {app_<property>} properties are available; page timestamp {ts}.'},
 				{tag: 'textbox', id: 'textbox-app-template', width: '100%', multiline: true, flex: 1}
 			]}
 		]}

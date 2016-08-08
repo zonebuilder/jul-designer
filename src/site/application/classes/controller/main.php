@@ -1,9 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /*
-	JUL Designer version 1.8
+	JUL Designer version 1.8.5
 	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-designer/
-	Licenses: GPL2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
+	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
 */
 /**
  * A REST server for JUL.Designer
@@ -276,9 +276,10 @@ class Controller_Main extends Controller {
 			}
 			$aInfo['modules_scripts'] = implode("\n\t", $aScripts);
 		}
+		$aInfo['ts'] = time();
 		$aKeys = array_keys($aInfo);
 		foreach ($aKeys as &$sKey) {
-			$sKey = strpos($sKey, '_') === false ? '{'.$sType.'_'.$sKey.'}' : '{'.$sKey.'}';
+			$sKey = $sKey !== 'ts' && strpos($sKey, '_') === false ? '{'.$sType.'_'.$sKey.'}' : '{'.$sKey.'}';
 		}
 		return str_replace($aKeys, array_values($aInfo), $sTemplate);
 	}

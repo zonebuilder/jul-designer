@@ -1,8 +1,8 @@
 /*
-	JUL Designer version 1.8
+	JUL Designer version 1.8.5
 	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-designer/
-	Licenses: GPL2 or later; LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
+	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
 */
 /**
 	@fileOverview	This file configures the main page UI, the 'Project' dialog, and the project operations
@@ -966,7 +966,7 @@ JUL.Designer.designer.projectUi = {
 			]},
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'description',
-				 value: 'Testing HTML page. Besides {jul_script} and {project_script}, all {project_<property>} properties are available.'},
+				 value: 'Testing HTML page. Besides {jul_script} and {project_script}, all {project_<property>} properties are available; page timestamp {ts}.'},
 				{tag: 'textbox', id: 'textbox-project-template', width: '100%', multiline: true, flex: 1}
 			]}
 		]}
@@ -1074,6 +1074,9 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		},
 		noLogic: {
 			tooltip: 'Don\'t separate logic from UI', required: true, defaultValue: false, template: '<boolean>'
+		},
+		keepBindings: {
+			tooltip: 'Keep all binding IDs in the generated code', required: true, defaultValue: false, template: '<boolean>'
 		}
 	},
 	/**
@@ -1627,7 +1630,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 						[oCurrent.classProperty,oCurrent.tagProperty, oCurrent.idProperty, oCurrent.bindingProperty]);
 				}
 			}
-			if (oConfig[oCurrent.idProperty] || (sId && !oTree.logic[sId])) { delete oConfig[oCurrent.bindingProperty]; }
+			if (!this.current.keepBindings && (oConfig[oCurrent.idProperty] || (sId && !oTree.logic[sId]))) { delete oConfig[oCurrent.bindingProperty]; }
 			for (var k = 0; k < aMembers.length; k++) {
 				var sMember = aMembers[k];
 				oTarget = null;

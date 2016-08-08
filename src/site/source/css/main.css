@@ -99,21 +99,3 @@ td.xul-box---box-child, div.xul-dialog--body, div.xul-window--body {
 input.xul-textbox--input, textarea.xul-textbox--input {
 	background-color: #fbfbfb;
 }
-/*
-#debug-pane {
-	display: none;
-	width: 360px;
-	height: 180px;
-	position: fixed;
-	z-index: 17000000;
-	right: 0;
-	bottom: 0;
-	overflow: auto;
-    unicode-bidi: embed;
-    font-family: monospace;
-    white-space: pre;
-	padding: 0.5em;
-	border: 1px solid #777;
-	background-color: #fff;
-}
-*/

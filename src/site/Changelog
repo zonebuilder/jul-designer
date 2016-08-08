@@ -1,3 +1,7 @@
+v1.8.5 (2016-08-08):
+  * added JWL Components sample app
+  * project option to keep all binding IDs in the generated code
+  * can use page timestamp {ts} in the page template
 v1.8 (2016-05-07):
   * updated to JUL v1.3.0
 v1.7.9 (2016-04-27):
