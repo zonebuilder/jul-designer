@@ -1,16 +1,14 @@
 html, body {
+	font-family: "Segoe UI", "Helvetica", Helvetica, sans-serif;
+	font-size: 13px;
 	width:	100%;
 	height: 100%;
 	padding: 0;
 	margin:	0;
 	overflow: hidden;
-	background-color: #f3f3f3;
 }
 body {
 	border: 0;
-	font-family: "Segoe UI", "Helvetica", Helvetica, sans-serif;
-	font-size: 13px;
-	color: #1c1c1c;
 }
 div, th, td {
 	margin: 0;
@@ -41,9 +39,6 @@ div.caption {
 }
 a.tbutton:hover {
 	text-decoration: underline;
-}
-.field input, button.field {
-	color: #1c1c1c;
 }
 .undef input {
 	font-style: italic;
@@ -95,7 +90,4 @@ td.xul-box---box-child, div.xul-dialog--body, div.xul-window--body {
 .tbutton tr.xul-menuitem {
 	font-size: 13px;
 	font-weight: normal;
-}
-input.xul-textbox--input, textarea.xul-textbox--input {
-	background-color: #fbfbfb;
 }

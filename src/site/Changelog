@@ -1,3 +1,7 @@
+v1.8.7 (2016-09-27):
+  * moved all custom colors to 'skin.css'
+  * sync UI node markers in the tree pane
+  * updated JWL sample app
 v1.8.5 (2016-08-08):
   * added JWL Components sample app
   * project option to keep all binding IDs in the generated code

@@ -1,26 +1,28 @@
+html, body {
+	color: #1c1c1c;
+	background-color: #f3f3f3;
+}
+.field input, button.field {
+	color: #1c1c1c;
+}
+input.xul-textbox--input, textarea.xul-textbox--input {
+	background-color: #fbfbfb;
+}
 .xul-menuitem_hover {
 	background-color: Highlight;
-	/*background-color: #8a8a8a;*/
 	color: HighlightText;
-	/*color: white;*/
 }
 .xul-menuitem_selected {
 	background-color: Highlight;
-	/*background-color: #8a8a8a;*/
 	color: HighlightText;
-	/*color: white;*/
 }
 .xul-menu_hover {
 	background-color: Highlight;
-	/*background-color: #8a8a8a;*/
 	color: HighlightText;
-	/*color: white;*/
 }
 .xul-menu_selected {
 	background-color: Highlight;
-	/*background-color: #8a8a8a;*/
 	color: HighlightText;
-	/*color: white;*/
 }
 .xul-listitem_hover,.xul-treerow_hover {
 	background-color: #dedede;
@@ -30,15 +32,11 @@
 }
 .xul-listbox_focus .xul-listitem_selected,.xul-tree_focus .xul-treeitem_selected {
 	background-color: Highlight;
-	/*background-color: #646464;*/
 	color: HighlightText;
-	/*color: white;*/
 }
 .xul-dialog--head,.xul-wizard--head,.xul-window--head {
 	background-color: ActiveCaption;
-	/*background-color: #5e5e5e;*/
 }
 .xul-dialog--title,.xul-wizard--title,.xul-window--title {
 	color: CaptionText;
-	/*color: white;*/
 }

@@ -9,7 +9,7 @@ as a constructor parameter, or with a custom factory for the other frameworks.
 
  = License =
  
- Licensed under GPLv2 or later and under LGPLv3 or later. See enclosed 'licenses' folder.
+ Licensed under GNU GPLv2 or later and under GNU LGPLv3 or later. See enclosed 'licenses' folder.
  
  = Browser support =
 
