@@ -1,3 +1,5 @@
+v1.8.8 (2016-10-03):
+  * updated some projects due to Google Drive halting web hosting
 v1.8.7 (2016-09-27):
   * moved all custom colors to 'skin.css'
   * sync UI node markers in the tree pane
