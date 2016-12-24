@@ -65,7 +65,7 @@ h1 {
               src="../media/jul224.png" width="240" height="224" /> </div>
           <div id="logo-right">
             <h1>JUL Designer</h1>
-            <p>Version 1.8.8</p>
+            <p>Version 1.9.0</p>
             <p>Copyright © 2014 - 2016 <a target="_blank"
 href="http://www.google.com/search?hl=en&amp;num=50&amp;start=0&amp;safe=0&amp;filter=0&amp;nfpr=1&amp;q=The+Zonebuilder+web+development+programming+IT+society+philosophy+politics">
                 The Zonebuilder</a></p>
@@ -79,7 +79,8 @@ href="http://www.google.com/search?hl=en&amp;num=50&amp;start=0&amp;safe=0&amp;f
             <ul>
               <li><a href="#features">Features</a></li>
               <li><a href="#requirements">System requirements</a></li>
-              <li><a href="#install">Installation</a></li>
+              <li><a href="#install-node">Installation for Node</a></li>
+              <li><a href="#install-php">Installation for PHP</a></li>
             </ul>
           </li>
           <li><a href="#app-modules">Application, modules and projects</a>
@@ -146,14 +147,25 @@ href="http://www.google.com/search?hl=en&amp;num=50&amp;start=0&amp;safe=0&amp;f
         <div id="requirements" class="section-2">
           <h3>System requirements</h3>
           <ul>
-            <li>A CSS2 compliant web browser with JavaScript 1.5 or
+            <li>a CSS2 compliant web browser with JavaScript 1.5 or
               later engine</li>
-            <li> A web server with PHP 5.2.0 or later extension</li>
+            <li>Node.js 0.10.0 or later installed</li>
+            <li>OR a web server with PHP 5.2.0 or later extension</li>
             <li>1024x768 minimum resolution</li>
           </ul>
         </div>
-        <div id="install" class="section-2">
-          <h3>Installation</h3>
+        <div id="install-node" class="section-2">
+          <h3>Installation for Node</h3>
+          <p>Unpack the distribution archive to a directory of your choice.
+            Run the following shell/command prompt commands:</p>
+			<pre>npm install
+npm start</pre><p>Navigate to the address <a target="_blank" href="http://localhost:7770/">http://localhost:7770/</a>
+            using a web browser. The examples and other assets
+            will be automatically installed with the first use of the
+            application.</p>
+        </div>
+        <div id="install-php" class="section-2">
+          <h3>Installation for PHP</h3>
           <p>Unpack the distribution archive to a directory of your web
             site. If necessary, give the web server process write
             permissions over the 'assets' directory (e.g. on Linux type

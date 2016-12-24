@@ -1,5 +1,5 @@
 /*
-	JUL - The JavaScript UI Language module version 1.3.6
+	JUL - The JavaScript UI Language version 1.3.7
 	Copyright (c) 2012 - 2016 The Zonebuilder (zone.builder@gmx.com)
 	http://sourceforge.net/projects/jul-javascript/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-javascript/wiki/License/)
@@ -101,13 +101,13 @@
 	onevar: true, newcap: true, noarg: true, node: true, strict: true, trailing: true, undef: true, unused: vars, wsh: true */
 /* globals ample, JUL: true */
 
-JUL = {};
-(function(window) {
+(function(global) {
 'use strict';
+global.JUL = {};
 
 
 JUL = {
-	version: '1.3.6',
+	version: '1.3.7',
 	apply: function(oSource, oAdd, bDontReplace) {
 		if (!oAdd || typeof oAdd !== 'object') { return oSource; }
 		var aMembers = [].concat(oAdd);
@@ -122,7 +122,7 @@ JUL = {
 		return oSource;
 	},
 	get: function(sPath, oRoot) {
-		var oCurrent = oRoot || window;
+		var oCurrent = oRoot || global;
 		if (!sPath) { return oCurrent; }
 		if (typeof sPath !== 'string') { return sPath; }
 		var aNames = sPath.replace(/\\\./g, ':::::').split('.');
@@ -155,8 +155,8 @@ JUL = {
 		var aNames = sPath ? sPath.replace(/\\\./g, ':::::').split('.') : [];
 		var sItem = '';
 		var oRe = /^(\d|[1-9]\d+)$/;
-		var oCurrent = oRoot || window;
-		if (!oRoot && aNames.length && 'window' === aNames[0]) { aNames.shift(); }
+		var oCurrent = oRoot || global;
+		if (!oRoot && aNames.length && ('window' === aNames[0] || 'global' === aNames[0])) { aNames.shift(); }
 		while (aNames.length) {
 			sItem = aNames.shift().replace(/:{5}/g, '.');
 			if (typeof oCurrent[sItem] === 'undefined') { oCurrent[sItem] = aNames.length && oRe.test(aNames[0]) ? [] : {}; }
@@ -213,7 +213,7 @@ if (typeof Array.prototype.map !== 'function') {
 	};
 }
 
-})(typeof window !== 'undefined' ? window : global);
+})(typeof global !== 'undefined' ? global : window);
 
 
 (function() {
@@ -274,7 +274,7 @@ JUL.apply(JUL.Ref.prototype,  {
 })();
 
 
-(function(window) {
+(function(global) {
 'use strict';
 
 
@@ -303,8 +303,15 @@ JUL.apply(JUL.UI,  {
 		 xul: 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
 	},
 	Parser: function(oConfig) {
+		if (!(this instanceof JUL.UI.Parser) || this.hasOwnProperty('Parser')) {
+			return this && typeof this.Parser === 'function' && this.Parser.prototype instanceof JUL.UI.Parser ?
+				new this.Parser(oConfig) : new JUL.UI.Parser(oConfig);
+		}
 		JUL.apply(this, oConfig);
-		this.Parser = function(oConfig) { JUL.UI.Parser.call(this, oConfig); };
+		this.Parser = function(oConfig) {
+			var oReturn = JUL.UI.Parser.call(this, oConfig);
+			if (typeof oReturn === 'object') { return oReturn; }
+		};
 		this.Parser.prototype = this;
 	},
 	compact: function(oData, bAuto, _nLength) {
@@ -466,7 +473,7 @@ JUL.apply(JUL.UI,  {
 		if (oConfig[this.idProperty]) {
 			sNamespace = oConfig[this.idProperty];
 			oConfig[this.idProperty] = oConfig[this.idProperty].replace(/\\\./g, '--').replace(/\./g, '-');
-			if ('window.' === sNamespace.substr(0, 7)) { oConfig[this.idProperty] = oConfig[this.idProperty].substr(7); }
+			if (['window.', 'global.'].indexOf(sNamespace.substr(0, 7)) > -1) { oConfig[this.idProperty] = oConfig[this.idProperty].substr(7); }
 		}
 		var sClass = oConfig[this.classProperty];
 		if (!this.customFactory) { delete oConfig[this.classProperty]; }
@@ -490,9 +497,9 @@ JUL.apply(JUL.UI,  {
 			while (aArgs.length && typeof aArgs[aArgs.length - 1] === 'undefined') { aArgs.pop(); }
 			return oThis[sFn].apply(oThis, aArgs);
 		};
-		var oDocument = document;
+		var oDocument = window.document;
 		var bAmple = typeof window.ample === 'object';
-		if (bAmple) { oDocument = ample; }
+		if (bAmple) { oDocument = window.ample; }
 		oWidget = oWidget || (sNS === 'html' || typeof oDocument.createElementNS !== 'function' ?
 			fCall(oDocument, 'createElement', nNS > -1 ? oConfig[this.classProperty].substr(nNS + 1) : oConfig[this.tagProperty], oConfig.is) :
 			fCall(oDocument, 'createElementNS', this.xmlNS[sNS], nNS > -1 ? oConfig[this.classProperty] : sNS + ':' + oConfig[this.tagProperty], oConfig.is));
@@ -605,7 +612,7 @@ JUL.apply(JUL.UI,  {
 	},
 	factory: function(sClass, oArgs) {
 		var aNames = sClass.split('.');
-		var oCurrent = window;
+		var oCurrent = global;
 		var sItem = '';
 		while (aNames.length) {
 			sItem = aNames.shift();
@@ -961,5 +968,5 @@ JUL.apply(JUL.UI,  {
 
 JUL.UI.Parser.prototype = JUL.UI;
 
-})(typeof window !== 'undefined' ? window : global);
+})(typeof global !== 'undefined' ? global : window);
 

@@ -27,8 +27,9 @@ Features
 System requirements
 -------------------
  
-* A CSS2 compliant web browser with JavaScript 1.5 or later engine 
-* A web server with PHP 5.2.0 or later extension 
+* a CSS2 compliant web browser with JavaScript 1.5 or later engine 
+* Node.js 0.10.0 or later installed 
+* OR a web server with PHP 5.2.0 or later extension 
 * 1024x768 minimum resolution 
 
 Build & install
@@ -42,7 +43,7 @@ Run the following shell commands in order:
 	npm run deps
 	npm run make
 ```
-The release will be in 'build' folder.
+The release will be in a 'build' folder. See Readme in that folder for further instructions.
 
 Downloads & User support
 ------------------------

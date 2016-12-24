@@ -13,11 +13,13 @@ var oConfig = {
 		'src/designer/JUL.Designer.framework.js', 'src/designer/JUL.Designer.help.js', 'src/designer/JUL.Designer.about.js'],
 	concatHeader: 'src/assets/header.js',
 	concatName: 'designer.js',
-	concatDest: 'build/source/js'
+	concatDest: 'build/source/js',
+	node: 'src/node/**'
 };
 var oGulp = require('gulp');
 var oPlugins = require('gulp-load-plugins')();
 var oMerged = require('merge-stream')();
+require('pump');
 
 oGulp.task('site', function() {
 	return oGulp.src(oConfig.copy)
@@ -49,15 +51,21 @@ oGulp.task('scripts', function() {
 	.pipe(oGulp.dest(oConfig.concatDest));
 });
 
+oGulp.task('node', function() {
+	return oGulp.src(oConfig.node)
+	.pipe(oPlugins.jshint())
+	.pipe(oGulp.dest(oConfig.dest));
+});
+
 oGulp.task('clean', function() {
 	return oGulp.src(oConfig.dest + '/*', {read: false})
 	.pipe(oPlugins.clean());
 });
 
 oGulp.task('build', function() {
-	oGulp.start(['site', 'copydeps', 'scripts']);
+	oGulp.start(['site', 'copydeps', 'scripts', 'node']);
 });
 
 oGulp.task('default', ['clean'], function() {
-	oGulp.start(['site', 'copydeps', 'scripts']);
+	oGulp.start('build');
 });

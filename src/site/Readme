@@ -22,15 +22,31 @@ It also generates the JavaScript code for the current component tree.
 
  = System requirements =
  
-  * A CSS2 compliant web browser with JavaScript 1.5 or later engine 
-  * A web server with PHP 5.2.0 or later extension 
+  * a CSS2 compliant web browser with JavaScript 1.5 or later engine 
+  * Node.js 0.10.0 or later installed 
+  * OR a web server with PHP 5.2.0 or later extension 
   * 1024x768 minimum resolution 
 
- = Installation =
 
-  * Extract this archive in a directory on your web server (eg. 'designer').
-  * Ensure that 'assets' directory is writable by the web server process.
-  * Navigate to the designer directory using a web browser.
+ = Installation for Node =
+
+Unpack the distribution archive to a directory of your choice. 
+Run the following shell/command prompt commands:
+npm install
+npm start
+
+Navigate to the address http://localhost:7770/ using a web browser. 
+The examples and other assets will be automatically installed with the first use of the application.
+
+
+ = Installation for PHP =
+
+Unpack the distribution archive to a directory of your web site. 
+If necessary, give the web server process write permissions over the 'assets' directory 
+(e.g. on Linux type as root: 'chmod 777 assets' or 'chown www-data assets'). 
+Navigate to the installation directory using a web browser. 
+The examples and other assets will be automatically installed with the first use of the application.
+
 
  = Support =
 

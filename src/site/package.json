@@ -1,11 +1,10 @@
 {
-  "name": "jul-designer-src",
+  "name": "jul-designer",
   "version": "1.9.0",
   "description": "JUL Designer - a RAD tool for JavaScript",
-  "main": "index.php",
+  "main": "server.js",
   "scripts": {
-    "deps": "node_modules/.bin/bower --allow-root install",
-    "make": "node_modules/.bin/gulp",
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -14,7 +13,8 @@
   },
   "keywords": [
     "UI",
-    "builder"
+    "builder",
+    "visual"
   ],
   "author": "The Zonebuilder <zone.builder@gmx.com> (http://www.google.com/search?hl=en&num=50&start=0&safe=0&filter=0&nfpr=1&q=The+Zonebuilder+web+development+programming+IT+society+philosophy+politics)",
   "license": "LGPL-3.0",
@@ -22,18 +22,24 @@
     "url": "https://github.com/zonebuilder/jul-designer/issues"
   },
   "homepage": "https://github.com/zonebuilder/jul-designer#readme",
-  "devDependencies": {
-    "bower": "1.x",
+  "dependencies": {
+    "body-parser": "1.x",
+    "ejs": "2.x",
+    "express": "3.x",
+    "fs-extra": "1.x",
     "gulp": "3.x",
-    "gulp-add-src": "0.x",
-    "gulp-clean": "0.x",
+    "gulp-clean-css": "2.x",
     "gulp-concat": "2.x",
-    "gulp-jshint": "2.x",
+    "gulp-header": "1.x",
+    "gulp-if": "2.x",
+    "gulp-ignore": "2.x",
     "gulp-load-plugins": "1.x",
-    "gulp-rename": "1.x",
-    "gulp-strip-comments": "2.x",
-    "jshint": "2.x",
-    "merge-stream": "1.x",
-    "pump": "1.x"
+    "gulp-newer": "1.x",
+    "gulp-uglify": "2.x",
+    "gulp-unzip": "0.x",
+    "htmlspecialchars": "1.x",
+    "jul": "1.x",
+    "pump": "1.x",
+    "zip-stream": "1.x"
   }
 }
