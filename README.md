@@ -1,8 +1,12 @@
+<p align="center">
+<img alt="Designer" src="https://zonebuilder.github.io/media/jul224.png" width="240" height="224" />
+</p>
+
 JUL Designer - a RAD tool for JavaScript
 ========================================
 
 About
------- 
+-----
 
 JUL Designer is a RAD tool used to visually build a JavaScript application.
 Given a component based application running in an event-driven environment, 
@@ -11,12 +15,12 @@ It also generates the JavaScript code for the current component tree.
 
 License
 -------
- 
+
  Licensed under GNU GPLv2 or later and under GNU LGPLv3 or later. See enclosed 'licenses' folder.
- 
+
 Features
 --------
- 
+
 * visually building and live testing a JavaScript application 
 * working with your preferred JavaScript component framework 
 * can be used with tag based languages (HTML, XUL, SVG etc.) 
@@ -26,7 +30,7 @@ Features
 
 System requirements
 -------------------
- 
+
 * a CSS2 compliant web browser with JavaScript 1.5 or later engine 
 * Node.js 0.10.0 or later installed 
 * OR a web server with PHP 5.2.0 or later extension 
@@ -43,10 +47,10 @@ Run the following shell commands in order:
 	npm run deps
 	npm run make
 ```
+
 The release will be in a 'build' folder. See Readme in that folder for further instructions.
 
-Downloads & User support
+Downloads & user support
 ------------------------
 
 [jul-designer project on SourceForge](http://sourceforge.net/projects/jul-designer/)
-

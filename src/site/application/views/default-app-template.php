@@ -8,7 +8,7 @@
 	{app_script}
 	{modules_scripts}
 	<script type="text/javascript">
-	// chnge as needed
+	// change as needed
 	window.onload = function() {
 		// create UI
 		{app_ns}.init();

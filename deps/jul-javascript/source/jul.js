@@ -1,6 +1,6 @@
 /*
-	JUL - The JavaScript UI Language version 1.3.7
-	Copyright (c) 2012 - 2016 The Zonebuilder (zone.builder@gmx.com)
+	JUL - The JavaScript UI Language version 1.3.8
+	Copyright (c) 2012 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-javascript/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-javascript/wiki/License/)
  */
@@ -107,7 +107,7 @@ global.JUL = {};
 
 
 JUL = {
-	version: '1.3.7',
+	version: '1.3.8',
 	apply: function(oSource, oAdd, bDontReplace) {
 		if (!oAdd || typeof oAdd !== 'object') { return oSource; }
 		var aMembers = [].concat(oAdd);

@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /*
-	JUL Designer version 1.9.0
-	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
+	JUL Designer version 1.9.5
+	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
 */
@@ -153,7 +153,7 @@ class Controller_Main extends Controller {
 				$sTemplate = $sType === 'project' ? $sPath.'.tpl.json' : $sPath.'.json';
 				if (in_array($sType, array('app', 'project')) && file_exists($sTemplate)) {
 					$this->response->body($this->generateTestPage(@file_get_contents($sTemplate), $this->request->query('version'), $sType, $this->request->query('current')));
-					$this->response->headers('cache-control', 'publc; max-age=3600');
+					$this->response->headers('cache-control', 'public; max-age=3600');
 				}
 				else {
 					$this->response->body('Template '.$this->request->query('ns').' not found.');
@@ -259,7 +259,7 @@ class Controller_Main extends Controller {
 			$sPrefix = $bExport ? 'js/' : str_replace(DIRECTORY_SEPARATOR, '/', substr(Kohana::$config->load('main.work_dir').DIRECTORY_SEPARATOR.$sType.'s', strlen(getenv('DOCUMENT_ROOT')))).'/';
 			$aInfo[$sType.'_script'] = '<'.'script type="text/javascript" src="'.htmlspecialchars($sPrefix).str_replace('.', $bExport ? '.' : '/', $aInfo['ns']).'.js?v='.$aInfo['version'].'"><'.'/script>';
 		}
-		$aInfo['jul_script'] = (string)Assets::factory('jul')->js(Kohana::$config->load('main.jul_root').'jul.js');
+		$aInfo['jul_script'] = (string)Assets::factory('jul.min')->js(Kohana::$config->load('main.jul_root').'jul.js');
 		if ($aModules) {
 			$aScripts = array();
 			$sDir = Kohana::$config->load('main.work_dir').DIRECTORY_SEPARATOR.'projects';

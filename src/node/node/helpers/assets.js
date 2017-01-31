@@ -1,6 +1,6 @@
 /*
-	JUL Designer version 1.9.0
-	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
+	JUL Designer version 1.9.5
+	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
 */
@@ -25,19 +25,19 @@ var Assets = function(sGroup) {
 	this._group = sGroup;
 	this._items = [];
 	this._interns = {css: [], js: []};
-	this._merge = [].concat(this._config.merge).indexOf((process.env.NODE_ENV || '').toLowerCase()) > -1;
+	this._merge = [].concat(this._config.merge).indexOf((process.env.NODE_ENV || 'development').toLowerCase()) > -1;
 	this._ts = (new Date()).getTime();
 };
 
 JUL.apply(Assets.prototype, {
 	/**
-	 * Adds an extenal CSS link
+	 * Adds an external CSS link
 	 */	 	
 	css: function(sUrl, oOptions) {
 		return this._add('css', sUrl, oOptions);
 	},
 	/**
-	 * Adds an extenal JS script
+	 * Adds an external JS script
 	 */	 	
 	js: function(sUrl, oOptions) {
 		return this._add('js', sUrl, oOptions);
@@ -138,7 +138,7 @@ JUL.apply(Assets.prototype, {
 		return this.render();
 	},
 	/**
-	 * Updtes the asset files
+	 * Updates the asset files
 	 */	 	
 	update: function(bCss, bJs) {
 		var fUpdate = this._onUpdate;
@@ -265,7 +265,7 @@ JUL.apply(Assets.prototype, {
 		return sUrl;
 	},
 	/**
-	 * Rehders a single asset
+	 * Renders a single asset
 	 */	 	
 	_renderItem: function(oAsset) {
 		var sText = '';

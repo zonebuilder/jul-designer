@@ -7,7 +7,7 @@
 	{jul_script}
 	{project_script}
 	<script type="text/javascript">
-	// chnge as needed
+	// change as needed
 	window.onload = function() {
 		// create UI
 		{project_ns}.init();

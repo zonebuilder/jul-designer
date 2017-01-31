@@ -1,6 +1,6 @@
 /*
-	JUL Designer version 1.9.0
-	Copyright (c) 2014 - 2016 The Zonebuilder (zone.builder@gmx.com)
+	JUL Designer version 1.9.5
+	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
 */
@@ -201,7 +201,7 @@ JUL.apply(exports, {
 				if (['app', 'project'].indexOf(sType) > -1 && oFS.existsSync(sTemplate)) {
 					try {
 						sTemplate = oFS.readFileSync(sTemplate, 'utf8');
-						oResponse.header('Cache-Control', 'publc; max-age=3600')
+						oResponse.header('Cache-Control', 'public; max-age=3600')
 						.send(this._generateTestPage(sTemplate, oRequest.query.version, sType, oRequest.query.current));
 					}
 					catch (e23) {

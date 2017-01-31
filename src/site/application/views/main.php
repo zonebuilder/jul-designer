@@ -3,9 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title><?php echo $title; ?></title>
-<link rel='shortcut icon' href='media/favicon.ico' />
+<link rel="shortcut icon" href="media/favicon.ico" />
 <?php
-	echo Assets::factory('designer')
+	echo Assets::factory('designer-all')
 		->css('https://fonts.googleapis.com/css?family=Roboto+Condensed|Varela')
 		->css($ample_root.'languages/xhtml/themes/default/style-prod.css')
 		->css($ample_root.'languages/xul/themes/default/style-prod.css')

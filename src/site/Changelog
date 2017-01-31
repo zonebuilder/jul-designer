@@ -1,3 +1,6 @@
+v1.9.5 (2017-01-31):
+  * removed single root component limitation
+  * updated JWL and newsreader examples
 v1.9.0 (2016-12-24):
   * added Node.js server application
 v1.8.8 (2016-10-03):
