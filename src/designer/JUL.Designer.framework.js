@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.9.5
+	JUL Designer version 2.0
 	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -31,8 +31,8 @@ JUL.Designer.framework.ui = {
 	tag: 'dialog',
 	id: 'dialog-framework',
 	title: 'Framework',
-	width: 860,
-	height: 430,
+	width: 980,
+	height: 470,
 	hidden: true,
 	children: [
 		{tag: 'tabbox', children: [
@@ -45,8 +45,8 @@ JUL.Designer.framework.ui = {
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'listbox', flex: 1, id: 'listbox-framework-settings', children: [
 					{tag: 'listhead', children: [
-						{tag: 'listheader', label: 'Setting', width: 220},
-						{tag: 'listheader', label: 'Value', width: 220},
+						{tag: 'listheader', label: 'Setting', width: 250},
+						{tag: 'listheader', label: 'Value', width: 380},
 						{tag: 'listheader', label: 'Code', width: 40}
 					]},
 					{tag: 'listbody'}
@@ -72,7 +72,7 @@ JUL.Designer.framework.ui = {
 						]},
 						{tag: 'listbox', flex: 1, id: 'listbox-framework-components', children: [
 							{tag: 'listhead', children: [
-								{tag: 'listheader', label: 'Name', width: 150}
+								{tag: 'listheader', label: 'Name', width: 200}
 							]},
 							{tag: 'listbody'}
 						]}
@@ -80,10 +80,10 @@ JUL.Designer.framework.ui = {
 					{tag: 'splitter'},
 					{tag: 'vbox', flex: 1, children: [
 						{tag: 'description', css: 'caption', value: 'Component settings'},
-						{tag: 'listbox', height: 120, minheight: 70, id: 'listbox-framework-component-settings', children: [
+						{tag: 'listbox', height: 150, minheight: 70, id: 'listbox-framework-component-settings', children: [
 							{tag: 'listhead', children: [
-								{tag: 'listheader', label: 'Setting', width: 220},
-								{tag: 'listheader', label: 'Value', width: 220},
+								{tag: 'listheader', label: 'Setting', width: 240},
+								{tag: 'listheader', label: 'Value', width: 320},
 								{tag: 'listheader', label: 'Code', width: 40}
 							]},
 							{tag: 'listbody'}
@@ -112,13 +112,14 @@ JUL.Designer.framework.ui = {
 							{tag: 'vbox', flex: 1, children: [
 								{tag: 'listbox', flex: 1, id: 'listbox-framework-component-members', children: [
 									{tag: 'listhead', children: [
-										{tag: 'listheader', label: 'Name', width: 120},
+										{tag: 'listheader', label: 'Name', width: 150},
 										{tag: 'listheader', label: 'Description', width: 80},
 										{tag: 'listheader', label: 'Logic', width: 60},
 										{tag: 'listheader', label: 'Required', width: 60},
-										{tag: 'listheader', label: 'Default value', width: 110},
+										{tag: 'listheader', label: 'Default value', width: 150},
 										{tag: 'listheader', label: 'Code', width: 40},
-										{tag: 'listheader', label: 'Template', width: 80}
+										{tag: 'listheader', label: 'Template', width: 80},
+										{tag: 'listheader', label: 'Hidden', width: 60}
 									]},
 									{tag: 'listbody'}
 								]}
@@ -126,9 +127,10 @@ JUL.Designer.framework.ui = {
 							{tag: 'vbox', flex: 1, children: [
 								{tag: 'listbox', flex: 1, id: 'listbox-framework-component-events', children: [
 									{tag: 'listhead', children: [
-										{tag: 'listheader', label: 'Name', width: 120},
+										{tag: 'listheader', label: 'Name', width: 150},
 										{tag: 'listheader', label: 'Description', width: 90},
-										{tag: 'listheader', label: 'Template', width: 90}
+										{tag: 'listheader', label: 'Template', width: 90},
+										{tag: 'listheader', label: 'Hidden', width: 60}
 									]},
 									{tag: 'listbody'}
 								]}
@@ -202,7 +204,7 @@ JUL.Designer.framework.logic = {
 					aLabels[i] = JUL.Designer.getWhere(oItems.item(i));
 				}
 				JUL.Designer.framework.removeComponents(aLabels);
-				ample.query(oItems).remove();
+				JUL.Designer.empty(oItems, true);
 			}
 		}
 	},
@@ -220,7 +222,7 @@ JUL.Designer.framework.logic = {
 				for (var i = 0; i < oItems.length; i++) {
 					aLabels[i] = JUL.Designer.getWhere(oItems.item(i));
 				}
-				ample.query(oItems).remove();
+				JUL.Designer.empty(oItems, true);
 				JUL.Designer.framework.removeMembers(aLabels);
 			}
 		}
@@ -376,6 +378,10 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 		ns: {
 			tooltip: 'Namespace path', id: 'setting-framework-ns', defaultValue: 'framework1', required: true, template: '<string>'
 		},
+		nsAlias: {
+			tooltip: 'Use this namespace instead, when adding or finding the components', id: 'setting-framework-ns-alias',
+			 template: '<string>'
+		},
 		prependNS: {
 			tooltip: 'If checked, framework\'s namespace will be prepended to each component name',
 			 id: 'setting-framework-prepend-ns', required: true, defaultValue: false, template: '<boolean>'
@@ -387,6 +393,10 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 		augments: {
 			tooltip: 'Framework namespace to build this upon (inherit all components and their configs)',
 			 id: 'setting-framework-augments', template: '<string>'
+		},
+		groupByLevel: {
+			tooltip: 'Groups components by the framework inheritance level', id: 'setting-framework-group-by', required: true,
+			 defaultValue: false, template: '<boolean>'
 		}
 	},
 	/**
@@ -424,6 +434,21 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 		ample.getElementById('listbox-framework-components').querySelector('xul|listbody').lastChild.scrollIntoView();
 		ample.getElementById('listbox-framework-components').clearSelection();
 	},
+	addLevelMap: function(oItems, nLevel) {
+		if (!oItems) { return; }
+		if (!nLevel) {
+			nLevel = 0;
+			this.state.levelMap = {};
+		}
+		nLevel = 'l' + (1000 + nLevel).toString().substr(1);
+		if (typeof oItems !== 'object') {
+			this.state.levelMap[oItems] = nLevel;
+			return;
+		}
+		for (var sItem in oItems) {
+			if (oItems.hasOwnProperty(sItem)) {  this.state.levelMap[sItem] = nLevel; }
+		}
+	},
 	/**
 		Adds a member to a framework component
 		@param	{String}	sType	Member type: member or event
@@ -442,15 +467,16 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 		this.currentConfig[sName] = {};
 		var oFields = {};
 		if (sType === 'events') {
+			this.currentConfig[sName] = {hidden: false};
 			oFields[sName] = {};
 			JUL.Designer.fillListbox('listbox-framework-component-events', oFields, this.currentConfig,
-				['label', 'description-description', 'description-template'], true);
+				['label', 'description-description', 'description-template', 'value-hidden'], true);
 		}
 		else {
-			this.currentConfig[sName] = {logic: false, required: false};
+			this.currentConfig[sName] = {logic: false, required: false, hidden: false};
 			oFields[sName] = {};
 			JUL.Designer.fillListbox('listbox-framework-component-members', oFields, this.currentConfig,
-				['label', 'description-description', 'value-logic', 'value-required', 'value-defaultValue', 'code-defaultValue', 'description-template'], true);
+				['label', 'description-description', 'value-logic', 'value-required', 'value-defaultValue', 'code-defaultValue', 'description-template', 'value-hidden'], true);
 		}
 		ample.getElementById('listbox-framework-component-' + sType).querySelector('xul|listbody').lastChild.scrollIntoView();
 		ample.getElementById('listbox-framework-component-' + sType).clearSelection();
@@ -472,6 +498,7 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 			for (var sItem in oResult.components) {
 				if (oResult.components.hasOwnProperty(sItem)) {
 					oFramework.current.components = oFramework.current.components || {};
+					oFramework.addLevelMap(sItem, oFramework.state.parents.length);
 					if (oFramework.current.components[sItem]) {
 						var oTarget = oFramework.current.components[sItem];
 						oTarget.restrictParent = oTarget.restrictParent || oResult.components[sItem].restrictParent;
@@ -505,7 +532,7 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 			JUL.Designer.panels.framework.hide();
 			JUL.Designer.state.lastDialog = null;
 			oFramework.onSelectComponent();
-			ample.query('#listbox-framework-components>xul|listbody').empty();
+			JUL.Designer.empty(ample.getElementById('listbox-framework-components').body);
 			oFramework.onSwitchCurrent();
 			return;
 		}
@@ -578,7 +605,7 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 	*/
 	close: function() {
 		this.onSelectComponent();
-		ample.query('#listbox-framework-components>xul|listbody').empty();
+		JUL.Designer.empty(ample.getElementById('listbox-framework-components').body);
 		this.current = {};
 		this.state.origFramework = null;
 		this.onSwitchCurrent();
@@ -611,21 +638,41 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 		@param	{Object}	[oContext]	The config object related to the selected component
 	*/
 	fillScrollbox: function(oContext) {
-		ample.query('#scrollbox-components').empty();
-		ample.query('#table-add-component>tbody').empty();
+		JUL.Designer.empty(ample.getElementById('scrollbox-components'));
+		JUL.Designer.empty(ample.getElementById('table-add-component').lastChild);
 		var oCurrent = this.current;
 		if (!oCurrent.components) { return; }
+		var sFrameworkNS = oCurrent.nsAlias || oCurrent.ns;
 		var sClass = false;
 		if (oContext) {
-			var oParser = JUL.Designer.designer.current.parserConfig;
+			var oParser = JUL.Designer.designer.currentParser;
 			sClass = oContext[oParser.classProperty] || oParser.defaultClass;
-			if (oParser.useTags) { sClass = sClass === oCurrent.ns ? oContext[oParser.tagProperty] : ''; }
-			else if (oCurrent.prependNS && sClass.indexOf(oCurrent.ns + '.') === 0) { sClass = sClass.substr(oCurrent.ns.length + 1); }
+			if (oParser.useTags) { sClass = sClass === sFrameworkNS ? oContext[oParser.tagProperty] : ''; }
+			else if (oCurrent.prependNS && sClass.indexOf(sFrameworkNS + '.') === 0) { sClass = sClass.substr(sFrameworkNS.length + 1); }
 		}
 		var oScrollbox = ample.getElementById('scrollbox-components');
 		var oMenupopup = ample.getElementById('table-add-component').lastChild;
+		var aSort = [];
+		for (var sItem in oCurrent.components) {
+			if (oCurrent.components.hasOwnProperty(sItem)) { aSort.push(sItem); }
+		}
+		var oRe = /_/g;
+		var oMap = this.state.levelMap;
+		var fSort = function(a, b) {
+			if (oCurrent.groupByLevel && oMap[a] !== oMap[b]) {
+				return oMap[a] > oMap[b] ? 1 : -1;
+			}
+			a = a.replace(oRe, '~');
+			b = b.replace(oRe, '~');
+			if (a.toUpperCase() === b.toUpperCase()) {
+				return a > b ? 1 : -1;
+			}
+			return a.toUpperCase() > b.toUpperCase() ? 1 : -1;
+		};
+		aSort.sort(fSort);
 		var n = 1;
-		for (var sItem in JUL.Designer.keySort(oCurrent.components)) {
+		for (var u = 0; u < aSort.length; u++) {
+			sItem = aSort[u];
 			var oComponent = oCurrent.components[sItem];
 			var aRestrict = [];
 			if (oComponent.restrictParent) { aRestrict = aRestrict.concat(oComponent.restrictParent); }
@@ -708,10 +755,10 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 		@param	{String}	sItem	Component name
 	*/
 	onSelectComponent: function(sItem) {
-		ample.query('#listbox-framework-component-settings>xul|listbody').empty();
+		JUL.Designer.empty(ample.getElementById('listbox-framework-component-settings').body);
 		ample.getElementById('textbox-member-name').setAttribute('value', '');
-		ample.query('#listbox-framework-component-members>xul|listbody').empty();
-		ample.query('#listbox-framework-component-events>xul|listbody').empty();
+		JUL.Designer.empty(ample.getElementById('listbox-framework-component-members').body);
+		JUL.Designer.empty(ample.getElementById('listbox-framework-component-events').body);
 		ample.getElementById('tabbox-current-component').querySelector('xul|tabs').firstChild.$activate();
 		//JUL.Designer.cleanMap();
 		if (!sItem) {
@@ -725,13 +772,23 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 		if (!this.currentComponent) { return; }
 		if (!this.currentComponent.members) { this.currentComponent.members = {}; }
 		if (!this.currentComponent.events) { this.currentComponent.events = {}; }
+		for (var sPos in this.currentComponent.members) {
+			if (this.currentComponent.members.hasOwnProperty(sPos)) {
+				JUL.apply(this.currentComponent.members[sPos], {logic: false, required: false, hidden: false}, true);
+			}
+		}
+		for (sPos in this.currentComponent.events) {
+			if (this.currentComponent.events.hasOwnProperty(sPos)) {
+				JUL.apply(this.currentComponent.events[sPos], {hidden: false}, true);
+			}
+		}
 		this.currentConfig = this.currentComponent.members;
 		ample.getElementById('textbox-component-name').setAttribute('value', sItem);
 		JUL.Designer.fillListbox('listbox-framework-component-settings', this.componentFields, this.currentComponent);
 		JUL.Designer.fillListbox('listbox-framework-component-members', JUL.Designer.keySort(this.currentComponent.members), this.currentComponent.members,
-			['label', 'description-description', 'value-logic', 'value-required', 'value-defaultValue', 'code-defaultValue', 'description-template'], true);
+			['label', 'description-description', 'value-logic', 'value-required', 'value-defaultValue', 'code-defaultValue', 'description-template', 'value-hidden'], true);
 		JUL.Designer.fillListbox('listbox-framework-component-events', JUL.Designer.keySort(this.currentComponent.events), this.currentComponent.events,
-			['label', 'description-description', 'description-template'], true);
+			['label', 'description-description', 'description-template', 'value-hidden'], true);
 	},
 	/**
 		Fires after the current framework is switched or is closed
@@ -773,6 +830,7 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 			var oFramework = JUL.Designer.framework;
 			oFramework.state.origFramework = oResult.result;
 			 oFramework.current = JUL.Designer.designer.copy(oFramework.state.origFramework);
+			 oFramework.addLevelMap(oFramework.current.components || {});
 			oFramework.state.parents = [oFramework.current.ns];
 			oFramework.augment();
 		});
@@ -815,6 +873,10 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 		var oCurrent = this.state.newFramework;
 		if (!JUL.Designer.validNS(oCurrent.ns)) {
 			window.alert('Invalid namespace');
+			return;
+		}
+		if (oCurrent.nsAlias && !JUL.Designer.validNS(oCurrent.nsAlias)) {
+			window.alert('Invalid namespace alias');
 			return;
 		}
 		if (oCurrent.augments && !JUL.Designer.validNS(oCurrent.augments)) {
@@ -860,6 +922,7 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 				oFramework.state.origFramework = oFramework.state.newFramework;
 				oFramework.state.newFramework = null;
 				oFramework.current = JUL.Designer.designer.copy(oFramework.state.origFramework);
+				oFramework.addLevelMap(oFramework.current.components || {});
 				oFramework.state.parents = [oFramework.current.ns];
 				oFramework.augment();
 			}
@@ -888,12 +951,13 @@ JUL.apply(JUL.Designer.framework, /** @lends JUL.Designer.framework */ {
 		if (sOperation === 'new') { this.state.newFramework = {}; }
 		else { this.state.newFramework = JUL.Designer.designer.copy(this.state.origFramework); }
 		var oCurrent = this.state.newFramework;
-		ample.query('#listbox-framework-settings>xul|listbody').empty();
+		JUL.Designer.empty(ample.getElementById('listbox-framework-settings').body);
 		ample.getElementById('textbox-component-name').setAttribute('value', '');
-		ample.query('#listbox-framework-component-settings>xul|listbody').empty();
+		JUL.Designer.empty(ample.getElementById('listbox-framework-component-settings').body);
 		ample.getElementById('textbox-member-name').setAttribute('value', '');
-		ample.query('#listbox-framework-component-members>xul|listbody').empty();
-		ample.query('#listbox-framework-components>xul|listbody').empty();
+		JUL.Designer.empty(ample.getElementById('listbox-framework-component-members').body);
+		JUL.Designer.empty(ample.getElementById('listbox-framework-component-events').body);
+		JUL.Designer.empty(ample.getElementById('listbox-framework-components').body);
 		JUL.Designer.fillListbox('listbox-framework-settings', this.fields, oCurrent);
 		if (oCurrent.components) {
 			JUL.Designer.fillListbox('listbox-framework-components', JUL.Designer.keySort(oCurrent.components), oCurrent.components, ['label']);

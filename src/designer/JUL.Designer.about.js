@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.9.5
+	JUL Designer version 2.0
 	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -32,13 +32,13 @@ JUL.Designer.about.ui = {
 	css: 'logo-bg',
 	hidden: true,
 	title: 'About',
-	width: 570,
-	height: 252,
+	width: 617,
+	height: 251,
 	'aml:resizable': false,
 	orient: 'horizontal',
 	children: [
-		{tag: 'vbox', width: 253, children: [
-			{xclass: 'html', tag: 'div', style: 'padding: 8px 0', flex: 1, children: [
+		{tag: 'vbox', width: 262, children: [
+			{xclass: 'html', tag: 'div', style: 'padding: 8px', flex: 1, children: [
 				{xclass: 'html', tag: 'img', width: 240, height: 224, alt: JUL.Designer.title, src: 'media/jul224.png'}
 			]}
 		]},

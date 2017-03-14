@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.9.5
+	JUL Designer version 2.0
 	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -51,13 +51,13 @@ JUL.Designer.browseUi = {
 	id: 'dialog-browse',
 	title: 'Open',
 	hidden: true,
-	width: 650,
-	height: 340,
+	width: 840,
+	height: 420,
 	children: [
 		{tag: 'listbox', id: 'listbox-browse', seltype: 'single', flex: 1, children: [
 			{tag: 'listhead', children: [
-				{tag: 'listheader', label: 'Namespace', width: 270},
-				{tag: 'listheader', label: 'Title', width: 270}
+				{tag: 'listheader', label: 'Namespace', width: 410},
+				{tag: 'listheader', label: 'Title', width: 510}
 			]},
 			{tag: 'listbody'}
 		],
@@ -100,8 +100,8 @@ JUL.Designer.codeUi = {
 	id: 'dialog-code',
 	title: 'Code',
 	hidden: true,
-	width: 750,
-	height: 300,
+	width: 960,
+	height: 420,
 	children: [
 		{tag: 'textbox', id: 'textbox-code', width: '100%', multiline: true, flex: 1, listeners: {
 			keydown: 'JUL.Designer.filterTab'
@@ -128,7 +128,7 @@ JUL.Designer.commentUi = {
 	id: 'dialog-comment',
 	title: 'Comment',
 	hidden: true,
-	width: 500,
+	width: 860,
 	height: 160,
 	children: [
 		{tag: 'textbox', css: 'desc', id: 'textbox-comment', width: '100%', multiline: true, flex: 1, listeners: {
@@ -156,8 +156,8 @@ JUL.Designer.jsUi = {
 	id: 'dialog-js',
 	title: 'JavaScript',
 	hidden: true,
-	width: 970,
-	height: 410,
+	width: 960,
+	height: 420,
 	buttons: 'accept',
 	children: [
 		{tag: 'textbox', id: 'textbox-js', readonly: true, width: '100%', multiline: true, flex: 1}
@@ -173,8 +173,8 @@ JUL.Designer.xmlUi = {
 	id: 'dialog-xml',
 	title: 'XML layout',
 	hidden: true,
-	width: 980,
-	height: 430,
+	width: 960,
+	height: 420,
 	buttons: 'accept',
 	children: [
 		{tag: 'hbox', children: [
@@ -195,7 +195,9 @@ JUL.Designer.xmlUi = {
 				]},
 				{tag: 'checkbox', id: 'checkbox-xml-merge-logic', label: 'Merge logic into layout'},
 				{tag: 'hbox', children: [
-					{tag: 'checkbox', id: 'checkbox-xml-export-listeners', label: 'Export listeners as attributes prepended with'},
+					{tag: 'checkbox', id: 'checkbox-xml-export-listeners', label: 'Export listeners as attributes'},
+					{tag: 'spacer', width: 5},
+					{tag: 'checkbox', id: 'checkbox-xml-strip-function', label: 'and make functions inline; attribute prefix'},
 					{tag: 'spacer', width: 5},
 					{tag: 'textbox', id: 'textbox-xml-listener-prefix', style: 'width:50px'}
 				]},
@@ -222,8 +224,8 @@ JUL.Designer.clipboardUi = {
 	id: 'dialog-clipboard',
 	title: 'Clipboard',
 	hidden: true,
-	width: 900,
-	height: 450,
+	width: 960,
+	height: 460,
 	children: [
 		{tag: 'textbox', id: 'textbox-clipboard-components', readonly: true, width: '100%', multiline: true, flex: 1},
 		{tag: 'hbox', children: [
@@ -259,7 +261,7 @@ JUL.Designer.clipboardLogic = {
 		listeners: {
 			change: function() {
 				var bCheck = this.getAttribute('checked') === 'true';
-				var oConfig = JUL.Designer.designer.current.parserConfig;
+				var oConfig = JUL.Designer.designer.currentParser;
 				var oClipboard = JUL.Designer.designer.state.clipboard;
 				var sClass = oConfig && oClipboard.contentNodes ? (oClipboard.contentNodes[0].ui[oConfig.classProperty] || oConfig.defaultClass) : '';
 				ample.getElementById('textbox-map-class-from').setAttribute('disabled', !bCheck);
@@ -499,7 +501,8 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		@type	Object
 	*/
 	parserConfig: {
-		defaultClass: 'xul', useTags: true, customFactory: 'JUL.UI.createDom', topDown: true, _usePrefixes: true
+		defaultClass: 'xul', useTags: true, customFactory: 'JUL.UI.createDom', topDown: true, includeProperty: '_inc_',
+		 _usePrefixes: true, referencePrefix: '=_ref_:'
 	},
 	/**
 		Runtime state for the current module
@@ -543,9 +546,9 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		@param	{String}	sEvent	Event name
 		@param	{Function}	fListener	Listener callback
 	*/
-	addListener: function(oElement, sEvent, fListener) {
+	addListener: function(oElement, sEvent, fListener, bCapture) {
 		if (oElement.addEventListener) {
-			oElement.addEventListener(sEvent, fListener, false);
+			oElement.addEventListener(sEvent, fListener, bCapture || false);
 		}
 		else if (oElement.attachEvent) {
 			oElement.attachEvent('on' + sEvent, fListener);
@@ -611,6 +614,7 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 					'-' + (100 + oValue.getDate()).toString().substr(1),
 				listeners: {
 					blur: this.onDateBlur,
+					focus: function() { JUL.Designer.state._lastFocus = this.getAttribute('id'); },
 					keypress: function(oEvent) {
 						if (oEvent.keyIdentifier === 'Enter') { JUL.Designer.onDateBlur.call(this); }
 					}
@@ -621,6 +625,7 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 					':' + (100 + oValue.getSeconds()).toString().substr(1),
 				listeners: {
 					blur: this.onTimeBlur,
+					focus: function() { JUL.Designer.state._lastFocus = this.getAttribute('id'); },
 					keypress: function(oEvent) {
 						if (oEvent.keyIdentifier === 'Enter') { JUL.Designer.onTimeBlur.call(this); }
 					}
@@ -664,6 +669,8 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		/* attach listeners to the editable input control */
 		if (oBuild.tag  === 'checkbox') {
 			oBuild.listeners = {
+				focus: function() { JUL.Designer.state._lastFocus = this.getAttribute('id'); },
+				blur: function() { delete JUL.Designer.state._lastFocus; },
 				change: function() {
 					var oWhere = JUL.Designer.getWhere(this);
 					var sValue = this.getAttribute('checked');
@@ -678,6 +685,7 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 			oBuild.listeners = {
 				blur: JUL.Designer.onBlur,
 				focus: function() {
+					JUL.Designer.state._lastFocus = this.getAttribute('id');
 					if (this.getAttribute('readonly') !== 'true' && this.getAttribute('class') === 'field undef') {
 						this.setAttribute('value', '');
 						JUL.Designer.replaceDom(this, function() { this.setAttribute('class', 'field'); });
@@ -734,12 +742,24 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 				}
 			}
 	},
+	empty: function(oEl, bRemove) {
+		if (!oEl) { return; }
+		if (!isNaN(oEl.length)) {
+			ample.query(oEl).each(function() { JUL.Designer.empty(this, bRemove); });
+			return;
+		}
+		while (oEl.lastChild) {
+			this.empty(oEl.lastChild);
+			oEl.removeChild(oEl.lastChild);
+		}
+		if (bRemove) { oEl.parentNode.removeChild(oEl); }
+	},
 	/**
 		Fills the list box inside 'Browse' dialog with server-side data depending on the kind of browse.
 		Can display applications, projects or frameworks. The location if set on the server in application/config/main.php
 	*/
 	fillBrowseList: function() {
-		ample.query('#listbox-browse>xul|listbody').empty();
+		this.empty(ample.getElementById('listbox-browse').body);
 		ample.get('index.php/main/manage', {
 			type: this.state.browseType,
 			operation: 'browse',
@@ -831,15 +851,15 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 			var oEl = this.$getContainer('input');
 			if (!oEl) { return false; }
 			try {
-				var nStart = oEl.selectionStart;
-				var nEnd = oEl.selectionEnd;
+				var nStart = oEl.selectionStart || 0;
+				var nEnd = oEl.selectionEnd || 0;
 				var sValue = this.getAttribute('value');
-				this.setAttribute('value', sValue.substring(0, nStart) + '\t' + sValue.substring(nEnd));
-				oEl.selectionStart = nStart + 1;
+				this.setAttribute('value', sValue.slice(0, nStart) + '\t' + sValue.substr(nEnd));
 				oEl.selectionEnd = nStart + 1;
+				oEl.selectionStart = nStart + 1;
 			}
-			catch(oException) {}
-			 return false;
+			catch(e) {}
+		 return false;
 		}
 	},
 	/**
@@ -966,7 +986,7 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 			if (bPrefix || (!this._usePrefixes && (this._regExps.regexp.test(oValue) ||
 				this._regExps.functionStart.test(oValue) || this._regExps.newStart.test(oValue)))) {
 				try {
-					return eval('(function(){return ' + oValue + '})()');
+					return eval('(function(){return(' + oValue + ')})()');
 				}
 				catch(e) {
 					return oValue;
@@ -1033,6 +1053,7 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		@param	{Object}	oEvent	The standardized event object
 	*/
 	onBlur: function(oEvent) {
+		if (oEvent) { delete JUL.Designer.state._lastFocus; }
 		if (this.getAttribute('readonly') === 'true' || this.getAttribute('class') === 'field undef') { return; }
 		var oWhere = JUL.Designer.getWhere(this);
 		var sValue = this.getAttribute('value');
@@ -1081,7 +1102,8 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 	/**
 		Custom on-blur handler for all date fields
 	*/
-	onDateBlur: function() {
+	onDateBlur: function(oEvent) {
+		if (oEvent) { delete JUL.Designer.state._lastFocus; }
 		var sId = this.getAttribute('id');
 		var oWhere = JUL.Designer.getWhere(sId);
 		var oVal = oWhere.val();
@@ -1111,7 +1133,8 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 	/**
 		Custom on-blur handler for all time fields
 	*/
-	onTimeBlur: function() {
+	onTimeBlur: function(oEvent) {
+		if (oEvent) { delete JUL.Designer.state._lastFocus; }
 		var sId = this.getAttribute('id');
 		var oWhere = JUL.Designer.getWhere(sId);
 		var oVal = oWhere.val();
@@ -1211,7 +1234,7 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		oCurrent.oldValue = oCurrent.val();
 		if (sText) {
 			try {
-				oCurrent.val(eval('(function(){return ' + sText + '})()'));
+				oCurrent.val(eval('(function(){return(' + sText + ')})()'));
 			}
 			catch(e) {
 				window.alert(e.description || e.message);
@@ -1276,6 +1299,7 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 			expires: 7,
 			path: '/'
 		});
+		return oSave;
 	},
 	/**
 		Displays the code editing dialog
@@ -1363,7 +1387,7 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		 '#listbox-designer-logic xul|listheader': 'width', '#listbox-designer-ui xul|listheader': 'width',
 		 '#listbox-framework-component-events xul|listheader': 'width',
 		 '#listbox-framework-component-members xul|listheader': 'width', '#listbox-framework-component-settings': 'height',
-		 '#listbox-framework-component-settings xul|listheader': 'height',
+		 '#listbox-framework-component-settings xul|listheader': 'width',
 		 '#listbox-framework-components xul|listheader': 'width', '#listbox-framework-settings xul|listheader': 'width',
 		 '#listbox-project-parser xul|listheader': 'width', '#listbox-project-settings xul|listheader': 'width',
 		 '#menubar-app': 'hidden', '#statusbar-app': 'hidden', '#tree-interface': 'height',

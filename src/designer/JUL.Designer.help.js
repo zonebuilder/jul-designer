@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.9.5
+	JUL Designer version 2.0
 	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -31,8 +31,8 @@ JUL.Designer.help.ui = {
 	tag: 'window',
 	hidden: true,
 	title: JUL.Designer.title + ' Help',
-	width: 950,
-	height: 490,
+	width: 980,
+	height: 480,
 	children: [
 		{tag: 'toolbox', children: [
 			{tag: 'toolbar', children: [
@@ -46,7 +46,7 @@ JUL.Designer.help.ui = {
 				{tag: 'toolbarseparator'},
 				{tag: 'vbox', flex: 1},
 				{xclass: 'html', tag: 'div', width: 220, style: 'padding:5px 18px 0 0;text-align:right', children: [
-					{xclass: 'html', tag: 'a', target: '_blank', href: 'docs/index.html?1485766997741', html: 'Open in a new window'}
+					{xclass: 'html', tag: 'a', target: '_blank', href: 'docs/index.html?1489485881291', html: 'Open in a new window'}
 				]}
 			]}
 		]},
@@ -68,7 +68,7 @@ JUL.Designer.help.ui = {
 			{tag: 'vbox', flex: 1, children: [
 				{xclass: 'html', tag: 'div', flex: 1, children: [
 					{xclass: 'html', tag: 'iframe', id: 'iframe-help', name: 'iframe-help', width: '100%', height: '100%', seamless: 'yes',
-					 style: 'border:0', src: 'docs/index.html?1485766997741'}
+					 style: 'border:0', src: 'docs/index.html?1489485881291'}
 				]}
 			]}
 		]}

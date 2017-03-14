@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.9.5
+	JUL Designer version 2.0
 	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -75,7 +75,7 @@ JUL.Designer.designer.ui = {
 				{tag: 'menuitem', command: 'command-show-add', type: 'checkbox', label: 'Show add component'},
 				{tag: 'menuitem', command: 'command-show-status', type: 'checkbox', label: 'Show status bar'}
 			]},
-			{tag: 'menupopup', id: 'menupopup-edit'}
+			{tag: 'menupopup', id: 'menupopup-edit', _inc_: 'JUL.Designer.designer.editUi'}
 		]},
 		{tag: 'menubar', id: 'menubar-app', context: 'menupopup-show-bars', children: [
 			{tag: 'toolbargrippy'},
@@ -107,7 +107,7 @@ JUL.Designer.designer.ui = {
 				]}
 			]},
 			{tag: 'menu', label: 'Edit  ', children: [
-				{tag: 'menupopup', id: 'menu-edit'}
+				{tag: 'menupopup', id: 'menu-edit', _inc_: 'JUL.Designer.designer.editUi'}
 			]},
 			{tag: 'menu', label: 'Framework  ', children: [
 				{tag: 'menupopup', children: [
@@ -217,7 +217,7 @@ JUL.Designer.designer.ui = {
 			]}
 		]},
 		{tag: 'hbox', flex: 1, children: [
-			{tag: 'vbox', id: 'vbox-project', width: 440, context: 'menupopup-edit', children: [
+			{tag: 'vbox', id: 'vbox-project', width: 495, context: 'menupopup-edit', children: [
 				{tag: 'hbox', flex: 1, children: [
 					{tag: 'vbox', width: '100%', children: [
 						{tag: 'description', value: 'Component tree', css: 'caption'},
@@ -259,11 +259,11 @@ JUL.Designer.designer.ui = {
 								]}
 							]}
 						]},
-						{tag: 'tree', id: 'tree-interface', minheight: 120, height: 220, children: [
+						{tag: 'tree', id: 'tree-interface', minheight: 120, height: 180, children: [
 							{tag: 'treecols', children: [
-								{tag: 'treecol', width: 164, label: 'Component', primary: true},
-								{tag: 'treecol', width: 50, label: 'ID'},
-								{tag: 'treecol', width: 120, label: 'Members'}
+								{tag: 'treecol', width: 220, label: 'Component', primary: true},
+								{tag: 'treecol', width: 160, label: 'ID'},
+								{tag: 'treecol', width: 145, label: 'Members'}
 							]},
 							{tag: 'treebody'}
 						]},
@@ -293,8 +293,8 @@ JUL.Designer.designer.ui = {
 							{tag: 'vbox', flex: 1, children: [
 								{tag: 'listbox', flex: 1, id: 'listbox-designer-ui', children: [
 									{tag: 'listhead', children: [
-										{tag: 'listheader', label: 'Member', width: 100},
-										{tag: 'listheader', label: 'Value', width: 120},
+										{tag: 'listheader', label: 'Member', width: 115},
+										{tag: 'listheader', label: 'Value', width: 170},
 										{tag: 'listheader', label: 'Code', width: 40}
 									]},
 									{tag: 'listbody'}
@@ -303,8 +303,8 @@ JUL.Designer.designer.ui = {
 							{tag: 'vbox', flex: 1, children: [
 								{tag: 'listbox', flex: 1, id: 'listbox-designer-logic', children: [
 									{tag: 'listhead', children: [
-										{tag: 'listheader', label: 'Member', width: 100},
-										{tag: 'listheader', label: 'Value', width: 120},
+										{tag: 'listheader', label: 'Member', width: 115},
+										{tag: 'listheader', label: 'Value', width: 170},
 										{tag: 'listheader', label: 'Code', width: 40}
 									]},
 									{tag: 'listbody'}
@@ -313,8 +313,8 @@ JUL.Designer.designer.ui = {
 							{tag: 'vbox', flex: 1, children: [
 								{tag: 'listbox', flex: 1, id: 'listbox-designer-listeners', children: [
 									{tag: 'listhead', children: [
-										{tag: 'listheader', label: 'Listener', width: 100},
-										{tag: 'listheader', label: 'Value', width: 120},
+										{tag: 'listheader', label: 'Listener', width: 115},
+										{tag: 'listheader', label: 'Value', width: 170},
 										{tag: 'listheader', label: 'Code', width: 40}
 									]},
 									{tag: 'listbody'}
@@ -323,7 +323,7 @@ JUL.Designer.designer.ui = {
 						]}
 					]},
 					{tag: 'spacer', width: 3},
-					{tag: 'vbox', id: 'vbox-add-component', width: 140, children: [
+					{tag: 'vbox', id: 'vbox-add-component', width: 145, children: [
 						{tag: 'description', value: 'Add component', css: 'caption'},
 						{tag: 'scrollbox', id: 'scrollbox-components', flex: 1, orient: 'vertical'}
 					]}
@@ -754,9 +754,6 @@ JUL.Designer.designer.logic = {
 			}
 		}
 	},
-	'menu-edit': {
-		children: '=ref: JUL.Designer.designer.editUi'
-	},
 	'menuliist-designer-members': {
 		listeners: {
 			command: function() {
@@ -825,9 +822,6 @@ JUL.Designer.designer.logic = {
 				}, 50);
 			}
 		}
-	},
-	'menupopup-edit': {
-		children: '=ref: JUL.Designer.designer.editUi'
 	},
 	'splitter-test': {
 		listeners: {
@@ -932,8 +926,8 @@ JUL.Designer.designer.projectUi = {
 	tag: 'dialog',
 	id: 'dialog-project',
 	title: 'Project',
-	width: 860,
-	height: 430,
+	width: 980,
+	height: 470,
 	hidden: true,
 	children: [
 		{tag: 'tabbox', children: [
@@ -947,8 +941,8 @@ JUL.Designer.designer.projectUi = {
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'listbox', flex: 1, id: 'listbox-project-settings', children: [
 					{tag: 'listhead', children: [
-						{tag: 'listheader', label: 'Setting', width: 220},
-						{tag: 'listheader', label: 'Value', width: 220},
+						{tag: 'listheader', label: 'Setting', width: 250},
+						{tag: 'listheader', label: 'Value', width: 380},
 						{tag: 'listheader', label: 'Code', width: 40}
 					]},
 					{tag: 'listbody'}
@@ -957,8 +951,8 @@ JUL.Designer.designer.projectUi = {
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'listbox', flex: 1, id: 'listbox-project-parser', children: [
 					{tag: 'listhead', children: [
-						{tag: 'listheader', label: 'Member', width: 220},
-						{tag: 'listheader', label: 'Value', width: 220},
+						{tag: 'listheader', label: 'Member', width: 250},
+						{tag: 'listheader', label: 'Value', width: 380},
 						{tag: 'listheader', label: 'Code', width: 40}
 					]},
 					{tag: 'listbody'}
@@ -1013,21 +1007,23 @@ JUL.Designer.designer.projectLogic = {
 	Shares the config of the edit menu with the context popup menu
 	@type	Array
 */
-JUL.Designer.designer.editUi = [
-	{tag: 'menuitem', label: 'Copy components', command: 'command-copy-node'},
-	{tag: 'menuitem', label: 'Cut components', command: 'command-cut-node'},
-	{tag: 'menuitem', label: 'Paste components', command: 'command-paste-node'},
-	{tag: 'menuitem', label: 'Move component up', command: 'command-up-node'},
-	{tag: 'menuitem', label: 'Move component down', command: 'command-down-node'},
-	{tag: 'menuitem', label: 'Remove components', command: 'command-remove-node'},
-	{tag: 'menuseparator'},
-	{tag: 'menuitem', label: 'Copy members', command: 'command-copy-members'},
-	{tag: 'menuitem', label: 'Cut members', command: 'command-cut-members'},
-	{tag: 'menuitem', label: 'Paste members', command: 'command-paste-members'},
-	{tag: 'menuitem', label: 'Remove members', command: 'command-remove-members'},
-	{tag: 'menuseparator'},
-	{tag: 'menuitem', label: 'Undo', command: 'command-undo'}
-];
+JUL.Designer.designer.editUi = {
+	children: [
+		{tag: 'menuitem', label: 'Copy components', command: 'command-copy-node'},
+		{tag: 'menuitem', label: 'Cut components', command: 'command-cut-node'},
+		{tag: 'menuitem', label: 'Paste components', command: 'command-paste-node'},
+		{tag: 'menuitem', label: 'Move component up', command: 'command-up-node'},
+		{tag: 'menuitem', label: 'Move component down', command: 'command-down-node'},
+		{tag: 'menuitem', label: 'Remove components', command: 'command-remove-node'},
+		{tag: 'menuseparator'},
+		{tag: 'menuitem', label: 'Copy members', command: 'command-copy-members'},
+		{tag: 'menuitem', label: 'Cut members', command: 'command-cut-members'},
+		{tag: 'menuitem', label: 'Paste members', command: 'command-paste-members'},
+		{tag: 'menuitem', label: 'Remove members', command: 'command-remove-members'},
+		{tag: 'menuseparator'},
+		{tag: 'menuitem', label: 'Undo', command: 'command-undo'}
+	]
+};
 
 JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 	/**
@@ -1085,46 +1081,52 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 	*/
 	parserFields: {
 		classProperty: {
-			tooltip: 'Name of the class property', id: 'setting-project-class-property', defaultValue: 'xclass', required: true,
+			tooltip: 'Name of the class property', id: 'setting-parser-class-property', defaultValue: 'xclass', required: true,
 			 template: '<string>'
 		},
 		defaultClass: {
-			tooltip: 'Name of the default class', id: 'setting-project-default-class', required: true, defaultValue: 'Object',
+			tooltip: 'Name of the default class', id: 'setting-parser-default-class', required: true, defaultValue: 'Object',
 			 template: '<string>'
 		},
 		childrenProperty: {
-			tooltip: 'Name of the children property', id: 'setting-project-children-property', defaultValue: 'children',
+			tooltip: 'Name of the children property', id: 'setting-parser-children-property', defaultValue: 'children',
 			 required: true, template: '<string>'
 		},
 		membersProperties: {
-			tooltip: 'Array of other members properties', id: 'setting-project-members-properties', defaultValue: [], required: true,
+			tooltip: 'Array of other members properties', id: 'setting-parser-members-properties', defaultValue: [], required: true,
 			 template: '["category1", "category2" ... ]'
 		},
+		membersMappings: {
+			tooltip: 'Per-class mappings between a class name and a members array', id: 'setting-parser-members-mappingss',
+			 defaultValue: {}, required: true, template: '{"class1":<array1>, "class2":<array2> ... }'
+		},
 		idProperty: {
-			tooltip: 'Name of the ID property', id: 'setting-project-id-property', defaultValue: 'id', required: true,
+			tooltip: 'Name of the ID property', id: 'settingparser-id-property', defaultValue: 'id', required: true,
 			 template: '<string>'
 		},
 		bindingProperty: {
-			tooltip: 'Name of the binding ui with logic property', id: 'setting-project-binding-property', defaultValue: 'cid',
+			tooltip: 'Name of the binding ui with logic property', id: 'setting-parser-binding-property', defaultValue: 'cid',
 			 required: true, template: '<string>'
 		},
 		useTags: {
-			tooltip: 'Whether to use tags in configs', id: 'setting-project-use-tags', required: true, defaultValue: false,
+			tooltip: 'Whether to use tags in configs', id: 'setting-parser-use-tags', required: true, defaultValue: false,
 			 template: '<boolean>'
 		},
 		tagProperty: {
-			tooltip: 'Name of the tag property', id: 'setting-project-tag-property', defaultValue: 'tag', required: true,
+			tooltip: 'Name of the tag property', id: 'setting-parser-tag-property', defaultValue: 'tag', required: true,
 			 template: '<string>'
 		},
 		customFactory: {
-			tooltip: 'If supplied, it will be passed the component config', id: 'setting-project-custom-factory',
+			tooltip: 'If supplied, it will be passed the component config', id: 'setting-parser-custom-factory',
 			 template: ' function(oConfig) { ... return oInstance; }'
 		},
 		topDown: {
-			tooltip: 'Check this for a top-down instantiation', required: true, defaultValue: false, template: '<boolean>'
+			tooltip: 'Check this for a top-down instantiation', id: 'setting-parser-top-down', required: true, defaultValue: false,
+			 template: '<boolean>'
 		},
-		parentProperty: {
-			tooltip: 'Needed if topDown is checked', required: true, defaultValue: 'parent', template: '<string>'
+		_otherProperties: {
+			tooltip: 'Object with other parser properties to be applied over', id: 'setting-parser-other-properies', defaultValue: {},
+			 template: '<object>'
 		}
 	},
 	/**
@@ -1162,7 +1164,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			this.show('new');
 			return;
 		}
-		var oCurrent = this.current.parserConfig;
+		var oCurrent = this.currentParser;
 		var oFramework = JUL.Designer.framework.current;
 		/* pick the component from the current framework */
 		var oComponent = oFramework.components[sItem];
@@ -1218,8 +1220,9 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		}
 		/* create the new component config */
 		var oConfig = {};
+		var sFrameworkNS = oFramework.nsAlias || oFramework.ns;
 		oWhere.val(oConfig);
-		var sClass = oCurrent.useTags ? oFramework.ns : (oFramework.prependNS ? oFramework.ns + '.' + sItem : sItem);
+		var sClass = oCurrent.useTags ? sFrameworkNS : (oFramework.prependNS ? sFrameworkNS + '.' + sItem : sItem);
 		//if (oCurrent.defaultClass !== sClass) { oConfig[oCurrent.classProperty] = sClass; }
 		oConfig[oCurrent.classProperty] = sClass;
 		if (oCurrent.useTags) { oConfig[oCurrent.tagProperty] = sItem; }
@@ -1268,14 +1271,15 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 	*/
 	addConfigListeners: function(oConfig) {
 		var oTarget = this.getTarget(oConfig);
-		JUL.Designer.addValueListener(oConfig, this.current.parserConfig.classProperty, this.onClassUpdated, this);
-		if (this.current.parserConfig.useTags) {
-			JUL.Designer.addValueListener(oConfig, this.current.parserConfig.tagProperty, this.onClassUpdated, this);
+		JUL.Designer.addValueListener(oConfig, this.currentParser.classProperty, this.onClassUpdated, this);
+		if (this.currentParser.useTags) {
+			JUL.Designer.addValueListener(oConfig, this.currentParser.tagProperty, this.onClassUpdated, this);
 		}
-		JUL.Designer.addValueListener(oConfig, this.current.parserConfig.idProperty, this.onIdUpdated, this);
+		JUL.Designer.addValueListener(oConfig, this.currentParser.idProperty, this.onIdUpdated, this);
 		if (!this.current.noLogic) {
-			JUL.Designer.addValueListener(oConfig, this.current.parserConfig.bindingProperty, this.onBindingUpdated, this);
+			JUL.Designer.addValueListener(oConfig, this.currentParser.bindingProperty, this.onBindingUpdated, this);
 		}
+		JUL.Designer.addValueListener(oConfig, this.currentParser.instantiateProperty, this.onInstantiateUpdated, this);
 		JUL.Designer.addValueListener(oConfig, null, this.onConfigUpdated, this);
 		if (oTarget !== oConfig) { JUL.Designer.addValueListener(oTarget, null, this.onConfigUpdated, this); }
 		JUL.Designer.addValueListener(oTarget[this.current.listenersProperty], null, this.onConfigUpdated, this);
@@ -1292,10 +1296,11 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		}
 		var nLast = 1;
 		var sName = JUL.trim(ample.getElementById('textbox-designer-name').getAttribute('value'));
-		if (!sName || typeof this.currentConfig[sName] !== 'undefined' || this.getExclude().indexOf(sName) > -1 ||
+		var aExclude = this.getExclude();
+		if (!sName || typeof this.currentConfig[sName] !== 'undefined' || (sName !== this.currentParser.instantiateProperty && aExclude.indexOf(sName) > -1) ||
 			ample.query('#listbox-designer-' + sType + '>xul|listbody xul|listcell[label=' + sName + ']').length) {
 			while ((sName = (sType === 'listeners' ? 'event' : 'member') + nLast++) && (typeof this.currentConfig[sName] !== 'undefined' ||
-				this.getExclude().indexOf(sName) > -1 || ample.query('#listbox-designer-' + sType + '>xul|listbody xul|listcell[label=' + sName + ']').length)) {}
+				aExclude.indexOf(sName) > -1 || ample.query('#listbox-designer-' + sType + '>xul|listbody xul|listcell[label=' + sName + ']').length)) {}
 		}
 		ample.getElementById('textbox-designer-name').setAttribute('value', '');
 		/* build the editable field into the list box */
@@ -1314,7 +1319,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		@returns	{Object}	Root element of the generated tree
 	*/
 	buildTree: function(oParent, oWhere, bOnlyChildren, bSelf) {
-		var oCurrent = this.current.parserConfig;
+		var oCurrent = this.currentParser;
 		var oNode = null;
 		if (!oWhere) {
 			oWhere = new JUL.Ref({ref: this.current, key: 'ui'});
@@ -1348,7 +1353,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			var sClass = oConfig[oCurrent.classProperty] || oCurrent.defaultClass;
 			/* find the names of the members collections */
 			var aMembers = [];
-			var aSearch = [].concat(oCurrent.childrenProperty, oCurrent.membersProperties);
+			var aSearch = oCurrent.getMembers(oConfig);
 			for (var k = 0; k < aSearch.length; k++) {
 				if (sId && this.current.logic[sId] && this.current.logic[sId][aSearch[k]] && typeof this.current.logic[sId][aSearch[k]] === 'object') { aMembers.push(aSearch[k]); }
 				else if (oConfig[aSearch[k]] && typeof oConfig[aSearch[k]] === 'object') { aMembers.push(aSearch[k]); }
@@ -1417,8 +1422,9 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 	*/
 	changeMember: function(sItem, sType, oNode) {
 		var sName = JUL.trim(ample.getElementById('textbox-designer-name').getAttribute('value'));
-		if (!sName || sName === sItem || typeof this.currentConfig[sName] !== 'undefined' || this.getExclude().indexOf(sName) > -1 ||
-			ample.query('#listbox-designer-' + sType + '>xul|listbody xul|listcell[label=' + sName + ']').length) {
+		var aExclude = this.getExclude();
+		if (!sName || sName === sItem || typeof this.currentConfig[sName] !== 'undefined' || aExclude.indexOf(sName) > -1 ||
+			aExclude.indexOf(sItem) > -1 || ample.query('#listbox-designer-' + sType + '>xul|listbody xul|listcell[label=' + sName + ']').length) {
 			ample.getElementById('textbox-designer-name').setAttribute('value', sItem);
 			return false;
 		}
@@ -1591,13 +1597,13 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		@param	{Object}	oConfig	Configuration object
 	*/
 	cleanConfig: function(oConfig) {
-		var oCurrent = this.current.parserConfig;
+		var oCurrent = this.currentParser;
 		if (!oCurrent) { return; }
+		var aInstantiate = oCurrent.getMembers(oConfig);
 		JUL.Designer.keySort(oConfig, 
-			[].concat(this.current.listenersProperty, oCurrent.childrenProperty, oCurrent.membersProperties),
-			[oCurrent.classProperty,oCurrent.tagProperty, oCurrent.idProperty, oCurrent.bindingProperty],
+			[].concat(this.current.listenersProperty, aInstantiate),
+			[oCurrent.classProperty, oCurrent.tagProperty, oCurrent.idProperty, oCurrent.bindingProperty, oCurrent.instantiateProperty],
 		true);
-		//if (oConfig[oCurrent.classProperty] === oCurrent.defaultClass) { delete oConfig[oCurrent.classProperty]; }
 		var sId = this.getId(oConfig);
 		var oTarget = this.getTarget(oConfig, sId);
 			if (oTarget[this.current.listenersProperty]) {
@@ -1610,8 +1616,8 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			if (JUL.Designer.isEmpty(oTarget)) { delete this.current.logic[sId]; }
 			else {
 				JUL.Designer.keySort(oTarget,
-					[].concat(this.current.listenersProperty, oCurrent.childrenProperty, oCurrent.membersProperties),
-					[oCurrent.classProperty,oCurrent.tagProperty, oCurrent.idProperty, oCurrent.bindingProperty],
+					[].concat(this.current.listenersProperty, aInstantiate),
+					[oCurrent.classProperty, oCurrent.tagProperty, oCurrent.idProperty, oCurrent.bindingProperty, oCurrent.instantiateProperty],
 				true);
 			}
 		}
@@ -1628,14 +1634,14 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		var oTree = {ui: null, logic: null};
 		if (!oUi) { return oTree; }
 		oTree.logic = JUL.Designer.keySort(oLogic);
-		var oCurrent = this.current.parserConfig;
+		var oCurrent = this.currentParser;
 		var sListeners = this.current.listenersProperty;
-		/* get he names of the member collection, to put them last in the config objects */
-		var aMembers = [].concat(oCurrent.childrenProperty, oCurrent.membersProperties);
 		/* make a recursive function for cleaning the tree */
 		var fClean = function(oConfig) {
+		/* get he names of the member collection, to put them last in the config objects */
+		var aMembers = oCurrent.getMembers(oConfig);
 			oConfig = JUL.Designer.keySort(oConfig, [].concat(sListeners, aMembers),
-				[oCurrent.classProperty,oCurrent.tagProperty, oCurrent.idProperty, oCurrent.bindingProperty]);
+				[oCurrent.classProperty,oCurrent.tagProperty, oCurrent.idProperty, oCurrent.bindingProperty, oCurrent.instantiateProperty]);
 			/* remove class info if it matches project's default class */
 			if (oConfig[oCurrent.classProperty] === oCurrent.defaultClass) { delete oConfig[oCurrent.classProperty]; }
 			var sId = this.getId(oConfig, oCurrent);
@@ -1648,7 +1654,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 				if (JUL.Designer.isEmpty(oTarget)) { delete oTree.logic[sId]; }
 				else {
 					oTree.logic[sId] = JUL.Designer.keySort(oTarget, [].concat(sListeners, aMembers),
-						[oCurrent.classProperty,oCurrent.tagProperty, oCurrent.idProperty, oCurrent.bindingProperty]);
+						[oCurrent.classProperty,oCurrent.tagProperty, oCurrent.idProperty, oCurrent.bindingProperty, oCurrent.instantiateProperty]);
 				}
 			}
 			if (!this.current.keepBindings && (oConfig[oCurrent.idProperty] || (sId && !oTree.logic[sId]))) { delete oConfig[oCurrent.bindingProperty]; }
@@ -1697,12 +1703,10 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 	copy: function(oConfig, bInstance, bNewBinding, oRootLogic, oMapClass) {
 		var oLogic = {};
 		var oCurrent = null;
-		var aMembers = [];
 		if (bInstance) {
 			oRootLogic = oRootLogic || this.current.logic;
 			var oCheckLogic = this.current.logic;
-			oCurrent = this.current.parserConfig;
-			aMembers = [].concat(oCurrent.childrenProperty, oCurrent.membersProperties);
+			oCurrent = this.currentParser;
 		}
 		/* build a recursive function for copying the config */
 		var fCopy = function(oConfig, bInstance) {
@@ -1719,7 +1723,8 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			else if (sType === 'Object') {
 				oNew = {};
 				var sNewBinding = false;
-		var sId = bInstance ? JUL.Designer.designer.getId(oConfig, oCurrent) : false;
+				var sId = bInstance ? JUL.Designer.designer.getId(oConfig, oCurrent) : false;
+				var aMembers = bInstance ? oCurrent.getMembers(oConfig) : null;
 				/* generate a new binding in advance, if required */
 				if (bInstance && bNewBinding && sId && ((!oConfig[oCurrent.idProperty] && !JUL.Designer.designer.current.noLogic) || oCheckLogic[sId])) {
 					sNewBinding = (oCurrent.useTags ? oConfig[oCurrent.tagProperty] : oConfig[oCurrent.classProperty] || oCurrent.defaultClass) + '-' + JUL.Designer.designer.current.lastComponentId++;
@@ -1771,19 +1776,23 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 	createXml: function(oConfig) {
 		if (!oConfig) { return null; }
 		var aTag = (oConfig[this.classProperty] + (this.useTags ? ':' + oConfig[this.tagProperty] : '')).split(':');
-		if (aTag.length > 2) { aTag = aTag.shift().concat(aTag.join(':')); }
+		if (aTag.length > 2) { aTag = [aTag.shift()].concat(aTag.join(':')); }
 		var oWidget = aTag.length > 1 && this.xmlDoc.createElementNS ?
 			this.xmlDoc.createElementNS(this.xmlNS[aTag[0]] || null, aTag[0] === this.defaultClass ? aTag[1] : aTag.join(':')) :
 			this.xmlDoc.createElement(aTag.length > 1 && aTag[0] === this.defaultClass ? aTag[1] : aTag.join(':'));
 		if (!oWidget) { return null; }
+		var aInstantiate = this.getMembers(oConfig);
 		for (var sItem in JUL.Designer.keySort(oConfig, null, ['type', this.idProperty, this.cssProperty, 'style'])) {
-			if (oConfig.hasOwnProperty(sItem) && this.membersProperties.concat([this.childrenProperty]).indexOf(sItem) < 0 &&
+			if (oConfig.hasOwnProperty(sItem) && aInstantiate.indexOf(sItem) < 0 &&
 				[this.listenersProperty, this.htmlProperty, this.tagProperty, this.classProperty, this.parentProperty].indexOf(sItem) < 0)
 			{
 				var aAttr = sItem.split(':');
-				if (aAttr.length > 2) { aAttr = aAttr.shift().concat(aAttr.join(':')); }
+				if (aAttr.length > 2) { aAttr = [aAttr.shift()].concat(aAttr.join(':')); }
 				if (aAttr[aAttr.length - 1] === this.cssProperty) { aAttr[aAttr.length - 1] = 'class'; }
-				var sAttr = ['Array', 'Date', 'Function', 'Object', 'Null', 'RegExp'].indexOf(JUL.typeOf(oConfig[sItem])) > -1 ? JUL.Designer.parser.obj2str(oConfig[sItem]) : oConfig[sItem].toString();
+				var sAttr = ['Array', 'Date', 'Function', 'Object', 'Null', 'RegExp'].indexOf(JUL.typeOf(oConfig[sItem])) > -1 ? this.obj2str(oConfig[sItem]) : oConfig[sItem].toString();
+				if (this.referencePrefix && typeof oConfig[sItem] === 'string' && sAttr.substr(0, this.referencePrefix.length) === this.referencePrefix) {
+					sAttr = JUL.trim(sAttr.substr(this.referencePrefix.length));
+				}
 				if (aAttr.length > 1 && oWidget.setAttributeNS) {
 					oWidget.setAttributeNS(this.xmlNS[aAttr[0]] || null, aAttr[0] === this.defaultClass ? aAttr[1] : aAttr.join(':'), sAttr);
 				}
@@ -1798,8 +1807,8 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 				if (oListeners.hasOwnProperty(sItem)) {
 					var aAll = [].concat(oListeners[sItem]);
 					for (var j = 0; j < aAll.length; j++) {
-				var sListener = ['Array', 'Date', 'Function', 'Object', 'Null', 'RegExp'].indexOf(JUL.typeOf(aAll[j])) > -1 ? JUL.Designer.parser.obj2str(aAll[j]) : aAll[j].toString();
-						if (typeof aAll[j] === 'function') {
+						var sListener = ['Array', 'Date', 'Function', 'Object', 'Null', 'RegExp'].indexOf(JUL.typeOf(aAll[j])) > -1 ? JUL.Designer.parser.obj2str(aAll[j]) : aAll[j].toString();
+						if (this.stripFunction && typeof aAll[j] === 'function') {
 							sListener = sListener.slice(sListener.indexOf('{') + 1, sListener.lastIndexOf('}'));
 							if (JUL.trim(sListener).split('\n').length < 2) { sListener = JUL.trim(sListener); }
 						}
@@ -1810,7 +1819,16 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		
 		}
 		if (typeof oConfig[this.htmlProperty] !== 'undefined') {
-			var oText = this.xmlDoc.createTextNode(oConfig[this.htmlProperty].toString());
+			var oDiv = document.getElementById('div-process-xml');
+			if (!oDiv) {
+				oDiv = document.createElement('div');
+				oDiv.setAttribute('id', 'div-process-xml');
+				oDiv.style.cssText = 'display:none';
+				document.body.appendChild(oDiv);
+			}
+			oDiv.innerHTML = oConfig[this.htmlProperty].toString().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			var oText = this.xmlDoc.createTextNode(oDiv.textContent || oDiv.innerText || '');
+			oDiv.innerHTML = '';
 			oWidget.appendChild(oText);
 		}
 		if (oConfig[this.parentProperty] && typeof oConfig[this.parentProperty] === 'object') {
@@ -1854,8 +1872,8 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		Fills the UI, logic, and listeners list boxes corresponding to a configuration object
 		@param	{Object}	oConfig	Configuration object
 	*/
-	fillComponentLists: function(oConfig) {
-			var oCurrent = this.current.parserConfig;
+	fillComponentLists: function(oConfig, bKeep) {
+			var oCurrent = this.currentParser;
 		this.initConfig(oConfig);
 		var sId = this.getId(oConfig);
 		var oUiFields = {};
@@ -1869,16 +1887,20 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		if (!this.current.noLogic) {
 			oUiFields[oCurrent.bindingProperty] = {tooltip: 'Component binding ID'};
 		}
+		if (typeof oConfig[oCurrent.instantiateProperty] !== 'undefined') {
+			oUiFields[oCurrent.instantiateProperty] = {tooltip: 'Config node instantiation members'};
+		}
 		var sItem;
 		var oMembers = null;
 		var oEvents = null;
+		 var aExclude = this.getExclude(oCurrent, oConfig);
 		if (JUL.Designer.framework.current.components) {
 			var oComponent = this.findComponent(oConfig);
 			 /* build the fields given by the component type */
 			 if (oComponent) {
 			 	oMembers = JUL.Designer.framework.getInherited(oComponent, 'members') || {};
 				 for (sItem in JUL.Designer.keySort(oMembers)) {
-				 	if (oMembers.hasOwnProperty(sItem) && this.getExclude().indexOf(sItem) < 0) {
+				 	if (oMembers.hasOwnProperty(sItem) && aExclude.indexOf(sItem) < 0 && !oMembers[sItem].hidden) {
 					 	if (sId && this.current.logic[sId] && oMembers[sItem].logic) { oLogicFields[sItem] = oMembers[sItem]; }
 					 	else { oUiFields[sItem] = oMembers[sItem]; }
 					 	if (oMembers[sItem].required && (!oMembers[sItem].logic || !sId || !this.current.logic[sId]) &&
@@ -1893,34 +1915,37 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 				 }
 			 	oEvents = JUL.Designer.framework.getInherited(oComponent, 'events') || {};
 				 for (sItem in JUL.Designer.keySort(oEvents)) {
-				 	if (oEvents.hasOwnProperty(sItem)) { oListenersFields[sItem] = oEvents[sItem]; }
+				 	if (oEvents.hasOwnProperty(sItem) && !oEvents[sItem].hidden) { oListenersFields[sItem] = oEvents[sItem]; }
 				 }
 			 }
 		}
 		/* build the rest of the fields */
 		for (sItem in JUL.Designer.keySort(oConfig)) {
-			if (oConfig.hasOwnProperty(sItem) && this.getExclude().indexOf(sItem) < 0 &&
-				(!oMembers || !oMembers[sItem] || (sId && this.current.logic[sId] && oMembers[sItem].logic))) {
+			if (oConfig.hasOwnProperty(sItem) && aExclude.indexOf(sItem) < 0 &&
+				(!oMembers || !oMembers[sItem] || oMembers[sItem].hidden || (sId && this.current.logic[sId] && oMembers[sItem].logic))) {
 				oUiFields[sItem] = {tooltip: 'Custom ui member'};
 			}
 		}
 		var oTarget = this.getTarget(oConfig, sId);
 		if (oTarget !== oConfig) {
 			for (sItem in JUL.Designer.keySort(oTarget)) {
-				if (oTarget.hasOwnProperty(sItem) && this.getExclude().indexOf(sItem) < 0 &&
-					(!oMembers || !oMembers[sItem] || !oMembers[sItem].logic)) {
+				if (oTarget.hasOwnProperty(sItem) && aExclude.indexOf(sItem) < 0 &&
+					(!oMembers || !oMembers[sItem] || oMembers[sItem].hidden || !oMembers[sItem].logic)) {
 					oLogicFields[sItem] = {tooltip: 'Custom logic member'};
 				}
 			}
 		}
 		for (sItem in JUL.Designer.keySort(oTarget[this.current.listenersProperty])) {
-			if (oTarget[this.current.listenersProperty].hasOwnProperty(sItem) && this.getExclude().indexOf(sItem) < 0 && (!oEvents || !oEvents[sItem])) {
+			if (oTarget[this.current.listenersProperty].hasOwnProperty(sItem) && aExclude.indexOf(sItem) < 0 &&
+				(!oEvents || !oEvents[sItem]) || oEvents[sItem].hidden) {
 				oListenersFields[sItem] = {tooltip: 'Custom event'};
 			}
 		}
-		ample.query('#listbox-designer-ui>xul|listbody').empty();
-		ample.query('#listbox-designer-logic>xul|listbody').empty();
-		ample.query('#listbox-designer-listeners>xul|listbody').empty();
+		if (!bKeep) {
+			JUL.Designer.empty(ample.getElementById('listbox-designer-ui').body);
+			JUL.Designer.empty(ample.getElementById('listbox-designer-logic').body);
+			JUL.Designer.empty(ample.getElementById('listbox-designer-listeners').body);
+		}
 		JUL.Designer.fillListbox('listbox-designer-ui', oUiFields, oConfig);
 		JUL.Designer.fillListbox('listbox-designer-logic', oLogicFields, oTarget);
 		JUL.Designer.fillListbox('listbox-designer-listeners', oListenersFields, oTarget[this.current.listenersProperty]);
@@ -1941,21 +1966,8 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		ample.getElementById('menulist-designer-members').setAttribute('value', '');
 		ample.getElementById('menulist-designer-members-type').setAttribute('value', '');
 		ample.getElementById('menulist-designer-members-where').setAttribute('value', '');
-		var oMenu = ample.getElementById('menulist-designer-members').querySelector('xul|menupopup');
-		ample.query(oMenu).empty();
-		var oCurrent = this.current.parserConfig;
-		if (oCurrent) {
-			this.buildTree();
-			var aItems = [].concat(oCurrent.childrenProperty, oCurrent.membersProperties);
-			for (var i = 0; i < aItems.length; i++) {
-				oMenu.appendChild(JUL.Designer.parser.createComponent({
-					tag: 'menuitem',
-					label: aItems[i],
-					value: aItems[i],
-					style: 'font-style:italic'
-				}));
-			}
-		}
+		this.setMembersMenu();
+		if (this.current.ns) { this.buildTree(); }
 		ample.getElementById('tree-interface').reflow();
 	},
 	/**
@@ -1968,7 +1980,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		var oComponent = oConfig ? this.findComponent(oConfig) : null;
 		var oInherit = oComponent ? JUL.Designer.framework.getInherited(oComponent, 'members') || {} : {};
 		var oDirect = oComponent && oComponent.members ? oComponent.members : {};
-		var aMembers = [].concat(this.current.parserConfig.childrenProperty, this.current.parserConfig.membersProperties);
+		var aMembers = this.currentParser.getMembers(oConfig);
 		var aMenus = [];
 		for (var j = oComponent ? 0 : 2; j < 3; j++) {
 			for (var i = 0; i < aMembers.length; i++) {
@@ -1988,7 +2000,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			if (j === 1 && aMenus.length && aMenus.length < aMembers.length) { aMenus.push({tag: 'menuseparator'}); }
 		}
 		var oPopup = ample.getElementById('menulist-designer-members').querySelector('xul|menupopup');
-		ample.query(oPopup).empty();
+		JUL.Designer.empty(oPopup);
 		for (i = 0; i < aMenus.length; i++) {
 			oPopup.appendChild(JUL.Designer.parser.create(aMenus[i]));
 		}
@@ -2001,12 +2013,13 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 	findComponent: function(oConfig) {
 		var oComponents = JUL.Designer.framework.current.components;
 		if (!oComponents) { return null; }
-		var oCurrent = this.current.parserConfig;
+		var oCurrent = this.currentParser;
+		var sFrameworkNS = JUL.Designer.framework.current.nsAlias || JUL.Designer.framework.current.ns;
 		var sClass = oConfig[oCurrent.classProperty] || oCurrent.defaultClass;
-		if (oCurrent.useTags && sClass === JUL.Designer.framework.current.ns) { return oComponents[oConfig[oCurrent.tagProperty]]; }
+		if (oCurrent.useTags && sClass === sFrameworkNS) { return oComponents[oConfig[oCurrent.tagProperty]]; }
 		if (!oCurrent.useTags) {
 			if (JUL.Designer.framework.current.prependNS) {
-				var sNs = JUL.Designer.framework.current.ns + '.';
+				var sNs = sFrameworkNS + '.';
 				if (sClass.substr(0, sNs.length) === sNs) { return oComponents[sClass.substr(sNs.length)]; }
 			}
 			else {
@@ -2038,7 +2051,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			if (!sItem && oRoot === oFind) { return ''; }
 			if (sItem && oRoot[sItem] === oFind) { return ''; }
 		}
-		var aMembers = [].concat(this.current.parserConfig.childrenProperty, this.current.parserConfig.membersProperties);
+		var oParserConfig = this.currentParser;
 		/* build a recursive function for searching */
 		var fobj = function(oCurrent, nLevel) {
 			if (!oCurrent) { return false; }
@@ -2049,6 +2062,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 				if (!sItem && oCurrent === oFind) { return true; }
 				if (sItem && oCurrent[sItem] === oFind) { return true; }
 			}
+			var aMembers = oParserConfig.getMembers(oCurrent);
 			var sId = JUL.Designer.designer.getId(oCurrent);
 			for (var i = 0; i < aMembers.length; i++) {
 				aPath[nLevel] = aMembers[i];
@@ -2143,10 +2157,11 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		@param	{Object}	[oParserConfig]	Parser config object, defaults to project's parser
 		@returns	{Array}	An array of special names
 	*/
-	getExclude: function(oParserConfig) {
-		oParserConfig = oParserConfig || this.current.parserConfig;
-		var aExclude = [].concat(oParserConfig.childrenProperty, oParserConfig.membersProperties, this.current.listenersProperty,
-			oParserConfig.classProperty, oParserConfig.idProperty, oParserConfig.bindingProperty);
+	getExclude: function(oParserConfig, oConfig) {
+		oParserConfig = oParserConfig || this.currentParser;
+		if (!oConfig && this.currentNode) { oConfig = JUL.Designer.getWhere(this.currentNode).val(); }
+		var aExclude = oParserConfig.getMembers(oConfig).concat(this.current.listenersProperty,
+			oParserConfig.classProperty, oParserConfig.idProperty, oParserConfig.bindingProperty, oParserConfig.instantiateProperty);
 		if (oParserConfig.useTags) { aExclude.push(oParserConfig.tagProperty); }
 		if (oParserConfig.topDown) { aExclude.push(oParserConfig.parentProperty); }
 		return aExclude;
@@ -2159,7 +2174,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 	getFirstChildren: function(oConfig) {
 		var sId = this.getId(oConfig);
 		var oLogic = sId ? this.current.logic[sId] : false;
-		var aMembers = [].concat(this.current.parserConfig.childrenProperty, this.current.parserConfig.membersProperties);
+		var aMembers = this.currentParser.getMembers(oConfig);
 		var oComponent = this.findComponent(oConfig);
 		var aDirect = [];
 		for (var j = oComponent && oComponent.members ? 0 : 1; j < 2; j++) {
@@ -2208,7 +2223,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		@returns	{String}	Component ID; falls back to the binding ID
 	*/
 	getId: function(oConfig, oParserConfig) {
-		oParserConfig = oParserConfig || this.current.parserConfig;
+		oParserConfig = oParserConfig || this.currentParser;
 		return oConfig[oParserConfig.idProperty] || oConfig[oParserConfig.bindingProperty];
 	},
 	/**
@@ -2241,7 +2256,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		@returns	{String}	The UI part or the logic part, if present
 	*/
 	getTarget: function(oConfig, sId, oLogic, oParserConfig) {
-		oParserConfig = oParserConfig || this.current.parserConfig;
+		oParserConfig = oParserConfig || this.currentParser;
 		sId = sId || this.getId(oConfig, oParserConfig);
 		oLogic = oLogic || this.current.logic;
 		return sId && oLogic[sId] ? oLogic[sId] : oConfig;
@@ -2273,7 +2288,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			ample.getElementById(oWhere.field.id).setAttribute('value', oWhere.oldValue || '');
 			return;
 		}
-		var sId = oWhere.ref()[this.current.parserConfig.idProperty];
+		var sId = oWhere.ref()[this.currentParser.idProperty];
 		this.swapLogic(null, sId || sValue, sId || oWhere.oldValue);
 	},
 	/**
@@ -2338,8 +2353,8 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		if (typeof oWhere.oldValue === 'undefined') { this.state.clipboard.undo.del.push(oWhere.key()); }
 		else { this.state.clipboard.undo.items[oWhere.key()] = oWhere.oldValue; }
 		this.save(true, true);
-		var oCurrent = this.current.parserConfig;
-		if ([oCurrent.classProperty, oCurrent.idProperty, oCurrent.bindingProperty, oCurrent.classProperty].indexOf(oWhere.key()) > -1 ||
+		var oCurrent = this.currentParser;
+		if ([oCurrent.classProperty, oCurrent.idProperty, oCurrent.bindingProperty, oCurrent.classProperty, oCurrent.instantiateProperty].indexOf(oWhere.key()) > -1 ||
 			(oCurrent.useTags && oWhere.key() === oCurrent.tagProperty)) {
 			ample.getElementById(oWhere.field.id).blur();
 		}
@@ -2369,11 +2384,12 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			};
 		}
 		var oWhere;
+		var aExclude = this.getExclude();
 		for (var i = 0; i < oItems.length; i++) {
 			 oWhere = JUL.Designer.getWhere(oItems.item(i).childNodes[1].firstChild);
 			if (oWhere && typeof oWhere.val() !== 'undefined') {
 				if (!bRemove) { this.state.clipboard.contentMembers[oWhere.key()] = this.copy(oWhere.val()); }
-				if (bCut && this.getExclude().indexOf(oWhere.key()) < 0) {
+				if (bCut && aExclude.indexOf(oWhere.key()) < 0) {
 					this.state.clipboard.undo.items[oWhere.key()] = oWhere.val();
 					if (oWhere.field.required) {
 						oWhere.val(oWhere.field.defaultValue);
@@ -2383,8 +2399,8 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 					}
 				}
 			}
-			if (bCut && this.getExclude().indexOf(oWhere.key()) < 0) {
-				ample.query(oItems.item(i)).remove();
+			if (bCut && aExclude.indexOf(oWhere.key()) < 0) {
+				JUL.Designer.empty(oItems.item(i), true);
 			}
 		}
 		if (!bRemove) {
@@ -2471,8 +2487,19 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			return;
 		}
 		this.setCellLabel(this.currentNode, 'id');
-		var sBinding = oWhere.ref()[this.current.parserConfig.bindingProperty];
+		var sBinding = oWhere.ref()[this.currentParser.bindingProperty];
 		this.swapLogic(null, sValue || sBinding, oWhere.oldValue || sBinding);
+	},
+	onInstantiateUpdated: function(oWhere) {
+		if (oWhere.val() === oWhere.oldValue) { return; }
+		this.setCellLabel(this.currentNode, 'members');
+		this.showMembers(oWhere.showWhat || this.currentParser.childrenProperty, true);
+		if (this.state.selectTimer) { clearTimeout(this.state.selectTimer); }
+		this.state.selectTimer = setTimeout(function() {
+			var oDesigner = JUL.Designer.designer;
+			delete oDesigner.state.selectTimer;
+			oDesigner.onSelectNode(JUL.Designer.designer.currentNode);
+		}, 100);
 	},
 	/**
 		Fires after the paste operation with the copied members of a component
@@ -2492,8 +2519,9 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 				show: JUL.Designer.getWhere(this.currentNode),
 			tabIndex: nIndex
 		};
+		var aExclude = this.getExclude();
 		for (var sItem in this.state.clipboard.contentMembers) {
-			if (this.state.clipboard.contentMembers.hasOwnProperty(sItem) && this.getExclude().indexOf(sItem) < 0 &&
+			if (this.state.clipboard.contentMembers.hasOwnProperty(sItem) && aExclude.indexOf(sItem) < 0 &&
 				(!this.state.clipboard.pasteFilter || this.state.clipboard.pasteFilter.indexOf(sItem) > -1)) {
 				if (typeof this.currentConfig[sItem] === 'undefined') { this.state.clipboard.undo.del.push(sItem); }
 				else { this.state.clipboard.undo.items[sItem] = this.currentConfig[sItem]; }
@@ -2595,9 +2623,9 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		ample.getElementById('menulist-designer-members').setAttribute('value', '');
 		ample.getElementById('menulist-designer-members-type').setAttribute('value', '');
 		ample.getElementById('menulist-designer-members-where').setAttribute('value', '');
-		ample.query('#listbox-designer-ui>xul|listbody').empty();
-		ample.query('#listbox-designer-logic>xul|listbody').empty();
-		ample.query('#listbox-designer-listeners>xul|listbody').empty();
+		JUL.Designer.empty(ample.getElementById('listbox-designer-ui').body);
+		JUL.Designer.empty(ample.getElementById('listbox-designer-logic').body);
+		JUL.Designer.empty(ample.getElementById('listbox-designer-listeners').body);
 		ample.query(ample.getElementById('tabbox-designer-members').querySelector('xul|tabs').childNodes[1]).show();
 		ample.getElementById('tabbox-designer-members').querySelector('xul|tabs').childNodes[oNode && this.state.showTab ? this.state.showTab : 0].$activate();
 		if (oNode) { delete this.state.showTab; }
@@ -2606,6 +2634,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		if (oNode) {
 			var oWhere = JUL.Designer.getWhere(oNode);
 			var oConfig = oWhere.val();
+			this.setMembersMenu(oConfig);
 			JUL.Designer.framework.fillScrollbox(oConfig);
 			var sId = this.getId(oConfig);
 			var oChildren = oConfig[oWhere.showWhat];
@@ -2618,12 +2647,13 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			ample.getElementById('menulist-designer-members-where').setAttribute('value',
 				sId && this.current.logic[sId] && this.current.logic[sId][oWhere.showWhat] && typeof this.current.logic[sId][oWhere.showWhat] === 'object' ? 'logic' : 'ui' );
 			JUL.Designer.state.lastDialog = null;
-			this.fillComponentLists(oConfig);
+			this.fillComponentLists(oConfig, true);
 			this.addConfigListeners(oConfig);
 			this.filterMembers(oWhere);
 		}
 		else {
 			this.currentConfig = null;
+			this.setMembersMenu();
 			JUL.Designer.framework.fillScrollbox();
 			this.filterMembers();
 		}
@@ -2637,6 +2667,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		delete this.state._xmlOptions;
 		delete this.state.clipboard.undo;
 		this.state.notSaved = false;
+		this.currentParser = this.current.ns ? new JUL.UI.Parser(JUL.apply(JUL.apply({}, this.current.parserConfig), this.current.parserConfig._otherProperties || {}, true)) : null;
 		ample.getElementById('deck-test').setAttribute('selectedIndex', bClose ? 1 : 0);
 		this.setTitle();
 		ample.getElementById('anchor-test').setAttribute('href', this.current.ns ? this.testUrl() : '#');
@@ -2707,13 +2738,18 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		if (!JUL.Designer.designer.current.ns) { return; }
 		var oTest = document.getElementById('iframe-test');
 		JUL.Designer.addListener(oTest.contentDocument || oTest.contentWindow.document, 'click', function(oEvent) {
+			var sFocus = JUL.Designer.state._lastFocus;
+			if (sFocus) {
+				var oEl = ample.getElementById(sFocus);
+				if (oEl) { oEl.blur(); }
+			}
 			if (!JUL.Designer.framework.current.components) { return; }
 			oEvent = oEvent || event;
 			var oPoint = {x: oEvent.clientX, y: oEvent.clientY};
 			setTimeout(function() {
 				JUL.Designer.designer.onTestClick(oPoint);
 			}, 100);
-		});
+		}, true);
 	},
 	/**
 		Opens a project
@@ -2760,6 +2796,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			rootWrapper: JUL.trim(ample.getElementById('textbox-xml-wrapper').getAttribute('value')) || 'content',
 			listenerPrefix: JUL.trim(ample.getElementById('textbox-xml-listener-prefix').getAttribute('value')),
 			exportListeners: ample.getElementById('checkbox-xml-export-listeners').getAttribute('checked') === 'true',
+			stripFunction: ample.getElementById('checkbox-xml-strip-function').getAttribute('checked') === 'true',
 			mergeLogic: ample.getElementById('checkbox-xml-merge-logic').getAttribute('checked') === 'true',
 			expandMembers: ample.getElementById('checkbox-xml-expand-members').getAttribute('checked') === 'true'
 		});
@@ -2787,9 +2824,10 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 	removeMembers: function(aNames, sType, aNodes) {
 		var sName;
 		var bSave = false;
+		var aExclude = this.getExclude();
 		for (var i = 0; i < aNames.length; i++) {
 			sName = aNames[i];
-			if (this.getExclude().indexOf(sName) < 0) {
+			if (aExclude.indexOf(sName) < 0) {
 				if (typeof this.currentConfig[sName] !== 'undefined') {
 					var oWhere = JUL.Designer.getWhere(aNodes.get(i).childNodes[1].firstChild);
 					if (oWhere.field.required) {
@@ -2800,7 +2838,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 					}
 					bSave = true;
 				}
-				ample.query(aNodes.get(i)).remove();
+				JUL.Designer.empty(aNodes.get(i), true);
 			}
 		}
 		if (bSave) { this.save(true); }
@@ -2873,7 +2911,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		}
 		var oParent = oNode.parentNode;
 		if (!bOnlyChildren) {
-			ample.query(oNode).remove();
+			JUL.Designer.empty(oNode, true);
 			delete JUL.Designer.state.map[sId];
 		}
 		if (!bSelf) {
@@ -3054,7 +3092,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			var oWhere = JUL.Designer.getWhere(this.currentNode);
 			sCurrentPath = this.findPath(oWhere.val());
 		}
-		var oCurrent = this.current.parserConfig;
+		var oCurrent = this.currentParser;
 		var fSearch = function(oConfig, aPath) {
 			var sPath = aPath.join('.');
 			if (sPath === sCurrentPath) {
@@ -3085,7 +3123,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			var oWhere = JUL.Designer.getWhere(oNode);
 			oConfig = oWhere.val();
 		}
-		var oCurrent = this.current.parserConfig;
+		var oCurrent = this.currentParser;
 		var sId = this.getId(oConfig);
 		for (var i = 0; i < aItems.length; i++) {
 			switch (aItems[i]) {
@@ -3098,13 +3136,29 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			break;
 			case 'members':
 				var aMembers = [];
-				var aSearch = [].concat(oCurrent.childrenProperty, oCurrent.membersProperties);
+				var aSearch = oCurrent.getMembers(oConfig);
 				for (var k = 0; k < aSearch.length; k++) {
 					if (sId && this.current.logic[sId] && this.current.logic[sId][aSearch[k]] && typeof this.current.logic[sId][aSearch[k]] === 'object') { aMembers.push(aSearch[k]); }
 					else if (oConfig[aSearch[k]] && typeof oConfig[aSearch[k]] === 'object') { aMembers.push(aSearch[k]); }
 				}
 				oNode.querySelector('xul|treerow').childNodes[2].setAttribute('label', aMembers.join(', '));
 			break;
+			}
+		}
+	},
+	setMembersMenu: function(oConfig, oCurrent) {
+		var oMenu = ample.getElementById('menulist-designer-members').querySelector('xul|menupopup');
+		JUL.Designer.empty(oMenu);
+		oCurrent = oCurrent || this.currentParser;
+		if (oCurrent) {
+			var aItems = oCurrent.getMembers(oConfig);
+			for (var i = 0; i < aItems.length; i++) {
+				oMenu.appendChild(JUL.Designer.parser.createComponent({
+					tag: 'menuitem',
+					label: aItems[i],
+					value: aItems[i],
+					style: 'font-style:italic'
+				}));
 			}
 		}
 	},
@@ -3196,6 +3250,9 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			this.state.mapsToModule = sModule;
 		}
 		var oCurrent = this.state.newProject;
+		if (sOperation === 'new' && JUL.Designer.framework.current.ns) {
+			oCurrent.suggestedFramework = JUL.Designer.framework.current.ns;
+		}
 		if (oInit) { JUL.apply(oCurrent, oInit); }
 		if (sOperation === 'edit') {
 			for (var sItem in this.current) {
@@ -3205,8 +3262,8 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 				}
 			}
 		}
-		ample.query('#listbox-project-settings>xul|listbody').empty();
-		ample.query('#listbox-project-parser>xul|listbody').empty();
+		JUL.Designer.empty(ample.getElementById('listbox-project-settings').body);
+		JUL.Designer.empty(ample.getElementById('listbox-project-parser').body);
 		if (!oCurrent.template) {
 			oCurrent.template = JUL.Designer.config.defaultTemplate;
 		}
@@ -3260,7 +3317,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		ample.getElementById('textbox-clipboard-members').setAttribute('value', sText);
 		sText = '* special members ';
 		if (this.current.ns) {
-			sText = sText + this.getExclude().map(function(s){return "'" + s + "'";}).join(', ') + ' ';
+			sText = sText + ' like ' + this.getExclude().map(function(s){return "'" + s + "'";}).join(', ') + ' ';
 		}
 		sText = sText + 'won\'t be pasted over';
 		ample.getElementById('description-exclude-paste').setAttribute('value', sText);
@@ -3319,14 +3376,14 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		Changes the 'members' collection displayed under a component in the UI tree panel
 		@param	{String}	sWhat	The name of the new collection
 	*/
-	showMembers: function(sWhat) {
-		var oCurrent = this.current.parserConfig;
-		var aItems = [].concat(oCurrent.childrenProperty, oCurrent.membersProperties);
-		if (aItems.indexOf(sWhat) < 0) { return; }
+	showMembers: function(sWhat, bForce) {
+		var oCurrent = this.currentParser;
 		var oWhere = JUL.Designer.getWhere(this.currentNode);
 		var oConfig = oWhere.val();
+		var aItems = oCurrent.getMembers(oConfig);
+		if (aItems.indexOf(sWhat) < 0) { return; }
 		var sId = this.getId(oConfig);
-		if (sWhat === oWhere.showWhat) { return; }
+		if (!bForce && sWhat === oWhere.showWhat) { return; }
 		var sType = oConfig[sWhat] ? JUL.typeOf(oConfig[sWhat]) : 'Array';
 		if (sId && this.current.logic[sId] && this.current.logic[sId][sWhat] && 
 			typeof this.current.logic[sId][sWhat] === 'object') {
@@ -3453,7 +3510,8 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			htmlProperty: JUL.UI.htmlProperty,
 			rootWrapper: 'content',
 			exportListeners: false,
-			listenerPrefix: 'on',
+			stripFunction: false,
+			listenerPrefix: '',
 			mergeLogic: false,
 			expandMembers: false
 		};
@@ -3461,6 +3519,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		ample.getElementById('textbox-xml-html').setAttribute('value' , this.state._xmlOptions.htmlProperty);
 		ample.getElementById('textbox-xml-wrapper').setAttribute('value' , this.state._xmlOptions.rootWrapper);
 		ample.getElementById('checkbox-xml-export-listeners').setAttribute('checked' , this.state._xmlOptions.exportListeners);
+		ample.getElementById('checkbox-xml-strip-function').setAttribute('checked' , this.state._xmlOptions.stripFunction);
 		ample.getElementById('textbox-xml-listener-prefix').setAttribute('value' , this.state._xmlOptions.listenerPrefix);
 		ample.getElementById('checkbox-xml-merge-logic').setAttribute('checked' , this.state._xmlOptions.mergeLogic);
 		ample.getElementById('checkbox-xml-expand-members').setAttribute('checked' , this.state._xmlOptions.expandMembers);
@@ -3552,6 +3611,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 	*/
 	testJs: function(oJs, bComment) {
 		var sJs = '/* generated by ' + JUL.Designer.title + ' version ' + JUL.Designer.version + ' */\n';
+		oJs.parserConfig = JUL.apply(JUL.apply({}, oJs.parserConfig), oJs.parserConfig._otherProperties || {}, true);
 		if (bComment) {
 			var oProject = JUL.Designer.keySort(oJs);
 			delete oProject.parserConfig;
@@ -3559,6 +3619,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			delete oProject.logic;
 			var oParser = JUL.Designer.keySort(oJs.parserConfig);
 			delete oParser._keepInstance;
+			delete oParser._otherProperties;
 			for (var sItem in oParser) {
 				if (oParser.hasOwnProperty(sItem) && typeof JUL.UI[sItem] !== 'undefined' &&
 					JSON.stringify(oParser[sItem]) === JSON.stringify(JUL.UI[sItem])) { delete oParser[sItem]; }
@@ -3606,22 +3667,25 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		oOptions = oOptions || {};
 		oOptions = JUL.apply({
 			exportListeners: true,
-			listenerPrefix: 'on',
+			stripFunction: true,
+			listenerPrefix: '',
 			listenersProperty: this.current.listenersProperty,
 			mergeLogic: true,
-			expandMembers: !this.current.parserConfig.useTags,
+			expandMembers: !this.currentParser.useTags,
 			rootWrapper: 'root'
 		}, [this.current.parserConfig, oOptions]);
 		oOptions.topDown = true;
 		if (oOptions.expandMembers) {
-			oOptions.membersProperties = [].concat(oOptions.childrenProperty, oOptions.membersProperties);
+			oOptions.membersProperties = [].concat(oOptions.childrenProperty, oOptions.membersProperties || []);
 			oOptions.childrenProperty = '_children_';
 		}
-		oOptions.xmlDoc = JUL.UI._createXml(sHeader.replace('"1.0"', '"1.0" encoding="UTF-8"') + '<root />');
+		oOptions.xmlDoc = JUL.UI._createXml(sHeader.replace('"1.0"', '"1.0" encoding="UTF-8"') + '<root xmlns="#customXMLns:" />');
 		oOptions.xmlDoc.removeChild(oOptions.xmlDoc.lastChild);
 		var bArray = JUL.typeOf(this.current.ui) === 'Array';
 		oOptions.xmlNS = JUL.apply({}, JUL.UI.xmlNS);
-		oOptions.xmlNS.xul = 'http://www.w3.org/2015/xul';
+		for (var sPos in oOptions.xmlNS) {
+			if (oOptions.xmlNS.hasOwnProperty(sPos)) { oOptions.xmlNS[sPos] = '#customXMLns:' + oOptions.xmlNS[sPos]; }
+		}
 		oOptions.customFactory = this.createXml;
 		var oParser = new JUL.UI.Parser(oOptions);
 		var oUi = oOptions.expandMembers ? (bArray ?
@@ -3647,7 +3711,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 		var oSerializer = JUL.Designer.state._serializer;
 		var sEncoding = oOptions.xmlDoc.xmlEncoding || oOptions.xmlDoc.characterSet || oOptions.xmlDoc.charset;
 		var sXml = oSerializer ? oSerializer.serializeToString(oOptions.xmlDoc) : (oOptions.xmlDoc.xml || '');
-		sXml = sXml.replace(new RegExp(oOptions.xmlNS.xul, 'g'), JUL.UI.xmlNS.xul);
+		sXml = sXml.replace(/#customXMLns:/g, '');
 		var n = 0;
 		if (sXml.substr(0, 5) === '<' + '?xml') {
 			n = sXml.indexOf('?' + '>') + 2;
@@ -3717,7 +3781,7 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			}
 		break;
 		case 'changeMembers':
-			var oParser = this.current.parserConfig;
+			var oParser = this.currentParser;
 			this.initConfig(oUndo.show.val());
 			if (oUndo.tabIndex === 1) { oUndo.owner = this.getTarget(oUndo.show.val()); }
 			if (oUndo.tabIndex === 2) { oUndo.owner = this.getTarget(oUndo.show.val())[this.current.listenersProperty]; }

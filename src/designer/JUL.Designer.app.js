@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 1.9.5
+	JUL Designer version 2.0
 	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -31,8 +31,8 @@ JUL.Designer.app.ui = {
 	tag: 'dialog',
 	id: 'dialog-app',
 	title: 'Application',
-	width: 860,
-	height: 430,
+	width: 980,
+	height: 470,
 	hidden: true,
 	children: [
 		{tag: 'tabbox', children: [
@@ -48,8 +48,8 @@ JUL.Designer.app.ui = {
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'listbox', flex: 1, id: 'listbox-app-settings', children: [
 					{tag: 'listhead', children: [
-						{tag: 'listheader', label: 'Setting', width: 220},
-						{tag: 'listheader', label: 'Value', width: 220},
+						{tag: 'listheader', label: 'Setting', width: 250},
+						{tag: 'listheader', label: 'Value', width: 380},
 						{tag: 'listheader', label: 'Code', width: 40}
 					]},
 					{tag: 'listbody'}
@@ -58,8 +58,8 @@ JUL.Designer.app.ui = {
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'listbox', flex: 1, id: 'listbox-app-parser', children: [
 					{tag: 'listhead', children: [
-						{tag: 'listheader', label: 'Member', width: 220},
-						{tag: 'listheader', label: 'Value', width: 220},
+						{tag: 'listheader', label: 'Member', width: 250},
+						{tag: 'listheader', label: 'Value', width: 380},
 						{tag: 'listheader', label: 'Code', width: 40}
 					]},
 					{tag: 'listbody'}
@@ -88,9 +88,9 @@ JUL.Designer.app.ui = {
 				]},
 				{tag: 'listbox', flex: 1, id: 'listbox-app-modules', children: [
 					{tag: 'listhead', children: [
-						{tag: 'listheader', label: 'Module', width: 200},
-						{tag: 'listheader', label: 'Namespace', width: 300},
-						{tag: 'listheader', label: 'Description', width: 120}
+						{tag: 'listheader', label: 'Module', width: 220},
+						{tag: 'listheader', label: 'Namespace', width: 330},
+						{tag: 'listheader', label: 'Description', width: 140}
 					]},
 					{tag: 'listbody'}
 				]}
@@ -419,8 +419,8 @@ JUL.apply(JUL.Designer.app, /** @lends JUL.Designer.app */ {
 		var oPopupButton = ample.getElementById('menupopup-switch-module-button');
 		var oModules = this.current.modules;
 		if (!bSelectOnly) {
-			ample.query(oPopup).empty();
-			ample.query(oPopupButton).empty();
+			JUL.Designer.empty(oPopup);
+			JUL.Designer.empty(oPopupButton);
 			if (!this.current.ns) { return; }
 			var n = 1;
 			for (var sItem in oModules) {
@@ -523,7 +523,7 @@ JUL.apply(JUL.Designer.app, /** @lends JUL.Designer.app */ {
 			var sItem = JUL.Designer.getWhere(oSelected.item(i));
 			delete oModules[sItem];
 		}
-		ample.query(oSelected).remove();
+		JUL.Designer.empty(oSelected, true);
 	},
 	/**
 		Saves the current application
@@ -619,9 +619,9 @@ JUL.apply(JUL.Designer.app, /** @lends JUL.Designer.app */ {
 				}
 			}
 		}
-		ample.query('#listbox-app-settings>xul|listbody').empty();
-		ample.query('#listbox-app-parser>xul|listbody').empty();
-		ample.query('#listbox-app-modules>xul|listbody').empty();
+		JUL.Designer.empty(ample.getElementById('listbox-app-settings').body);
+		JUL.Designer.empty(ample.getElementById('listbox-app-parser').body);
+		JUL.Designer.empty(ample.getElementById('listbox-app-modules').body);
 		if (!oCurrent.template) {
 			oCurrent.template = JUL.Designer.config.defaultAppTemplate;
 		}

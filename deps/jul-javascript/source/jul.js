@@ -1,5 +1,5 @@
 /*
-	JUL - The JavaScript UI Language version 1.3.8
+	JUL - The JavaScript UI Language version 1.4.0
 	Copyright (c) 2012 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-javascript/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-javascript/wiki/License/)
@@ -107,17 +107,20 @@ global.JUL = {};
 
 
 JUL = {
-	version: '1.3.8',
+	version: '1.4.0',
 	apply: function(oSource, oAdd, bDontReplace) {
 		if (!oAdd || typeof oAdd !== 'object') { return oSource; }
+		var oNew = bDontReplace ? {} : oSource;
 		var aMembers = [].concat(oAdd);
 		for (var i = 0; i < aMembers.length; i++) {
 			oAdd = aMembers[i];
 			for (var sItem in oAdd) {
-				if (oAdd.hasOwnProperty(sItem) && (!bDontReplace || typeof oSource[sItem] !== 'undefined')) {
-					oSource[sItem] = oAdd[sItem];
-				}
+				if (oAdd.hasOwnProperty(sItem)) { oNew[sItem] = oAdd[sItem]; }
 			}
+		}
+		if (!bDontReplace) { return oSource; }
+		for (sItem in oNew) {
+			if (oNew.hasOwnProperty(sItem) && typeof oSource[sItem] === 'undefined') { oSource[sItem] = oNew[sItem]; }
 		}
 		return oSource;
 	},
@@ -290,6 +293,8 @@ JUL.apply(JUL.UI,  {
 	htmlProperty: 'html',
 	idProperty: 'id',
 	includeProperty: 'include',
+	instantiateProperty: 'instantiate',
+	membersMappings: {},
 	membersProperties: [],
 	parentProperty: 'parent',
 	parserProperty: 'parserConfig',
@@ -315,6 +320,12 @@ JUL.apply(JUL.UI,  {
 		this.Parser.prototype = this;
 	},
 	compact: function(oData, bAuto, _nLength) {
+		if (!oData || typeof oData !== 'object') { return oData; }
+		if (JUL.typeOf(oData) === 'Array') {
+			var aResult = [];
+			for (var u = 0; u < oData.length; u++) { aResult.push(this.compact(oData[u], bAuto, _nLength)); }
+			return aResult;
+		}
 		oData = this.include(oData);
 		if (JUL.typeOf(oData[this.childrenProperty]) !== 'Array') { return oData; }
 		var aItems = [];
@@ -337,14 +348,14 @@ JUL.apply(JUL.UI,  {
 			}
 		}
 		var oAdd = {};
-		if (typeof _nLength === 'undefined') { _nLength = this.membersProperties.length; }
+		if (typeof _nLength === 'undefined') { _nLength = (this.membersProperties || []).length; }
 		for (i = 0; i < oData[this.childrenProperty].length; i++) {
 			oChild = oData[this.childrenProperty][i];
 			sClass = oChild[this.classProperty] || this.defaultClass;
 			sName = this.useTags ? sClass + ':' + oChild[this.tagProperty] : sClass;
 			var sTag = this.useTags && sClass === this.defaultClass ? oChild[this.tagProperty] : sName;
 			var bCompact = typeof oChild[this.childrenProperty] === 'object' && oChild[this.childrenProperty].length;
-			var iPos = this.membersProperties.indexOf(sTag);
+			var iPos = (this.membersProperties || []).indexOf(sTag);
 			if (bCompact && (iPos < 0 || iPos >= _nLength)) {
 				if (bAuto) {
 					for (sItem in oChild) {
@@ -370,7 +381,8 @@ JUL.apply(JUL.UI,  {
 		for (sItem in oAdd) {
 			if (oAdd.hasOwnProperty(sItem)) {
 				oNew[sItem] = oAdd[sItem];
-				if (sItem !== this.childrenProperty && this.membersProperties.indexOf(sItem) < 0) {
+				if (sItem !== this.childrenProperty && (this.membersProperties || []).indexOf(sItem) < 0) {
+					this.membersProperties = this.membersProperties || [];
 					this.membersProperties.push(sItem);
 				}
 				for (i = 0; i < oAdd[sItem].length; i++) {
@@ -415,15 +427,11 @@ JUL.apply(JUL.UI,  {
 					JUL.apply(oNew, oBindings[oNew[this.idProperty]]);
 				}
 				oCurrent.val(oNew);
+				var aInstantiate = this.getMembers(oNew);
+				delete oNew[this.instantiateProperty];
 				for (var sItem in oNew) {
 					if (oNew.hasOwnProperty(sItem)) {
-						if (this.referencePrefix && typeof oNew[sItem] === 'string' &&
-							oNew[sItem].substr(0, this.referencePrefix.length) === this.referencePrefix) {
-								var sGet = JUL.trim(oNew[sItem].substr(this.referencePrefix.length));
-								oNew[sItem] = sGet ? JUL.get(sGet) : null;
-							}
-						if (typeof oNew[sItem] === 'object' &&
-							[].concat(this.childrenProperty, this.membersProperties).indexOf(sItem) > -1) {
+						if (oNew[sItem] && typeof oNew[sItem] === 'object' && aInstantiate.indexOf(sItem) > -1) {
 							var aMembers = [].concat(oNew[sItem]);
 							var sType = JUL.typeOf(oNew[sItem]);
 							if (sType === 'Array' || this.topDown) {
@@ -487,22 +495,14 @@ JUL.apply(JUL.UI,  {
 	},
 	createDom: function(oConfig, oWidget) {
 		if (!oConfig) { return null; }
-		var nNS = oConfig[this.classProperty].indexOf(':');
-		var sNS = nNS > -1 ? oConfig[this.classProperty].substr(0, nNS) : oConfig[this.classProperty];
-		if (!this.xmlNS[sNS]) { sNS = 'html'; }
-		var fCall = function() {
-			var aArgs = [].slice.call(arguments);
-			var oThis = aArgs.shift();
-			var sFn = aArgs.shift();
-			while (aArgs.length && typeof aArgs[aArgs.length - 1] === 'undefined') { aArgs.pop(); }
-			return oThis[sFn].apply(oThis, aArgs);
-		};
+		var nNS = this.useTags ? -1 : oConfig[this.classProperty].indexOf(':');
+		var sNS = nNS > -1 ? oConfig[this.classProperty].substr(0, nNS) : (this.useTags ? oConfig[this.classProperty] : 'html');
 		var oDocument = window.document;
 		var bAmple = typeof window.ample === 'object';
 		if (bAmple) { oDocument = window.ample; }
 		oWidget = oWidget || (sNS === 'html' || typeof oDocument.createElementNS !== 'function' ?
-			fCall(oDocument, 'createElement', nNS > -1 ? oConfig[this.classProperty].substr(nNS + 1) : oConfig[this.tagProperty], oConfig.is) :
-			fCall(oDocument, 'createElementNS', this.xmlNS[sNS], nNS > -1 ? oConfig[this.classProperty] : sNS + ':' + oConfig[this.tagProperty], oConfig.is));
+			oDocument.createElement.apply(oDocument, [nNS > -1 ? oConfig[this.classProperty].substr(nNS + 1) : (this.useTags ? oConfig[this.tagProperty] : oConfig[this.classProperty])].concat(oConfig.is || [])) :
+			oDocument.createElementNS.apply(oDocument, [this.xmlNS[sNS] || null, nNS > -1 ? oConfig[this.classProperty] : sNS + ':' + (this.useTags ? oConfig[this.tagProperty] : oConfig[this.classProperty])].concat(oConfig.is || [] )));
 		if (!oWidget) { return null; }
 		if (oConfig.listeners && typeof oConfig.listeners === 'object') {
 			var oListeners = oConfig.listeners;
@@ -520,14 +520,18 @@ JUL.apply(JUL.UI,  {
 				}
 			}
 		}
+		var aInstantiate = this.getMembers(oConfig);
 		for (sItem in oConfig) {
-			if (oConfig.hasOwnProperty(sItem) && [].concat(this.childrenProperty, this.membersProperties).indexOf(sItem) < 0 &&
+			if (oConfig.hasOwnProperty(sItem) && aInstantiate.indexOf(sItem) < 0 &&
 				['listeners', this.cssProperty, 'style', this.htmlProperty, this.tagProperty, this.classProperty, this.parentProperty].indexOf(sItem) < 0)
 			{
 				nNS = sItem.indexOf(':');
 				var sAttr = ['Array', 'Date', 'Function', 'Object', 'Null', 'RegExp'].indexOf(JUL.typeOf(oConfig[sItem])) > -1 ? this.obj2str(oConfig[sItem]) : oConfig[sItem];
-				if (nNS > -1) {
-					oWidget.setAttributeNS(this.xmlNS[sItem.substr(0, nNS)], sItem, sAttr);
+				if (this.referencePrefix && typeof oConfig[sItem] === 'string' && sAttr.substr(0, this.referencePrefix.length) === this.referencePrefix) {
+					sAttr = JUL.trim(sAttr.substr(this.referencePrefix.length));
+				}
+				if (nNS > -1 && typeof oWidget.setAttributeNS === 'function') {
+					oWidget.setAttributeNS(this.xmlNS[sItem.substr(0, nNS)] || null, sItem, sAttr);
 				}
 				else {
 					oWidget.setAttribute(sItem, sAttr);
@@ -555,15 +559,16 @@ JUL.apply(JUL.UI,  {
 			}
 		}
 		for (sItem in oConfig) {
-			if (oConfig.hasOwnProperty(sItem) && JUL.typeOf(oConfig[sItem]) === 'Array' &&
-				[].concat(this.childrenProperty, this.membersProperties).indexOf(sItem) > -1) {
-				var aMembers = oConfig[sItem];
+			if (oConfig.hasOwnProperty(sItem) && oConfig[sItem] && typeof oConfig[sItem] === 'object' &&
+				aInstantiate.indexOf(sItem) > -1) {
+				var aMembers = [].concat(oConfig[sItem]);
 				var oMembersWidget =  oWidget;
 				if (sItem !== this.childrenProperty) {
 					nNS = sItem.indexOf(':');
-					if (nNS > -1) { sNS = sItem.substr(0, nNS);	}
-					oMembersWidget = sNS === 'html' ? fCall(oDocument, 'createElement', nNS > -1 ? sItem.substr(nNS + 1) : sItem, oConfig.is) :
-						fCall(oDocument, 'createElementNS', this.xmlNS[sNS], nNS > -1 ? sItem : sNS + ':' + sItem, oConfig.is);
+					sNS = nNS > -1 ? sItem.substr(0, nNS) : (this.useTags ? this.defaultClass : 'html');
+					oMembersWidget = sNS === 'html' || typeof oDocument.createElementNS !== 'function' ?
+						oDocument.createElement.apply(oDocument, [nNS > -1 ? sItem.substr(nNS + 1) : sItem].concat(oConfig.is || [])) :
+						oDocument.createElementNS.apply(oDocument, [this.xmlNS[sNS] || null, nNS > -1 ? sItem : sNS + ':' + sItem].concat(oConfig.is || []));
 				}
 				for (var k = 0; k < aMembers.length; k++) {
 					oMembersWidget.appendChild(aMembers[k]);
@@ -580,11 +585,15 @@ JUL.apply(JUL.UI,  {
 		return oWidget;
 	},
 	expand: function(oData) {
+		if (!oData || typeof oData !== 'object') { return oData; }
+		if (JUL.typeOf(oData)  === 'Array') { return oData.map(this.expand, this); }
 		oData = this.include(oData);
 		var aChildren = [];
+		var aInstantiate = this.getMembers(oData);
+		delete oData[this.instantiateProperty];
 		for (var sItem in oData) {
 			if (oData.hasOwnProperty(sItem) && oData[sItem] && typeof oData[sItem] === 'object' &&
-				[].concat(this.childrenProperty, this.membersProperties).indexOf(sItem) > -1) {
+				aInstantiate.indexOf(sItem) > -1) {
 				if (sItem === this.childrenProperty) {
 					aChildren = aChildren.concat(oData[sItem]);
 				}
@@ -626,6 +635,17 @@ JUL.apply(JUL.UI,  {
 		else {
 			return new oCurrent[sItem]();
 		}
+	},
+	getMembers: function(oConfig) {
+		var aMembers = [].concat(this.childrenProperty, this.membersProperties || []);
+		if (!oConfig) { return aMembers; }
+		var aClass = [];
+		if (!this.useTags || (oConfig[this.classProperty] && oConfig[this.classProperty] !== this.defaultClass)) {
+			aClass.push(oConfig[this.classProperty] || this.defaultClass);
+		}
+		if (this.useTags) { aClass.push(oConfig[this.tagProperty]); }
+		var oMappings = this.membersMappings || {};
+		return aMembers.concat(oMappings[aClass.join(':')] || [], oConfig[this.instantiateProperty] || []);
 	},
 	include: function(oData, fMerger) {
 		var oNew = {};
@@ -723,6 +743,10 @@ JUL.apply(JUL.UI,  {
 							sItem.substr(0, this._jsonPrefixes.regex.length) === this._jsonPrefixes.regex) {
 							bPrefix = true;
 							sItem = sItem.substr(this._jsonPrefixes.regex.length).replace(/^\s+/, '');
+						}
+						if (this.referencePrefix && sItem.substr(0, this.referencePrefix.length) === this.referencePrefix) {
+							bPrefix = true;
+							sItem = sItem.substr(this.referencePrefix.length).replace(/^\s+/, '');
 						}
 						sContent = sContent + (bPrefix || (!this._usePrefixes && this._regExps.regexp.test(sItem)) ?
 							sItem : (this._useDoubleQuotes ? sData.substr(nStart, i - nStart + 1) :
@@ -854,7 +878,7 @@ JUL.apply(JUL.UI,  {
 					var sTag = !bNoTag && nNS > -1 && this.defaultClass === oChild.nodeName.substr(0, nNS) ?
 						oChild.nodeName.substr(nNS + 1) : oChild.nodeName;
 					if (!oRepeat[oChild.nodeName] &&
-						[].concat(this.childrenProperty, this.membersProperties).indexOf(sTag) > -1) {
+						[].concat(this.childrenProperty, this.membersProperties || []).indexOf(sTag) > -1) {
 						var aMembers = [];
 						oData[sTag] = aMembers;
 						for (var k = 0; k < oChild.childNodes.length; k++) {
@@ -900,7 +924,7 @@ JUL.apply(JUL.UI,  {
 		if (window.DOMParser) {
 			JUL.UI._xmlParser = JUL.UI._xmlParser || new DOMParser();
 			try {
-				return JUL.UI._xmlParser.parseFromString(sXml, 'application/xhtml+xml');
+				return JUL.UI._xmlParser.parseFromString(sXml, 'application/xml');
 			}
 			catch(e) {
 				return {error: e.message};
