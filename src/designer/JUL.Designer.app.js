@@ -614,7 +614,7 @@ JUL.apply(JUL.Designer.app, /** @lends JUL.Designer.app */ {
 				if (oDesigner.parserFields.hasOwnProperty(sField)) {
 					this.parserFields[sField] = JUL.apply({}, oDesigner.parserFields[sField]);
 					if (this.parserFields[sField].id) {
-						this.parserFields[sField].id = this.parserFields[sField].id.replace('project', 'app');
+						this.parserFields[sField].id = this.parserFields[sField].id + '-app';
 					}
 				}
 			}
