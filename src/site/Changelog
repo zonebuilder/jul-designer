@@ -1,3 +1,5 @@
+v2.0.2 (2017-03-25):
+  * maintenance release
 v2.0 (2017-03-14):
   * implemented per-class and per-node members instantiation as in JUL 1.4.0
   * new examples of newsreader in ReactJS, WinJS & OpenUI5

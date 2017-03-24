@@ -1,5 +1,5 @@
 /*
-	JUL - The JavaScript UI Language version 1.4.0
+	JUL - The JavaScript UI Language version 1.4.5
 	Copyright (c) 2012 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-javascript/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-javascript/wiki/License/)
@@ -107,7 +107,7 @@ global.JUL = {};
 
 
 JUL = {
-	version: '1.4.0',
+	version: '1.4.5',
 	apply: function(oSource, oAdd, bDontReplace) {
 		if (!oAdd || typeof oAdd !== 'object') { return oSource; }
 		var oNew = bDontReplace ? {} : oSource;
@@ -392,12 +392,14 @@ JUL.apply(JUL.UI,  {
 		}
 		return oNew;
 	},
-	create: function(oTree, oBindings, oParent) {
-			if (!oTree) { return null; }
+	create: function(oTree, oBindings, oParent, bSparse) {
+			var sType = JUL.typeOf(oTree);
+			if (['Array', 'Object'].indexOf(sType) < 0) { return null; }
+			if (JUL.typeOf(oBindings) !== 'Object') { oBindings = null; }
 			if (oBindings && oBindings[this.includeProperty]) {
 					oBindings = this.include(oBindings);
 			}
-			if (JUL.typeOf(oTree) === 'Array') {
+			if (sType === 'Array') {
 				return oTree.map(function(oItem) {
 					return this.create(oItem, oBindings, oParent);
 				}, this);
@@ -410,39 +412,60 @@ JUL.apply(JUL.UI,  {
 				var aNextNodes = [];
 			for (var i = 0; i < aNodes.length; i++) {
 				var oCurrent = aNodes[i];
-				if (!oCurrent.val() || oCurrent.val()[this.parserProperty]) { continue; }
 				oCurrent.config = oCurrent.val();
-				delete oCurrent.config[this._instanceProperty];
-				var oNew = this.include(oCurrent.config);
-				if (oNew[this.bindingProperty]) {
-					if (oBindings) {
-						var aCid = [].concat(oNew[this.bindingProperty]);
-						for (var k = 0; k < aCid.length; k++) {
-							if (oBindings[aCid[k]]) { JUL.apply(oNew, oBindings[aCid[k]]); }
+				sType = JUL.typeOf(oCurrent.config);
+				if (sType !== 'Object' && (!bSparse || sType !== 'Array')) { continue; }
+				if (sType === 'Array') {
+					var aCopy = [].concat(oCurrent.config);
+					for (var j = 0; j < aCopy.length; j++) {
+						if (['Array', 'Object'].indexOf(JUL.typeOf(aCopy[j])) > -1) {
+							aNextNodes.push(new JUL.Ref(aCopy, j));
 						}
 					}
-					delete oNew[this.bindingProperty];
+					oCurrent.val(aCopy);
+					oCurrent.sparse = true;
+					delete oCurrent.config;
+					continue;
 				}
-				if (oNew[this.idProperty] && oBindings && oBindings[oNew[this.idProperty]]) {
-					JUL.apply(oNew, oBindings[oNew[this.idProperty]]);
+				if (oCurrent.config[this.parserProperty]) { continue; }
+				var bConfig = !bSparse || oCurrent.config[this.classProperty] || (this.useTags && oCurrent.config[this.tagProperty]);
+				delete oCurrent.config[this._instanceProperty];
+				var oNew = bConfig ? this.include(oCurrent.config) : JUL.apply({}, oCurrent.config);
+				if (bConfig) {
+					if (oNew[this.bindingProperty]) {
+						if (oBindings) {
+							var aCid = [].concat(oNew[this.bindingProperty]);
+							for (var k = 0; k < aCid.length; k++) {
+								if (oBindings[aCid[k]]) { JUL.apply(oNew, oBindings[aCid[k]]); }
+							}
+						}
+						delete oNew[this.bindingProperty];
+					}
+					if (oNew[this.idProperty] && oBindings && oBindings[oNew[this.idProperty]]) {
+						JUL.apply(oNew, oBindings[oNew[this.idProperty]]);
+					}
 				}
 				oCurrent.val(oNew);
-				var aInstantiate = this.getMembers(oNew);
-				delete oNew[this.instantiateProperty];
+				oCurrent.sparse = !bConfig;
+				var aInstantiate = bConfig ? this.getMembers(oNew) : [];
+				if (bConfig) { delete oNew[this.instantiateProperty]; }
 				for (var sItem in oNew) {
 					if (oNew.hasOwnProperty(sItem)) {
-						if (oNew[sItem] && typeof oNew[sItem] === 'object' && aInstantiate.indexOf(sItem) > -1) {
+						var bInstantiate = bConfig && aInstantiate.indexOf(sItem) > -1;
+						sType = JUL.typeOf(oNew[sItem]);
+						if (['Array', 'Object'].indexOf(sType) > -1 && (bInstantiate || bSparse)) {
 							var aMembers = [].concat(oNew[sItem]);
-							var sType = JUL.typeOf(oNew[sItem]);
-							if (sType === 'Array' || this.topDown) {
+							if (sType === 'Array' || (bInstantiate && this.topDown)) {
 								for (var n = 0; n < aMembers.length; n++) {
-										aNextNodes.push(new JUL.Ref({ref: aMembers, key: n, parent: oCurrent}));
+										if (['Array', 'Object'].indexOf(JUL.typeOf(aMembers[n])) > -1) {
+											aNextNodes.push(new JUL.Ref({ref: aMembers, key: n, parent: oCurrent}));
+										}
 								}
 							}
 							else {
 									aNextNodes.push(new JUL.Ref({ref: oNew, key: sItem, parent: oCurrent}));
 							}
-							if (this.topDown) {
+							if (bInstantiate && this.topDown) {
 								delete oNew[sItem];
 							}
 							else {
@@ -465,10 +488,12 @@ JUL.apply(JUL.UI,  {
 				oCurrent.val(oBranchParser.create(oBranchConfig, oBindings, this.topDown && oCurrent.parent ? oCurrent.parent.val() : null));
 				continue;
 			}
-			if (this.topDown) {
-				oCurrent.val()[this.parentProperty] = oCurrent.parent ? oCurrent.parent.val() : null;
+			if (!oCurrent.sparse) {
+				if (this.topDown) {
+					oCurrent.val()[this.parentProperty] = oCurrent.parent ? oCurrent.parent.val() : null;
+				}
+				oCurrent.val(this.createComponent(oCurrent.val()));
 			}
-			oCurrent.val(this.createComponent(oCurrent.val()));
 			if (this._keepInstance && oCurrent.config) {
 				oCurrent.config[this._instanceProperty] = oCurrent.val();
 			}
@@ -527,7 +552,8 @@ JUL.apply(JUL.UI,  {
 			{
 				nNS = sItem.indexOf(':');
 				var sAttr = ['Array', 'Date', 'Function', 'Object', 'Null', 'RegExp'].indexOf(JUL.typeOf(oConfig[sItem])) > -1 ? this.obj2str(oConfig[sItem]) : oConfig[sItem];
-				if (this.referencePrefix && typeof oConfig[sItem] === 'string' && sAttr.substr(0, this.referencePrefix.length) === this.referencePrefix) {
+				if (this.referencePrefix && typeof oConfig[sItem] === 'string' &&
+					sAttr.substr(0, this.referencePrefix.length) === this.referencePrefix && JUL.trim(sAttr.substr(this.referencePrefix.length))) {
 					sAttr = JUL.trim(sAttr.substr(this.referencePrefix.length));
 				}
 				if (nNS > -1 && typeof oWidget.setAttributeNS === 'function') {
@@ -716,11 +742,13 @@ JUL.apply(JUL.UI,  {
 				else {
 					var bPrefix = false;
 					if (this._usePrefixes) {
-						if (sItem.substr(0, this._jsonPrefixes.func.length) === this._jsonPrefixes.func) {
+						if (sItem.substr(0, this._jsonPrefixes.func.length) === this._jsonPrefixes.func &&
+							JUL.trim(sItem.substr(this._jsonPrefixes.func.length))) {
 							bPrefix = true;
 							sItem = sItem.substr(this._jsonPrefixes.func.length).replace(/^\s+/, '');
 						}
-						else if (sItem.substr(0, this._jsonPrefixes.newop.length) === this._jsonPrefixes.newop) {
+						else if (sItem.substr(0, this._jsonPrefixes.newop.length) === this._jsonPrefixes.newop &&
+							JUL.trim(sItem.substr(this._jsonPrefixes.newop.length))) {
 							bPrefix = true;
 							sItem = sItem.substr(this._jsonPrefixes.newop.length).replace(/^\s+/, '');
 						}
@@ -740,11 +768,13 @@ JUL.apply(JUL.UI,  {
 					else {
 						bPrefix = false;
 						if (this._usePrefixes &&
-							sItem.substr(0, this._jsonPrefixes.regex.length) === this._jsonPrefixes.regex) {
+							sItem.substr(0, this._jsonPrefixes.regex.length) === this._jsonPrefixes.regex &&
+								JUL.trim(sItem.substr(this._jsonPrefixes.regex.length))) {
 							bPrefix = true;
 							sItem = sItem.substr(this._jsonPrefixes.regex.length).replace(/^\s+/, '');
 						}
-						if (this.referencePrefix && sItem.substr(0, this.referencePrefix.length) === this.referencePrefix) {
+						if (this.referencePrefix && sItem.substr(0, this.referencePrefix.length) === this.referencePrefix &&
+							JUL.trim(sItem.substr(this.referencePrefix.length))) {
 							bPrefix = true;
 							sItem = sItem.substr(this.referencePrefix.length).replace(/^\s+/, '');
 						}
