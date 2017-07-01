@@ -91,3 +91,11 @@ td.xul-box---box-child, div.xul-dialog--body, div.xul-window--body {
 	font-size: 13px;
 	font-weight: normal;
 }
+.code textarea.xul-textbox--input {
+	background: url(../../media/lines.png);
+	background-attachment: local;
+	background-repeat: no-repeat;
+	padding-left: 35px;
+	padding-top: 10px;
+	line-height: 16px !important;
+}

@@ -1,5 +1,5 @@
 /*
-	JUL - The JavaScript UI Language version 1.4.5
+	JUL - The JavaScript UI Language version 1.5.2
 	Copyright (c) 2012 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-javascript/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-javascript/wiki/License/)
@@ -107,15 +107,38 @@ global.JUL = {};
 
 
 JUL = {
-	version: '1.4.5',
-	apply: function(oSource, oAdd, bDontReplace) {
+	nsRoot: null,
+	version: '1.5.2',
+	Instance: function(oConfig) {
+		if (!(this instanceof JUL.Instance)) { return new JUL.Instance(oConfig); }
+		JUL.apply(this, oConfig || {});
+		var oThis = this;
+		var fInstance = function() { return oThis; };
+		var FRef = function(oRef, sKey) {
+			if (!(this instanceof FRef)) { return new FRef(oRef, sKey); }
+			JUL.Ref.call(this, oRef, sKey);
+		};
+		FRef. prototype = new JUL.Ref();
+		FRef.prototype.constructor = FRef;
+		FRef.prototype._getJulInstance = fInstance;
+		this.ref = FRef;
+		this.ui = new JUL.UI.Parser();
+		this.ui._getJulInstance = fInstance;
+		this.parser = this.ui.Parser;
+	},
+	apply: function(oSource, oAdd, bDontReplace, aFilterOut, aFilterIn) {
 		if (!oAdd || typeof oAdd !== 'object') { return oSource; }
+		if (aFilterOut) { aFilterOut = [].concat(aFilterOut); }
+		if (aFilterIn) { aFilterIn = [].concat(aFilterIn); }
 		var oNew = bDontReplace ? {} : oSource;
 		var aMembers = [].concat(oAdd);
 		for (var i = 0; i < aMembers.length; i++) {
 			oAdd = aMembers[i];
 			for (var sItem in oAdd) {
-				if (oAdd.hasOwnProperty(sItem)) { oNew[sItem] = oAdd[sItem]; }
+				if (oAdd.hasOwnProperty(sItem) &&
+					(!aFilterOut || aFilterOut.indexOf(sItem) < 0) && (!aFilterIn || aFilterIn.indexOf(sItem) > -1)) {
+					oNew[sItem] = oAdd[sItem];
+				}
 			}
 		}
 		if (!bDontReplace) { return oSource; }
@@ -125,17 +148,30 @@ JUL = {
 		return oSource;
 	},
 	get: function(sPath, oRoot) {
-		var oCurrent = oRoot || global;
+		var oCurrent = oRoot || this.nsRoot || global;
 		if (!sPath) { return oCurrent; }
 		if (typeof sPath !== 'string') { return sPath; }
 		var aNames = sPath.replace(/\\\./g, ':::::').split('.');
+		if (!oRoot && aNames.length > 1 && ('window' === aNames[0] || 'global' === aNames[0])) {
+			aNames.shift();
+			oCurrent = global;
+		}
 		var sItem = '';
 		while (aNames.length) {
 			sItem = aNames.shift().replace(/:{5}/g, '.');
+			if (!sItem) { continue; }
 			if (typeof oCurrent[sItem] === 'undefined') { return oCurrent[sItem]; }
 			oCurrent = oCurrent[sItem];
 		}
 		return oCurrent;
+	},
+	getInstance: function(oChild) {
+		if (oChild instanceof JUL.Ref || oChild instanceof JUL.UI.Parser) {
+			return oChild._getJulInstance ? oChild._getJulInstance() : JUL;
+		}
+		else {
+			return oChild === JUL.UI ? JUL : null;
+		}
 	},
 	makeCaller: function(oScope, fCall, bAppendThis) {
 		if (!oScope || (!fCall && fCall !== 0)) { return null; }
@@ -158,10 +194,14 @@ JUL = {
 		var aNames = sPath ? sPath.replace(/\\\./g, ':::::').split('.') : [];
 		var sItem = '';
 		var oRe = /^(\d|[1-9]\d+)$/;
-		var oCurrent = oRoot || global;
-		if (!oRoot && aNames.length && ('window' === aNames[0] || 'global' === aNames[0])) { aNames.shift(); }
+		var oCurrent = oRoot || this.nsRoot || global;
+		if (!oRoot && aNames.length > 1 && ('window' === aNames[0] || 'global' === aNames[0])) {
+			aNames.shift();
+			oCurrent = global;
+		}
 		while (aNames.length) {
 			sItem = aNames.shift().replace(/:{5}/g, '.');
+			if (!sItem) { continue; }
 			if (typeof oCurrent[sItem] === 'undefined') { oCurrent[sItem] = aNames.length && oRe.test(aNames[0]) ? [] : {}; }
 				if (!aNames.length && typeof oInit !== 'undefined') { oCurrent[sItem] = oInit; }
 			oCurrent = oCurrent[sItem];
@@ -193,8 +233,23 @@ JUL = {
 	},
 	typeOf: function(oData) {
 		return ({}).toString.call(oData).match(/\w+/g)[1];
+	},
+	_getAutoInstance: function(oNSRoot) {
+		oNSRoot = oNSRoot || null;
+		if (oNSRoot === this.nsRoot) { return this; }
+		this._autoInstances = this._autoInstances || [];
+		for (var i = 0; i < this._autoInstances.length; i++) {
+			if (oNSRoot === this._autoInstances[i].nsRoot) { return this._autoInstances[i].getInstance; }
+		}
+		var oInstance = new JUL.Instance({nsRoot: oNSRoot});
+		var fInstance = function() { return oInstance; };
+		if (this._autoInstances.length > 1023) { this._autoInstances = this._autoInstances.slice(64, 1024); }
+		this._autoInstances.push({nsRoot: oNSRoot, getInstance: fInstance});
+		return fInstance;
 	}
 };
+
+JUL.apply(JUL.Instance.prototype, JUL, false, ['Instance', 'Ref', 'UI', 'version', '_getAutoInstance']);
 
 if (typeof Array.prototype.indexOf !== 'function') {
 	Array.prototype.indexOf = function(oSearch, nStart) {
@@ -229,20 +284,36 @@ JUL.Ref = function(oRef, sKey) {
 	if (!(this instanceof JUL.Ref)) {
 		return new JUL.Ref(oRef, sKey);
 	}
-	if (oRef instanceof JUL.Ref) {
-		JUL.apply(this, oRef);
-		return;
-	}
-	this._ref = oRef;	
-	this._key = sKey;
-	if (typeof oRef === 'object' && oRef.ref) {
-		this._ref = oRef.ref;
-		this._key = oRef.key;
-		for (var sMember in oRef) {
-			if (oRef.hasOwnProperty(sMember) && sMember !== 'key' && sMember !== 'ref') {
-				this[sMember] = oRef[sMember];
+	if (typeof oRef === 'undefined') { return; }
+	if (typeof sKey === 'undefined') {
+		if (oRef && typeof oRef === 'string') {
+			oRef = oRef.replace(/\\\./g, ':::::').split('.');
+			sKey = oRef.pop().replace(/:{5}/g, '.');
+			oRef = JUL.getInstance(this).get(oRef.join('.').replace(/:{5}/g, '\\.'));
+			if (typeof oRef !== 'undefined') {
+				this._ref = oRef;
+				this._key = sKey;
 			}
 		}
+		else if (oRef instanceof JUL.Ref) {
+			JUL.apply(this, oRef);
+		}
+		else if (JUL.typeOf(oRef) === 'Object' && oRef.hasOwnProperty('ref') && oRef.hasOwnProperty('key')) {
+			if (oRef.nsRoot) {
+				this._getJulInstance = JUL._getAutoInstance(oRef.nsRoot);
+			}
+			this._ref = oRef.ref;
+			this._key = oRef.key;
+			for (var sMember in oRef) {
+				if (oRef.hasOwnProperty(sMember) && sMember !== 'key' && sMember !== 'ref' && sMember !== 'nsRoot') {
+					this[sMember] = oRef[sMember];
+				}
+			}
+		}
+	}
+	else {
+		this._ref = oRef;	
+		this._key = sKey;
 	}
 };
 
@@ -259,10 +330,20 @@ JUL.apply(JUL.Ref.prototype,  {
 		return this._key;
 	},
 	ref: function(oRef, sKey) {
-		if (!oRef) { return this._ref; }
+		if (typeof oRef === 'undefined') { return this._ref; }
 		if (oRef === true) { return this._key; }
-		if (oRef) { this._ref = oRef; }
 		if (typeof sKey !== 'undefined') { this._key = sKey; }
+		else if (oRef && typeof oRef === 'string') {
+			oRef = oRef.replace(/\\\./g, ':::::').split('.');
+			sKey = oRef.pop().replace(/:{5}/g, '.');
+			oRef = JUL.getInstance(this).get(oRef.join('.').replace(/:{5}/g, '\\.'));
+			if (typeof oRef !== 'undefined') {
+				this._ref = oRef;
+				this._key = sKey;
+			}
+			return this;
+		}
+		if (oRef !== false) { this._ref = oRef; }
 		return this;
 	},
 	val: function(oVal) {
@@ -310,9 +391,15 @@ JUL.apply(JUL.UI,  {
 	Parser: function(oConfig) {
 		if (!(this instanceof JUL.UI.Parser) || this.hasOwnProperty('Parser')) {
 			return this && typeof this.Parser === 'function' && this.Parser.prototype instanceof JUL.UI.Parser ?
-				new this.Parser(oConfig) : new JUL.UI.Parser(oConfig);
+				new this.Parser(oConfig) :
+				(this && this.ui && this.ui instanceof JUL.UI.Parser ?
+					new this.ui.Parser(oConfig) :  new JUL.UI.Parser(oConfig));
 		}
-		JUL.apply(this, oConfig);
+		oConfig = oConfig || {};
+		if (oConfig.nsRoot) {
+			this._getJulInstance = JUL._getAutoInstance(oConfig.nsRoot);
+		}
+		JUL.apply(this, oConfig, false, 'nsRoot');
 		this.Parser = function(oConfig) {
 			var oReturn = JUL.UI.Parser.call(this, oConfig);
 			if (typeof oReturn === 'object') { return oReturn; }
@@ -504,15 +591,17 @@ JUL.apply(JUL.UI,  {
 		if (!oConfig[this.classProperty]) { oConfig[this.classProperty] = this.defaultClass; }
 		var sNamespace = '';
 		if (oConfig[this.idProperty]) {
-			sNamespace = oConfig[this.idProperty];
+			sNamespace = oConfig[this.idProperty].replace(/\\\./g, ':::::');
 			oConfig[this.idProperty] = oConfig[this.idProperty].replace(/\\\./g, '--').replace(/\./g, '-');
 			if (['window.', 'global.'].indexOf(sNamespace.substr(0, 7)) > -1) { oConfig[this.idProperty] = oConfig[this.idProperty].substr(7); }
+			if (sNamespace.substr(0, 1) === '.') { oConfig[this.idProperty] = oConfig[this.idProperty].substr(1); }
 		}
+		var oJul = JUL.getInstance(this);
 		var sClass = oConfig[this.classProperty];
 		if (!this.customFactory) { delete oConfig[this.classProperty]; }
-		var oNew = this.customFactory ? JUL.get(this.customFactory).call(this, oConfig) : this.factory(sClass, oConfig);
+		var oNew = this.customFactory ? oJul.get(this.customFactory).call(this, oConfig) : this.factory(sClass, oConfig);
 		if (sNamespace.indexOf('.') > -1) {
-			return JUL.ns(sNamespace.replace(/-/g, '_'), oNew);
+			return oJul.ns(sNamespace.replace(/:{5}/g, '\\.').replace(/-/g, '_'), oNew);
 		}
 		else {
 			return oNew;
@@ -520,6 +609,7 @@ JUL.apply(JUL.UI,  {
 	},
 	createDom: function(oConfig, oWidget) {
 		if (!oConfig) { return null; }
+		var oJul = JUL.getInstance(this);
 		var nNS = this.useTags ? -1 : oConfig[this.classProperty].indexOf(':');
 		var sNS = nNS > -1 ? oConfig[this.classProperty].substr(0, nNS) : (this.useTags ? oConfig[this.classProperty] : 'html');
 		var oDocument = window.document;
@@ -531,15 +621,15 @@ JUL.apply(JUL.UI,  {
 		if (!oWidget) { return null; }
 		if (oConfig.listeners && typeof oConfig.listeners === 'object') {
 			var oListeners = oConfig.listeners;
-			var oScope = oListeners.scope ? JUL.get(oListeners.scope) : null;
+			var oScope = oListeners.scope ? oJul.get(oListeners.scope) : null;
 			for (var sItem in oListeners) {
 				if (oListeners.hasOwnProperty(sItem) && sItem !== 'scope') {
 					var aAll = [].concat(oListeners[sItem]);
 					for (var j = 0; j < aAll.length; j++) {
-						var fListener = JUL.get(aAll[j]);
+						var fListener = oJul.get(aAll[j]);
 						if (fListener) {
-							if (bAmple || oWidget.addEventListener) { oWidget.addEventListener(sItem, oScope ? JUL.makeCaller(oScope, fListener, true) : fListener); }
-							else { oWidget.attachEvent('on' + sItem, JUL.makeCaller(oScope || oWidget, fListener, true)); }
+							if (bAmple || oWidget.addEventListener) { oWidget.addEventListener(sItem, oScope ? oJul.makeCaller(oScope, fListener, true) : fListener); }
+							else { oWidget.attachEvent('on' + sItem, oJul.makeCaller(oScope || oWidget, fListener, true)); }
 						}
 					}
 				}
@@ -646,20 +736,13 @@ JUL.apply(JUL.UI,  {
 		return oData;
 	},
 	factory: function(sClass, oArgs) {
-		var aNames = sClass.split('.');
-		var oCurrent = global;
-		var sItem = '';
-		while (aNames.length) {
-			sItem = aNames.shift();
-			if (typeof oCurrent[sItem] === 'undefined') { return null; }
-			if (aNames.length) { oCurrent = oCurrent[sItem]; }
-		}
-		if (typeof oCurrent[sItem] !== 'function') { return null; }
+		var FNew = JUL.getInstance(this).get(sClass);
+		if (typeof FNew !== 'function') { return null; }
 		if (oArgs) {
-			return new oCurrent[sItem](oArgs);
+			return new (FNew)(oArgs);
 		}
 		else {
-			return new oCurrent[sItem]();
+			return new (FNew)();
 		}
 	},
 	getMembers: function(oConfig) {
@@ -679,9 +762,10 @@ JUL.apply(JUL.UI,  {
 			return JUL.apply(oNew, oData);
 		}
 		fMerger = fMerger || this._includeMerger;
+		var oJul = JUL.getInstance(this);
 		var aIncludes = [].concat(oData[this.includeProperty]);
 		for (var i = 0; i < aIncludes.length; i++) {
-			var oInclude = JUL.get(aIncludes[i]);
+			var oInclude = oJul.get(aIncludes[i]);
 			if (oInclude) {
 				if (fMerger) {  fMerger.call(this, oNew, this.include(oInclude, fMerger)); }
 				else { JUL.apply(oNew, this.include(oInclude)); }
@@ -702,7 +786,7 @@ JUL.apply(JUL.UI,  {
 			var fEmpty = function() {};
 			this._useJsonize = JSON.stringify({o: fEmpty}, JUL.makeCaller(JUL.UI, '_jsonReplacer')).indexOf('function') < 0;
 		}
-		var sData = this._useJsonize ? JSON.stringify(this._jsonize(oData)) : JSON.stringify(oData, JUL.makeCaller(this, '_jsonReplacer'));
+		var sData = this._useJsonize ? JSON.stringify(this._jsonize(oData)) : JSON.stringify(oData, JUL.getInstance(this).makeCaller(this, '_jsonReplacer'));
 		if (!sData) { return ''; }
 		var ca = '#';
 		var c = '';

@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.0.2
+	JUL Designer version 2.0.5
 	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -103,7 +103,7 @@ JUL.Designer.codeUi = {
 	width: 960,
 	height: 420,
 	children: [
-		{tag: 'textbox', id: 'textbox-code', width: '100%', multiline: true, flex: 1, listeners: {
+		{tag: 'textbox', id: 'textbox-code', css: 'code', width: '100%', multiline: true, flex: 1, listeners: {
 			keydown: 'JUL.Designer.filterTab'
 		}}
 	],
@@ -160,7 +160,7 @@ JUL.Designer.jsUi = {
 	height: 420,
 	buttons: 'accept',
 	children: [
-		{tag: 'textbox', id: 'textbox-js', readonly: true, width: '100%', multiline: true, flex: 1}
+		{tag: 'textbox', id: 'textbox-js', css: 'code', readonly: true, width: '100%', multiline: true, flex: 1}
 	]
 };
 
@@ -211,7 +211,7 @@ JUL.Designer.xmlUi = {
 				}}
 			]}
 		]},
-		{tag: 'textbox', id: 'textbox-xml', readonly: true, width: '100%', multiline: true, flex: 1}
+		{tag: 'textbox', id: 'textbox-xml', css: 'code', readonly: true, width: '100%', multiline: true, flex: 1}
 	]
 };
 
@@ -227,7 +227,8 @@ JUL.Designer.clipboardUi = {
 	width: 960,
 	height: 460,
 	children: [
-		{tag: 'textbox', id: 'textbox-clipboard-components', readonly: true, width: '100%', multiline: true, flex: 1},
+		{tag: 'textbox', id: 'textbox-clipboard-components', css: 'code', readonly: true, width: '100%', multiline: true,
+		 flex: 1},
 		{tag: 'hbox', children: [
 			{tag: 'checkbox', id: 'checkbox-paste-range', label: 'for the next paste, use only the component indexes '},
 			{tag: 'textbox', id: 'textbox-range-start', type: 'number', disabled: true, min: -1, style: 'width:50px'},
@@ -242,7 +243,7 @@ JUL.Designer.clipboardUi = {
 			{tag: 'textbox', id: 'textbox-map-class-to', disabled: true, style: 'width:200px',
 			 tooltiptext: 'comma separated list of class names'}
 		]},
-		{tag: 'textbox', id: 'textbox-clipboard-members', readonly: true, width: '100%', multiline: true, flex: 1},
+		{tag: 'textbox', id: 'textbox-clipboard-members', css: 'code', readonly: true, width: '100%', multiline: true, flex: 1},
 		{tag: 'hbox', children: [
 			{tag: 'checkbox', id: 'checkbox-paste-filter', label: 'for the next paste, use only the specified members '},
 			{tag: 'textbox', id: 'textbox-filter-members', disabled: true, style: 'width:450px'}
@@ -755,6 +756,30 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		if (bRemove) { oEl.parentNode.removeChild(oEl); }
 	},
 	/**
+		Executes JavaScript code
+		@param	{String}	sCode	JavaScript code string
+		@param	{Function}	fCall	Callback with the parameters:<ul>
+		<li>oVal - the returned value or the error string</li>
+		<li>nLine - the error line or undefined if no error</li></ul>
+	*/
+	exec: function(sCode, fCall) {
+		sCode = '(function() { "use strict"; var fCall = JUL.get(' + JUL.UI.obj2str(fCall).replace(/\r?\n\s*/g, ' ') +
+			'); fCall((\n' + sCode + '\n)); window.onerror = null; })();';
+		var oScript = document.createElement('script');
+		oScript.setAttribute('type', 'text/javascript');
+		oScript['textContent' in oScript ? 'textContent' : 'text'] = sCode;
+		var oHead = document.getElementsByTagName('head')[0];
+		window.onerror = function(sMsg, sUrl, nLine) {
+			setTimeout(function() {
+				window.onerror = null;
+				JUL.get(fCall)(sMsg.toString(), nLine);
+			}, 0);
+			return true;
+		};
+		oHead.insertBefore(oScript, oHead.firstChild);
+		oHead.removeChild(oScript);
+	},
+	/**
 		Fills the list box inside 'Browse' dialog with server-side data depending on the kind of browse.
 		Can display applications, projects or frameworks. The location if set on the server in application/config/main.php
 	*/
@@ -1230,32 +1255,37 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		Converts and applies the JavaScript code in the code dialog
 	*/
 	saveCode: function() {
+		this.state._afterSave = this.state._afterSave || JUL.makeCaller(this, function() {
+			var oCurrent = this.state.currentObject;
+			this.onValueUpdated(oCurrent);
+			var oTwin = this.state.map[oCurrent.field.id.substr(12)]; // button-code-
+			if (oTwin) {
+				var oField = ample.getElementById(oTwin.field.id);
+				if (oField) {
+					this.replaceDom(oField, this.parser.create(this.buildField(oTwin.field, oTwin.val())));
+				}
+			}
+			this.panels.code.hide();
+			this.showLast();
+		});
 		var sText = JUL.trim(ample.getElementById('textbox-code').getAttribute('value'));
 		var oCurrent = this.state.currentObject;
 		oCurrent.oldValue = oCurrent.val();
 		if (sText) {
-			try {
-				oCurrent.val(eval('(function(){return(' + sText + ')})()'));
-			}
-			catch(e) {
-				window.alert(e.description || e.message);
-				return;
-			}
+			this.exec(sText, function(oVal, nLine) {
+				if (typeof nLine === 'undefined') {
+					JUL.Designer.state.currentObject.val(oVal);
+					JUL.Designer.state._afterSave();
+				}
+				else {
+					window.alert(oVal + '\nLine: ' + ((nLine || 1) - 1));
+				}
+			});
 		}
 		else {
 			oCurrent.del();
+			this.state._afterSave();
 		}
-		/* fire value-changed listeners */
-		JUL.Designer.onValueUpdated(oCurrent);
-		var oTwin = this.state.map[oCurrent.field.id.substr(12)]; // button-code-
-		if (oTwin) {
-			var oField = ample.getElementById(oTwin.field.id);
-			if (oField) {
-				JUL.Designer.replaceDom(oField, this.parser.create(this.buildField(oTwin.field, oTwin.val())));
-			}
-		}
-		this.panels.code.hide();
-		this.showLast();
 	},
 	/**
 		Saves the text in the comment dialog
@@ -1365,6 +1395,23 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 			if (!JUL.UI._regExps.variable.test(aNS[i])) { return false; }
 		}
 		return true;
+	},
+	/**
+		Wraps generated JS in an exporting function
+		@param	{String}	sCode	Code string to wrap
+		@param	{Boolean}	[bComment]	True to generate comments
+		@returns	{String}	Wrapped code
+	*/
+	wrapExport: function(sCode, bComment) {
+		return "(function(global) {\n'use strict';\n" +
+			(bComment ? "\n/* if in Node, export the instance factory, else apply it to the global namespace  */" : "") +
+			"\nvar fInstance = function(oNSRoot) {" +
+			(bComment ? "\n/* create a JUL instance bound to oNSRoot and make it available to the inner code */" : "") +
+			"\nvar jul = new JUL.Instance({nsRoot: oNSRoot || global});" +
+			"\n\n" + sCode + "\n};" +
+			"\n\nif (typeof module !== 'undefined' && module && module.exports) {" +
+			"\n\tmodule.exports = fInstance;\n}\nelse {\n\tfInstance(global);\n}" +
+			"\n\n})(typeof global !== 'undefined' ? global : window);\n";
 	},
 	/**
 		A hash between CSS selectors and lists of attributes of the UI elements

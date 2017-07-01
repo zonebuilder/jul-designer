@@ -1,3 +1,6 @@
+v2.0.5 (2017-07-01):
+  * line numbers, error hinting in code editor
+  * generated JS compatible with Node's module.exports
 v2.0.2 (2017-03-25):
   * maintenance release
 v2.0 (2017-03-14):

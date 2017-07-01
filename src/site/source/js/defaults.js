@@ -6,9 +6,9 @@ JUL.Designer.app.fields.init.defaultValue = function() {
 		if (this.modules.hasOwnProperty(sItem)) {
 			var sNS = this.modules[sItem].ns;
 			if (sNS.substr(0, 1) === '.') { sNS = this.ns + sNS; }
-			var oModule = JUL.get(sNS);
+			var oModule = jul.get(sNS);
 			if (oModule) {
-				var oParser = new JUL.UI.Parser(oModule.parserConfig);
+				var oParser = new jul.ui.Parser(oModule.parserConfig);
 				oParser.create(oModule.ui, oModule.logic);
 			}
 		}
@@ -16,6 +16,6 @@ JUL.Designer.app.fields.init.defaultValue = function() {
 };
 /* project's default entry point */
 JUL.Designer.designer.fields.init.defaultValue = function() {
-	var oParser = new JUL.UI.Parser(this.parserConfig);
+	var oParser = new jul.ui.Parser(this.parserConfig);
 	oParser.create(this.ui, this.logic);
 };

@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.0.2
+	JUL Designer version 2.0.5
 	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -961,7 +961,7 @@ JUL.Designer.designer.projectUi = {
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'description',
 				 value: 'Testing HTML page. Besides {jul_script} and {project_script}, all {project_<property>} properties are available; page timestamp {ts}.'},
-				{tag: 'textbox', id: 'textbox-project-template', width: '100%', multiline: true, flex: 1}
+				{tag: 'textbox', id: 'textbox-project-template', css: 'code', width: '100%', multiline: true, flex: 1}
 			]}
 		]}
 	]
@@ -3632,10 +3632,10 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 				{suf: '.logic', ref: oJs.logic, desc: ' logic'}
 			];
 			sJs = sJs + '/* \'' + oProject.title + '\' namespace */\n';
-			sJs = sJs + "JUL.ns('" + oProject.ns + "');\n\n";
+			sJs = sJs + "var oProject = jul.ns('" + oProject.ns + "');\n\n";
 			for (var i = 0; i < aItems.length; i++) {
 				var oItem = aItems[i];
-				sJs = sJs + (oItem.suf ? oProject.ns + oItem.suf + ' =\n' : 'JUL.apply(' + oProject.ns + ',\n' );
+				sJs = sJs + (oItem.suf ? 'oProject' + oItem.suf + ' =\n' : 'jul.apply(oProject' + ',\n' );
 				sJs = sJs + '/* begin \'' + oProject.title + "'" + oItem.desc + ' */\n';
 				sJs = sJs + JUL.Designer.parser.obj2str(oItem.ref) + '\n';
 				sJs = sJs + '/* end \'' + oProject.title + "'" + oItem.desc + ' */\n';
@@ -3643,10 +3643,10 @@ JUL.apply(JUL.Designer.designer, /** @lends JUL.Designer.designer */ {
 			}
 		}
 		else {
-			sJs = sJs + "JUL.ns('" + oJs.ns + "');\n";
-			sJs = sJs + 'JUL.apply(' + oJs.ns + ', ' + JUL.Designer.parser.obj2str(oJs) + ');\n';
+			sJs = sJs + "var oProject = jul.ns('" + oJs.ns + "');\n";
+			sJs = sJs + 'jul.apply(oProject, ' + JUL.Designer.parser.obj2str(oJs) + ');\n';
 		}
-		return sJs;
+		return JUL.Designer.wrapExport(sJs, bComment);
 	},
 	/**
 		Returns the URL of the project's test page

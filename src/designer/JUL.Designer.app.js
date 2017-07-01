@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.0.2
+	JUL Designer version 2.0.5
 	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -96,12 +96,12 @@ JUL.Designer.app.ui = {
 				]}
 			]},
 			{tag: 'vbox', flex: 1, children: [
-				{tag: 'textbox', id: 'textbox-app-js', readonly: true, width: '100%', multiline: true, flex: 1}
+				{tag: 'textbox', id: 'textbox-app-js', css: 'code', readonly: true, width: '100%', multiline: true, flex: 1}
 			]},
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'description',
 				 value: 'Testing HTML page. Besides {jul_script}, {app_script} and {modules_scripts}, all {app_<property>} properties are available; page timestamp {ts}.'},
-				{tag: 'textbox', id: 'textbox-app-template', width: '100%', multiline: true, flex: 1}
+				{tag: 'textbox', id: 'textbox-app-template', css: 'code', width: '100%', multiline: true, flex: 1}
 			]}
 		]}
 	]
@@ -685,10 +685,10 @@ JUL.apply(JUL.Designer.app, /** @lends JUL.Designer.app */ {
 				{suf: '.defaultParser', ref: oParser, desc: ' default parser'}
 			];
 			sJs = sJs + '/* \'' + oApp.title + '\' namespace */\n';
-			sJs = sJs + "JUL.ns('" + oApp.ns + "');\n\n";
+			sJs = sJs + "var oApp = jul.ns('" + oApp.ns + "');\n\n";
 			for (var i = 0; i < aItems.length; i++) {
 				var oItem = aItems[i];
-				sJs = sJs + (oItem.suf ? oApp.ns + oItem.suf + ' =\n' : 'JUL.apply(' + oApp.ns + ',\n');
+				sJs = sJs + (oItem.suf ? 'oApp' + oItem.suf + ' =\n' : 'jul.apply(oApp,\n');
 				sJs = sJs + '/* begin \'' + oApp.title + "'" + oItem.desc + ' */\n';
 				sJs = sJs + JUL.Designer.parser.obj2str(oItem.ref) + '\n';
 				sJs = sJs + '/* end \'' + oApp.title + "'" + oItem.desc + ' */\n';
@@ -696,10 +696,10 @@ JUL.apply(JUL.Designer.app, /** @lends JUL.Designer.app */ {
 			}
 		}
 		else {
-			sJs = sJs + "JUL.ns('" + oJs.ns + "');\n";
-			sJs = sJs + 'JUL.apply(' + oJs.ns + ', ' + JUL.Designer.parser.obj2str(oJs) + ');\n';
+			sJs = sJs + "var oApp = jul.ns('" + oJs.ns + "');\n";
+			sJs = sJs + 'jul.apply(oApp, ' + JUL.Designer.parser.obj2str(oJs) + ');\n';
 		}
-		return sJs;
+		return JUL.Designer.wrapExport(sJs, bComment);
 	},
 	/**
 		Retrieves the test URL of the application
