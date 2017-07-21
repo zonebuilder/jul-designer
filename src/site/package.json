@@ -1,6 +1,6 @@
 {
   "name": "jul-designer",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "description": "JUL Designer - a RAD tool for JavaScript",
   "main": "server.js",
   "scripts": {
@@ -18,12 +18,16 @@
   ],
   "author": "The Zonebuilder <zone.builder@gmx.com> (http://www.google.com/search?hl=en&num=50&start=0&safe=0&filter=0&nfpr=1&q=The+Zonebuilder+web+development+programming+IT+society+philosophy+politics)",
   "license": "LGPL-3.0",
+  "bin": {
+    "jul-designer": "server.js"
+  },
   "bugs": {
     "url": "https://github.com/zonebuilder/jul-designer/issues"
   },
   "homepage": "https://github.com/zonebuilder/jul-designer#readme",
   "dependencies": {
     "body-parser": "1.x",
+    "cli": "1.x",
     "ejs": "2.x",
     "express": "3.x",
     "fs-extra": "1.x",

@@ -1,3 +1,6 @@
+v2.1 (2017-07-21):
+  * published app to the NPM public repo
+  * added commend line interface
 v2.0.5 (2017-07-01):
   * line numbers, error hinting in code editor
   * generated JS compatible with Node's module.exports

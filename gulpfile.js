@@ -14,7 +14,12 @@ var oConfig = {
 	concatHeader: 'src/assets/header.js',
 	concatName: 'designer.js',
 	concatDest: 'build/source/js',
-	node: 'src/node/**'
+	node: 'src/node/**',
+	copyNode: ['build/**', '!build/Readme', '!build/Kohana-License', '!build/index.php', '!build/modules/**', '!build/system/**',
+		'!build/application/classes/**', '!build/application/config/**', '!build/application/views/**', '!build/application/bootstrap.php',
+		'!build/application/classes', '!build/application/config', '!build/application/views', '!build/application/i18n', '!build/application/messages',
+		 '!build/modules', '!build/system', 'README.md'],
+	destNode: 'build_node'
 };
 var oGulp = require('gulp');
 var oPlugins = require('gulp-load-plugins')();
@@ -62,10 +67,18 @@ oGulp.task('clean', function() {
 	.pipe(oPlugins.clean());
 });
 
-oGulp.task('build', function() {
-	oGulp.start(['site', 'copydeps', 'scripts', 'node']);
+oGulp.task('build', ['site', 'copydeps', 'scripts', 'node']);
+
+oGulp.task('clean_node', function() {
+	return oGulp.src(oConfig.destNode + '/*', {read: false})
+	.pipe(oPlugins.clean());
 });
 
-oGulp.task('default', ['clean'], function() {
-	oGulp.start('build');
+oGulp.task('build_node', ['build'], function() {
+	return oGulp.src(oConfig.copyNode)
+	.pipe(oGulp.dest(oConfig.destNode));
+});
+
+oGulp.task('default', ['clean', 'clean_node'], function() {
+	oGulp.start('build_node');
 });

@@ -36,8 +36,30 @@ System requirements
 * OR a web server with PHP 5.2.0 or later extension 
 * 1024x768 minimum resolution 
 
-Build & install
----------------
+Install & usage in Node
+-----------------------
+
+Install JUL Designer globally:
+
+`npm install -g jul-designer`
+
+Run server application: `jul-designer`. Use `-h` switch to see more options.
+
+Use a browser to work with the app at `http://localhost:7770/`.
+
+Import a project in a Node script:
+```javascript
+require('jul');
+var path = require('path');
+var workdir = path.resolve(__dirname, 'assets'); // change as needed
+// apply the project configuration to a local object
+var localVar = {};
+(require(path.resolve(workdir, 'projects', 'project1.js')))(localVar);
+console.log(localVar);
+```
+
+Build & install from source
+---------------------------
 
 Install [Node.js](https://nodejs.org/) and [Git](https://git-scm.com/) command line in your system.
 Run the following shell commands in order:
@@ -48,7 +70,7 @@ Run the following shell commands in order:
 	npm run make
 ```
 
-The release will be in a 'build' folder. See Readme in that folder for further instructions.
+The release will be in the 'build' folder. The Node module will be in the 'build_node' folder.
 
 Downloads & user support
 ------------------------

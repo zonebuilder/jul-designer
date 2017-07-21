@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.0.5
+	JUL Designer version 2.1
 	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -1403,15 +1403,15 @@ JUL.apply(JUL.Designer, /** @lends JUL.Designer */ {
 		@returns	{String}	Wrapped code
 	*/
 	wrapExport: function(sCode, bComment) {
-		return "(function(global) {\n'use strict';\n" +
+		return "(function(global, module) {\n'use strict';\n" +
 			(bComment ? "\n/* if in Node, export the instance factory, else apply it to the global namespace  */" : "") +
 			"\nvar fInstance = function(oNSRoot) {" +
 			(bComment ? "\n/* create a JUL instance bound to oNSRoot and make it available to the inner code */" : "") +
 			"\nvar jul = new JUL.Instance({nsRoot: oNSRoot || global});" +
 			"\n\n" + sCode + "\n};" +
-			"\n\nif (typeof module !== 'undefined' && module && module.exports) {" +
-			"\n\tmodule.exports = fInstance;\n}\nelse {\n\tfInstance(global);\n}" +
-			"\n\n})(typeof global !== 'undefined' ? global : window);\n";
+			"\n\nif (module && module.exports) {" +
+			"\n\tmodule.exports = fInstance;\n}\nelse if (global) {\n\tfInstance(global);\n}\nreturn fInstance;" +
+			"\n\n})(typeof global !== 'undefined' ? global : window, typeof module !== 'undefined' ? module : null);\n";
 	},
 	/**
 		A hash between CSS selectors and lists of attributes of the UI elements
