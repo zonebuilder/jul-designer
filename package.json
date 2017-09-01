@@ -1,6 +1,6 @@
 {
   "name": "jul-designer-src",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "JUL Designer - a RAD tool for JavaScript",
   "main": "index.php",
   "scripts": {
@@ -31,7 +31,7 @@
     "gulp-jshint": "2.x",
     "gulp-load-plugins": "1.x",
     "gulp-rename": "1.x",
-    "gulp-strip-comments": "2.x",
+    "gulp-strip-comments": "2.4.x",
     "jshint": "2.x",
     "merge-stream": "1.x",
     "pump": "1.x"

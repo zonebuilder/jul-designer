@@ -1,5 +1,5 @@
 /*
-	JUL - The JavaScript UI Language version 1.5.2
+	JUL - The JavaScript UI Language version 1.5.3
 	Copyright (c) 2012 - 2017 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-javascript/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-javascript/wiki/License/)
@@ -108,7 +108,7 @@ global.JUL = {};
 
 JUL = {
 	nsRoot: null,
-	version: '1.5.2',
+	version: '1.5.3',
 	Instance: function(oConfig) {
 		if (!(this instanceof JUL.Instance)) { return new JUL.Instance(oConfig); }
 		JUL.apply(this, oConfig || {});
@@ -208,10 +208,11 @@ JUL = {
 		}
 		return oCurrent;
 	},
-	trim: function(sText, sWhat, _bFromMap) {
+	trim: function(sText, sWhat, bLeftOrRight) {
 		if (typeof sText !== 'string') { sText = sText.toString(); }
 		if (!sText) { return sText; }
-		if (_bFromMap || !(sWhat || sWhat === 0)) {
+		var bUndef = typeof bLeftOrRight === 'undefined';
+		if (!(bUndef || bLeftOrRight === true || bLeftOrRight === false)  || (bUndef && !(sWhat || sWhat === 0))) {
 			if (typeof String.prototype.trim === 'function') {
 				return sText.trim();
 			}
@@ -220,14 +221,22 @@ JUL = {
 			}
 		}
 		else {
+			if (!(sWhat || sWhat === 0)) {
+				if (bLeftOrRight) { return sText.replace(/^\s+/, ''); }
+				else { return sText.replace(/\s+$/, ''); }
+			}
 			if (typeof sWhat !== 'string') { sWhat = sWhat.toString(); }
-			var nEnd = sText.length;
-			while (nEnd >= sWhat.length && sText.slice(nEnd - sWhat.length, nEnd) === sWhat) { nEnd = nEnd - sWhat.length; }
-			if (nEnd < sText.length) { sText = sText.slice(0, nEnd); }
+			if (bUndef || bLeftOrRight === false) {
+				var nEnd = sText.length;
+				while (nEnd >= sWhat.length && sText.slice(nEnd - sWhat.length, nEnd) === sWhat) { nEnd = nEnd - sWhat.length; }
+				if (nEnd < sText.length) { sText = sText.slice(0, nEnd); }
+			}
 			if (sText.length < sWhat.length) { return sText; }
-			var nStart = 0;
-			while (nStart <= sText.length - sWhat.length && sText.slice(nStart, nStart + sWhat.length) === sWhat) { nStart = nStart + sWhat.length; }
-			if (nStart) { sText = sText.substr(nStart); }
+			if (bUndef || bLeftOrRight === true) {
+				var nStart = 0;
+				while (nStart <= sText.length - sWhat.length && sText.slice(nStart, nStart + sWhat.length) === sWhat) { nStart = nStart + sWhat.length; }
+				if (nStart) { sText = sText.substr(nStart); }
+			}
 			return sText;
 		}
 	},
@@ -276,11 +285,13 @@ if (typeof Array.prototype.map !== 'function') {
 
 (function() {
 'use strict';
+var jul = JUL;
 
 
-JUL.ns('JUL.Ref');
+jul.ns('JUL.Ref');
 
-JUL.Ref = function(oRef, sKey) {
+
+jul.ns('JUL.Ref',  function(oRef, sKey) {
 	if (!(this instanceof JUL.Ref)) {
 		return new JUL.Ref(oRef, sKey);
 	}
@@ -315,9 +326,9 @@ JUL.Ref = function(oRef, sKey) {
 		this._ref = oRef;	
 		this._key = sKey;
 	}
-};
+});
 
-JUL.apply(JUL.Ref.prototype,  {
+jul.apply(jul.get('JUL.Ref').prototype,  {
 	del: function() {
 		delete this._ref[this._key];
 		return this;
@@ -360,11 +371,12 @@ JUL.apply(JUL.Ref.prototype,  {
 
 (function(global) {
 'use strict';
+var jul = JUL;
 
 
-JUL.ns('JUL.UI');
+jul.ns('JUL.UI');
 
-JUL.apply(JUL.UI,  {
+jul.apply(jul.get('JUL.UI'),  {
 	bindingProperty: 'cid',
 	childrenProperty: 'children',
 	classProperty: 'xclass',
@@ -628,8 +640,17 @@ JUL.apply(JUL.UI,  {
 					for (var j = 0; j < aAll.length; j++) {
 						var fListener = oJul.get(aAll[j]);
 						if (fListener) {
-							if (bAmple || oWidget.addEventListener) { oWidget.addEventListener(sItem, oScope ? oJul.makeCaller(oScope, fListener, true) : fListener); }
-							else { oWidget.attachEvent('on' + sItem, oJul.makeCaller(oScope || oWidget, fListener, true)); }
+							var oWhat = {
+								fn: fListener,
+								scope: oScope,
+								useCapture: false
+							};
+							if (typeof fListener === 'object') {
+								JUL.apply(oWhat, fListener);
+								if (fListener.scope) { oWhat.scope = oJul.get(fListener.scope); }
+							}
+							if (bAmple || oWidget.addEventListener) { oWidget.addEventListener(sItem, oWhat.scope ? oJul.makeCaller(oWhat.scope, oWhat.fn, true) : oWhat.fn, oWhat.useCapture); }
+							else { oWidget.attachEvent('on' + sItem, oJul.makeCaller(oWhat.scope || oWidget, oWhat.fn, true)); }
 						}
 					}
 				}

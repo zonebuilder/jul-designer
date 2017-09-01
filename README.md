@@ -49,12 +49,11 @@ Use a browser to work with the app at `http://localhost:7770/`.
 
 Import a project in a Node script:
 ```javascript
-require('jul');
 var path = require('path');
 var workdir = path.resolve(__dirname, 'assets'); // change as needed
 // apply the project configuration to a local object
 var localVar = {};
-(require(path.resolve(workdir, 'projects', 'project1.js')))(localVar);
+require(path.resolve(workdir, 'projects', 'project1.js'))(localVar);
 console.log(localVar);
 ```
 

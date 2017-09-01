@@ -74,11 +74,20 @@ oGulp.task('clean_node', function() {
 	.pipe(oPlugins.clean());
 });
 
+var fMark = null;
+var fDone = function() {
+	setTimeout(function() {
+		if (fMark) { fMark(); }
+		fMark = null;
+	}, 0);
+};
+
 oGulp.task('build_node', ['build'], function() {
 	return oGulp.src(oConfig.copyNode)
-	.pipe(oGulp.dest(oConfig.destNode));
+	.pipe(oGulp.dest(oConfig.destNode)).on('end', fDone);
 });
 
-oGulp.task('default', ['clean', 'clean_node'], function() {
+oGulp.task('default', ['clean', 'clean_node'], function(fCall) {
+	fMark = fCall;
 	oGulp.start('build_node');
 });
