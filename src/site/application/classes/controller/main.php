@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /*
-	JUL Designer version 2.1.2
-	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
+	JUL Designer version 2.1.3
+	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
 */

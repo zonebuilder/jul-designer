@@ -1,6 +1,6 @@
 /*
-	JUL Designer version 2.1.2
-	Copyright (c) 2014 - 2017 The Zonebuilder <zone.builder@gmx.com>
+	JUL Designer version 2.1.3
+	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
 */
@@ -2733,7 +2733,7 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		this.findPath(fPoint, null, oRoot.ui, oRoot.logic);
 		if (!aLabels.length) { return; }
 		aLabels.sort();
-		this.showSelect(oFound[aLabels[0]].rect);
+		this.showSelect(oFound[aLabels[0]].rect, true);
 		this.showPath(oFound[aLabels[0]].path);
 	},
 	/**
@@ -3459,9 +3459,14 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		Tries to hint a component with a red rectangle in the project's iframe
 		@param	{Object}	oRect	An object with the properties: left, top, width, height, and optionally, zIndex
 	*/
-	showSelect: function(oRect) {
+	showSelect: function(oRect, bFromTest) {
 		var oTest = document.getElementById('iframe-test');
 		var oDocument = oTest.contentDocument || oTest.contentWindow.document;
+		if (oRect) {
+			oRect = JUL.apply({}, oRect);
+			oRect.left += (oTest.contentWindow || oTest).pageXOffset || (oDocument.documentElement || oDocument).scrollLeft;
+			oRect.top += (oTest.contentWindow || oTest).pageYOffset || (oDocument.documentElement || oDocument).scrollTop;
+		}
 		ample.getElementById('statusbarpanel-selection').setAttribute('label',
 			oRect ? (typeof oRect.zIndex === 'undefined' ? '' : oRect.zIndex.toFixed(0) + ': ')  +
 			'[' + oRect.left.toFixed(0) + ', ' + oRect.top.toFixed(0) + '] -> [' +
@@ -3479,7 +3484,7 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		var oSelect;
 		for (var sItem in oLines) {
 			if (oLines.hasOwnProperty(sItem) && (oSelect = oDocument.getElementById(oLines[sItem]))) {
-				JUL.Designer.empty(oSelect, true);
+				oDocument.body.removeChild(oSelect);
 			}
 		}
 		if (!oRect) { return; }
@@ -3487,7 +3492,7 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 			if (oLines.hasOwnProperty(sItem)) {
 				oSelect = oDocument.createElement('div');
 				oSelect.setAttribute('id', oLines[sItem]);
-				oSelect.style.cssText = oSelect.style.cssText +'position:fixed;z-index:16777271;border:1px solid red;' + 
+				oSelect.style.cssText = oSelect.style.cssText +'position:absolute;z-index:16777271;border:1px solid red;' + 
 					(sItem === 'left' || sItem === 'right' ? 'width:0.1px;' : 'height:0.1px;') +
 					(sItem === 'left' || sItem === 'right' ? 'height:' + oRect.height + 'px;' : 'width:' + oRect.width + 'px;') +
 					(sItem === 'right' ? 'left:' + (oRect.left + oRect.width) + 'px;' : 'left:' + oRect.left + 'px;') +
@@ -3495,13 +3500,20 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 				oDocument.body.appendChild(oSelect);
 			}
 		}
+		if (!bFromTest) {
+			try {
+				oDocument.getElementById(oLines.top).scrollIntoView();
+				oDocument.getElementById(oLines.left).scrollIntoView();
+			}
+			catch (e1) {}
+		}
 		this.state.hintTimer = setTimeout(function() {
 			delete JUL.Designer.designer.state.hintTimer;
 			ample.getElementById('statusbarpanel-selection').setAttribute('label', '');
 			var oSelect;
 			for (var sItem in oLines) {
 				if (oLines.hasOwnProperty(sItem) && (oSelect = oDocument.getElementById(oLines[sItem]))) {
-					JUL.Designer.empty(oSelect, true);
+					oDocument.body.removeChild(oSelect);
 				}
 			}
 		}, 3000);
