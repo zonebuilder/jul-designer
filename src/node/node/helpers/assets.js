@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.1.3
+	JUL Designer version 2.1.4
 	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -58,7 +58,7 @@ JUL.apply(Assets.prototype, {
 	 * Renders the chain of styles and scripts
 	 */	 	
 	render: function() {
-		var sDir = DOCROOT + this._config.folder + DIRECTORY_SEPARATOR;
+		var sDir = this._config._path || DOCROOT + this._config.folder + DIRECTORY_SEPARATOR;
 		oFS.ensureDirSync(sDir + 'css' );
 		oFS.ensureDirSync(sDir + 'js' );
 		var aItems = [];
@@ -97,7 +97,7 @@ JUL.apply(Assets.prototype, {
 			if (this._interns.css.length) {
 				aItems.push(this._renderItem({type: 'css', url: sUrl, extern: true, options: {}}));
 				bCss = true;
-				sDir = DOCROOT + this._config.folder + DIRECTORY_SEPARATOR + 'css' + DIRECTORY_SEPARATOR;
+				sDir = (this._config._path || DOCROOT + this._config.folder + DIRECTORY_SEPARATOR) + 'css' + DIRECTORY_SEPARATOR;
 				try {
 					n = oFS.statSync(sDir + this._group + '.css').mtime.getTime();
 					bCss = n < nTS;
@@ -120,7 +120,7 @@ JUL.apply(Assets.prototype, {
 			if (this._interns.js.length) {
 				aItems.push(this._renderItem({type: 'js', url: sUrl, extern: true, options: {}}));
 				bJs = true;
-				sDir = DOCROOT + this._config.folder + DIRECTORY_SEPARATOR + 'js' + DIRECTORY_SEPARATOR;
+				sDir = (this._config._path || DOCROOT + this._config.folder + DIRECTORY_SEPARATOR) + 'js' + DIRECTORY_SEPARATOR;
 				try {
 					n = oFS.statSync(sDir + this._group + '.js').mtime.getTime();
 					bJs = n < nTS;
@@ -169,7 +169,7 @@ JUL.apply(Assets.prototype, {
 		var fIf = function(oFile) {
 			return !oSkip[oFile.path];
 		};
-		var sDir = DOCROOT + this._config.folder + DIRECTORY_SEPARATOR;
+		var sDir = this._config._path || DOCROOT + this._config.folder + DIRECTORY_SEPARATOR;
 		var oCssmin = this._config.processor.css;
 		if (typeof oCssmin !== 'object') { oCssmin = {name: oCssmin}; } 
 		if (this._merge) {

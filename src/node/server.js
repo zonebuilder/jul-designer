@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
-	JUL Designer version 2.1.3
+	JUL Designer version 2.1.4
 	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -41,9 +41,13 @@ var oOpts = require('cli').setApp(DOCROOT + 'package.json').enable('help', 'vers
 if (oOpts.address) { oConnection.host = oOpts.address; }
 if (oOpts.port) { oConnection.port = oOpts.port; }
 oApp.uri = 'http://' + oConnection.host + ':' + oConnection.port;
-if (oOpts.workdir[0] !== '(') {
+var sWorkDir = '';
+if (oOpts.workdir && oOpts.workdir.substr(0, 1) !== '(') {
+	sWorkDir = JUL.trim(require('path').resolve(oOpts.workdir.replace(/\//g, DIRECTORY_SEPARATOR)), DIRECTORY_SEPARATOR, false);
 	// this is a hack, it should be changed in future versions
-	oApp.Config('main').work_dir = require('path').resolve(oOpts.workdir);
+	oApp.Config('main').work_dir = sWorkDir;
+	oApp.Config('assets')._path = sWorkDir + DIRECTORY_SEPARATOR;
+	oApp.Config('main')._prefix = '/assets/';
 }
 
 var oExpress = require('express');
@@ -54,7 +58,8 @@ oApp.server.engine('html', oEjs.renderFile);
 oEjs.delimiter = '?';
 oApp.server.set('views', APPPATH + 'views');
 oApp.server.set('view engine', 'html');
-var aStatic = ['amplesdk-mainta-0.9.4', 'assets', 'docs', 'media'];
+oApp.server.use('/assets', oExpress.static(sWorkDir || DOCROOT + 'assets'));
+var aStatic = ['amplesdk-mainta-0.9.4', 'docs', 'media'];
 for (var i = 0; i < aStatic.length; i++) {
 	oApp.server.use('/' + aStatic[i], oExpress.static(DOCROOT + aStatic[i]));
 }

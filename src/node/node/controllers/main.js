@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.1.3
+	JUL Designer version 2.1.4
 	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -320,14 +320,14 @@ JUL.apply(exports, {
 			aInfo.project_script = oApp.View('project-script.html');
 		}
 		else {
-			var sPrefix = bExport ? 'js/' : (oApp.Config('main').work_dir + DIRECTORY_SEPARATOR + sType + 's').substr(DOCROOT.length - 1).replace(/\\/g, '/') + '/';
+			var sPrefix = bExport ? 'js/' : (oApp.Config('main')._prefix || (oApp.Config('main').work_dir + DIRECTORY_SEPARATOR).substr(DOCROOT.length - 1).replace(/\\/g, '/')) + sType + 's/';
 			aInfo[sType + '_script'] = '<' + 'script type="text/javascript" src="'+ oHtmlSpecialChars(sPrefix) + (bExport ? aInfo.ns : aInfo.ns.replace(/\./g, '/')) + '.js?v=' + aInfo.version + '"><' + '/script>';
 		}
 		aInfo.jul_script = oApp.Helper('assets')('jul.min').js(oApp.Config('main').jul_root + 'jul.js').toString();
 		if (aModules) {
 			var aScripts = [];
 			var sDir = oApp.Config('main').work_dir + DIRECTORY_SEPARATOR + 'projects';
-			sPrefix = bExport ? 'js/projects/' : sDir.substr(DOCROOT.length - 1).replace(/\\/g, '/') + '/';
+			sPrefix = bExport ? 'js/projects/' : (oApp.Config('main')._prefix || (oApp.Config('main').work_dir + DIRECTORY_SEPARATOR).substr(DOCROOT.length - 1).replace(/\\/g, '/')) + 'projects/';
 			for (sKey in aModules) {
 				if (aModules.hasOwnProperty(sKey)) {
 					var aItem = aModules[sKey];

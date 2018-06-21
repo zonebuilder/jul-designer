@@ -39,7 +39,19 @@ System requirements
 Install & usage in Node
 -----------------------
 
-Install JUL Designer globally:
+Install & run locally for Linux/UNIX shells:
+```bash
+npm install jul-designer
+"$(npm bin)/jul-designer"
+```
+
+Install & run locally for Windows/DOS shells:
+```cmd
+npm install jul-designer
+for /f "tokens=*" %i in ('npm bin') do @"%i\jul-designer"
+```
+
+Install JCS globally:Install JUL Designer globally:
 
 `npm install -g jul-designer`
 
