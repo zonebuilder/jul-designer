@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.1.4
+	JUL Designer version 2.2
 	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -1783,6 +1783,14 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		if (!oConfig) { return null; }
 		var aTag = (oConfig[this.classProperty] + (this.useTags ? ':' + oConfig[this.tagProperty] : '')).split(':');
 		if (aTag.length > 2) { aTag = [aTag.shift()].concat(aTag.join(':')); }
+		var sPrefix = (JUL.Designer.designer.current.parserConfig._otherProperties || {}).referencePrefix;
+		if (typeof sPrefix === 'undefined') { sPrefix = JUL.UI.referencePrefix; } 
+		if (sPrefix) {
+			var sLast = aTag[aTag.length - 1];
+			if (sLast.substr(0, sPrefix.length) === sPrefix) {
+				aTag[aTag.length - 1] = JUL.trim(sLast.substr(sPrefix.length));
+			}
+		}
 		var oWidget = aTag.length > 1 && this.xmlDoc.createElementNS ?
 			this.xmlDoc.createElementNS(this.xmlNS[aTag[0]] || null, aTag[0] === this.defaultClass ? aTag[1] : aTag.join(':')) :
 			this.xmlDoc.createElement(aTag.length > 1 && aTag[0] === this.defaultClass ? aTag[1] : aTag.join(':'));
@@ -1790,15 +1798,12 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		var aInstantiate = this.getMembers(oConfig);
 		for (var sItem in JUL.Designer.keySort(oConfig, null, ['type', this.idProperty, this.cssProperty, 'style'])) {
 			if (oConfig.hasOwnProperty(sItem) && aInstantiate.indexOf(sItem) < 0 &&
-				[this.listenersProperty, this.htmlProperty, this.tagProperty, this.classProperty, this.parentProperty].indexOf(sItem) < 0)
+				[this.listenersProperty, this.htmlProperty, this.textProperty, this.tagProperty, this.classProperty, this.parentProperty].indexOf(sItem) < 0)
 			{
 				var aAttr = sItem.split(':');
 				if (aAttr.length > 2) { aAttr = [aAttr.shift()].concat(aAttr.join(':')); }
 				if (aAttr[aAttr.length - 1] === this.cssProperty) { aAttr[aAttr.length - 1] = 'class'; }
 				var sAttr = ['Array', 'Date', 'Function', 'Object', 'Null', 'RegExp'].indexOf(JUL.typeOf(oConfig[sItem])) > -1 ? this.obj2str(oConfig[sItem]) : oConfig[sItem].toString();
-				if (this.referencePrefix && typeof oConfig[sItem] === 'string' && sAttr.substr(0, this.referencePrefix.length) === this.referencePrefix) {
-					sAttr = JUL.trim(sAttr.substr(this.referencePrefix.length));
-				}
 				if (aAttr.length > 1 && oWidget.setAttributeNS) {
 					oWidget.setAttributeNS(this.xmlNS[aAttr[0]] || null, aAttr[0] === this.defaultClass ? aAttr[1] : aAttr.join(':'), sAttr);
 				}
@@ -1824,15 +1829,12 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 			}
 		
 		}
+		if (typeof oConfig[this.textProperty] !== 'undefined') {
+			oWidget.appendChild(this.xmlDoc.createTextNode(oConfig[this.textProperty]));
+		}
 		if (typeof oConfig[this.htmlProperty] !== 'undefined') {
-			var oDiv = document.getElementById('div-process-xml');
-			if (!oDiv) {
-				oDiv = document.createElement('div');
-				oDiv.setAttribute('id', 'div-process-xml');
-				oDiv.style.cssText = 'display:none';
-				document.body.appendChild(oDiv);
-			}
-			oDiv.innerHTML = oConfig[this.htmlProperty].toString().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			var oDiv = JUL.Designer.state._xmlDiv = JUL.Designer.state._xmlDiv || window.document.createElement('div');
+			oDiv.innerHTML = oConfig[this.htmlProperty].toString().replace(/<(\s|\S)+?>/g, ' ').replace(/\x20+/g, ' ');
 			var oText = this.xmlDoc.createTextNode(oDiv.textContent || oDiv.innerText || '');
 			oDiv.innerHTML = '';
 			oWidget.appendChild(oText);

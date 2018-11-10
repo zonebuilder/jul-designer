@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.1.4
+	JUL Designer version 2.2
 	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -772,7 +772,7 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 	*/
 	exec: function(sCode, fCall) {
 		sCode = '(function() { "use strict"; var fCall = JUL.get(' + JUL.UI.obj2str(fCall).replace(/\r?\n\s*/g, ' ') +
-			'); fCall((\n' + sCode + '\n)); window.onerror = null; })();';
+			'); fCall(\n' + sCode + '\n); window.onerror = null; })();';
 		var oScript = document.createElement('script');
 		oScript.setAttribute('type', 'text/javascript');
 		oScript['textContent' in oScript ? 'textContent' : 'text'] = sCode;
@@ -1019,7 +1019,7 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 			if (bPrefix || (!this._usePrefixes && (this._regExps.regexp.test(oValue) ||
 				this._regExps.functionStart.test(oValue) || this._regExps.newStart.test(oValue)))) {
 				try {
-					return eval('(function(){return(' + oValue + ')})()');
+					return eval('(function(){return ' + oValue + '})()');
 				}
 				catch(e) {
 					return oValue;

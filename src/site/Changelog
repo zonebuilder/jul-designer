@@ -1,3 +1,6 @@
+v2.2 (2018-11-10):
+  * added Calc.react & Calc.vue projects
+  * updated JUL to the latest version
 v2.1.4 (2018-06-21):
   * [Node] updated README.md with how to install & run the Node module locally
   * [Node] moved all write operations to the working folder (see -w switch)
