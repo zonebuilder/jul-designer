@@ -1,0 +1,90 @@
+{
+  "name": "jul-designer",
+  "version": "2.5.0",
+  "description": "JUL Designer - a RAD tool for JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "electron-builder --dir",
+    "make_mac": "electron-forge make --platform darwin",
+    "make_win": "electron-builder package -w",
+    "make_lnx": "electron-builder package -l",
+    "clean": "del-cli out/ --force",
+    "make": "npm run clean && npm run make_mac && npm run make_win && npm run make_lnx"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zonebuilder/jul-designer.git"
+  },
+  "keywords": [
+    "UI",
+    "builder",
+    "visual"
+  ],
+  "author": "The Zonebuilder <zone.builder@gmx.com> (http://www.google.com/search?hl=en&num=50&start=0&safe=0&filter=0&nfpr=1&q=The+Zonebuilder+web+development+programming+IT+society+philosophy+politics)",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/zonebuilder/jul-designer/issues"
+  },
+  "homepage": "https://github.com/zonebuilder/jul-designer#readme",
+  "dependencies": {
+    "body-parser": "1.x",
+    "ejs": "2.x",
+    "express": "3.x",
+    "fs-extra": "1.x",
+    "gulp": "3.x",
+    "gulp-clean-css": "2.x",
+    "gulp-concat": "2.x",
+    "gulp-header": "1.x",
+    "gulp-if": "2.x",
+    "gulp-ignore": "2.x",
+    "gulp-load-plugins": "1.x",
+    "gulp-newer": "1.x",
+    "gulp-uglify": "2.x",
+    "gulp-unzip": "0.x",
+    "home-dir": "1.x",
+    "htmlspecialchars": "1.x",
+    "jul": "1.x",
+    "pump": "1.x",
+    "zip-stream": "1.x"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "6.0.0-beta.30",
+    "@electron-forge/maker-deb": "6.0.0-beta.30",
+    "@electron-forge/maker-rpm": "6.0.0-beta.30",
+    "@electron-forge/maker-squirrel": "6.0.0-beta.30",
+    "@electron-forge/maker-zip": "6.0.0-beta.30",
+    "del-cli": "^1.1.0",
+    "electron": "3.0.10",
+    "electron-builder": "^20.38.0"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "resources/icon"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "jul_designer"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  }
+}

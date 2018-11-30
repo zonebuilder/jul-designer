@@ -1,0 +1,31 @@
+{
+  "appId": "org.jul.designer",
+  "productName": "JUL Designer",
+  "electronVersion": "3.0.10",
+  "asar": false,
+  "directories": {
+    "output": "out",
+	"buildResources": "resources"
+  },
+  "publish": "github",
+  "linux": {
+    "category": "IDE",
+    "target": [
+      {
+        "target": "appimage",
+        "arch": ["ia32", "x64"]
+      }
+    ]
+  },
+  "win": {
+    "target": [
+	      {
+        "target": "nsis",
+        "arch": ["ia32", "x64"]
+      }
+]
+  },
+  "mac": {
+    "category": "public.app-category.ide"
+  }
+}

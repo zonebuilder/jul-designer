@@ -31,6 +31,8 @@ Features
 System requirements
 -------------------
 
+You may download the desktop application OR:
+
 * a CSS2 compliant web browser with JavaScript 1.5 or later engine 
 * Node.js 0.10.0 or later installed 
 * OR a web server with PHP 5.2.0 or later extension 
@@ -51,7 +53,7 @@ npm install jul-designer
 for /f "tokens=*" %i in ('npm bin') do @"%i\jul-designer"
 ```
 
-Install JCS globally:Install JUL Designer globally:
+Install JUL Designer globally:
 
 `npm install -g jul-designer`
 

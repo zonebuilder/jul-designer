@@ -87,10 +87,10 @@ td.xul-box---box-child, div.xul-dialog--body, div.xul-window--body {
 #test-bck {
 	background-color: grey;
 	background-image: url(../../media/julbck.jpg);
-	filter: alpha(opacity=25);
-	-moz-opacity: 0.25;
-	-khtml-opacity: 0.25;
-	opacity: 0.25;
+	filter: alpha(opacity=50);
+	-moz-opacity: 0.5;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
 }
 .tbutton tr.xul-menuitem {
 	font-size: 13px;

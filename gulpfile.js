@@ -19,7 +19,9 @@ var oConfig = {
 		'!build/application/classes/**', '!build/application/config/**', '!build/application/views/**', '!build/application/bootstrap.php',
 		'!build/application/classes', '!build/application/config', '!build/application/views', '!build/application/i18n', '!build/application/messages',
 		 '!build/modules', '!build/system', 'README.md'],
-	destNode: 'build_node'
+	destNode: 'build_node',
+	copyElectron: ['build_node/**', '!build_node/package.json', 'src/electron/**'],
+	destElectron: 'build_electron'
 };
 var oGulp = require('gulp');
 var oPlugins = require('gulp-load-plugins')();
@@ -73,6 +75,14 @@ oGulp.task('clean_node', function() {
 	return oGulp.src(oConfig.destNode + '/*', {read: false})
 	.pipe(oPlugins.clean());
 });
+oGulp.task('build_node', ['build'], function() {
+	return oGulp.src(oConfig.copyNode)
+	.pipe(oGulp.dest(oConfig.destNode));
+});
+oGulp.task('clean_electron', function() {
+	return oGulp.src(oConfig.destElectron + '/*', {read: false})
+	.pipe(oPlugins.clean());
+});
 
 var fMark = null;
 var fDone = function() {
@@ -82,12 +92,12 @@ var fDone = function() {
 	}, 0);
 };
 
-oGulp.task('build_node', ['build'], function() {
-	return oGulp.src(oConfig.copyNode)
-	.pipe(oGulp.dest(oConfig.destNode)).on('end', fDone);
+oGulp.task('build_electron', ['build_node'], function() {
+	return oGulp.src(oConfig.copyElectron)
+	.pipe(oGulp.dest(oConfig.destElectron)).on('end', fDone);
 });
 
-oGulp.task('default', ['clean', 'clean_node'], function(fCall) {
+oGulp.task('default', ['clean', 'clean_node', 'clean_electron'], function(fCall) {
 	fMark = fCall;
-	oGulp.start('build_node');
+	oGulp.start('build_electron');
 });

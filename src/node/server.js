@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
-	JUL Designer version 2.2
+	JUL Designer version 2.5
 	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -25,6 +25,10 @@ JUL.apply(oApp, {
 	Model: function(sName) { return require(APPPATH + 'models' + DIRECTORY_SEPARATOR + sName); },
 	View: function(sName) { return require('fs').readFileSync(APPPATH + 'views' + DIRECTORY_SEPARATOR + sName, 'utf8'); },
 	Helper: function(sName) { return require(APPPATH + 'helpers' + DIRECTORY_SEPARATOR + sName); },
+	onLoad: function() {
+		this.loaded = true;
+		if (this.mainWindow) { this.mainWindow.loadURL(this.uri + '/'); }
+	}
 });
 
 
@@ -32,7 +36,9 @@ var oConnection = {
 	host: 'localhost',
 	port: 7770
 };
-var oOpts = require('cli').setApp(DOCROOT + 'package.json').enable('help', 'version').parse({
+var oOpts = oApp.electron ? {
+	workdir: require('home-dir').directory + DIRECTORY_SEPARATOR + '.jul-designer'
+} : require('cli').setApp(DOCROOT + 'package.json').enable('help', 'version').parse({
 	address: ['a', 'Hostname or IP to listen to', 'string', oConnection.host],
 	port: ['p', 'Port number to listen to', 'int', oConnection.port],
 	workdir: ['w', 'Directory where projects, frameworks & apps are', 'path',
@@ -66,7 +72,11 @@ for (var i = 0; i < aStatic.length; i++) {
 oApp.server.get('/', JUL.makeCaller(oApp.Controller('main'), 'index'));
 oApp.server.all('/index.php/main/manage', JUL.makeCaller(oApp.Controller('main'), 'manage'));
 oApp.server.listen(oConnection.port, oConnection.host, function() {
+	oApp.onLoad();
 	var oConfig = oApp.Config('main');
 	console.log('Running ' + oConfig.title + ' version ' + oConfig.version);
 	console.log('available at: ' + oApp.uri + '/');
+}).on('error', function() {
+	oApp.onLoad();
+	console.log('Address ' + oApp.uri + '/ already in use!');
 });
