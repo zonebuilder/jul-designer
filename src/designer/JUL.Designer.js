@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.5
+	JUL Designer version 2.5.1
 	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -1461,8 +1461,11 @@ window.onbeforeunload = function(oEvent) {
 	if (JUL.Designer.state.oTestAppWnd && !JUL.Designer.state.oTestAppWnd.closed) {
 		JUL.Designer.state.oTestAppWnd.close();
 	}
-	try { JUL.Designer.designer.checkSave('exit'); } catch (e) {}
 	if (JUL.Designer.designer.state.notSaved) {
+		setTimeout(function() {
+			JUL.Designer.designer.checkSave('exit');
+			delete JUL.Designer.designer.state.notSaved;
+		}, 0);
 		return 'Unsaved changes to the project will be discarded when you leave the page';
 	}
 };

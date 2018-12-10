@@ -1,12 +1,12 @@
 {
   "name": "jul-designer",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "JUL Designer - a RAD tool for JavaScript",
   "main": "index.js",
   "scripts": {
     "start": "electron .",
     "test": "electron-builder --dir",
-    "make_mac": "electron-forge make --platform darwin",
+    "make_mac": "electron-forge make --platform darwin --arch x64",
     "make_win": "electron-builder package -w",
     "make_lnx": "electron-builder package -l",
     "clean": "del-cli out/ --force",

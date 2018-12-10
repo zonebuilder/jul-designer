@@ -1,3 +1,5 @@
+v2.5.1 (2018-12-10):
+  * [Node] increased 'body-parser' request limit to 4M
 v2.5 (2018-11-30):
   * created Electron desktop applications
 v2.2 (2018-11-10):

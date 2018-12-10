@@ -1,6 +1,6 @@
 <?php
 /*
-	JUL Designer version 2.5
+	JUL Designer version 2.5.1
 	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)

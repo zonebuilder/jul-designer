@@ -1,5 +1,6 @@
 {
   "appId": "org.jul.designer",
+  "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
   "productName": "JUL Designer",
   "electronVersion": "3.0.10",
   "asar": false,

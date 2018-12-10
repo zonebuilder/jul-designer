@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
-	JUL Designer version 2.5
+	JUL Designer version 2.5.1
 	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -22,6 +22,7 @@ JUL.apply(oApp, {
 			width: 1024,
 			height: 730,
 			backgroundColor: '#f3f3f3',
+			title: 'JUL Designer',
 			webPreferences: {
 				nativeWindowOpen: true,
 				nodeIntegration: false

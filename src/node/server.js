@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
-	JUL Designer version 2.5
+	JUL Designer version 2.5.1
 	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -58,7 +58,7 @@ if (oOpts.workdir && oOpts.workdir.substr(0, 1) !== '(') {
 
 var oExpress = require('express');
 oApp.server = oExpress();
-oApp.server.use(require('body-parser').urlencoded({ extended: false}));
+oApp.server.use(require('body-parser').urlencoded({ extended: false, limit: 4096 * 1024}));
 var oEjs = require('ejs');
 oApp.server.engine('html', oEjs.renderFile);
 oEjs.delimiter = '?';
