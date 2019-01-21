@@ -1,6 +1,6 @@
 /*
-	JUL Designer version 2.5.1
-	Copyright (c) 2014 - 2018 The Zonebuilder <zone.builder@gmx.com>
+	JUL Designer version 2.6.1
+	Copyright (c) 2014 - 2019 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
 */
@@ -49,7 +49,7 @@ jul.ns('JUL.Designer.about.ui', {
 			{tag: 'description', css: 'logo-title', value: JUL.Designer.title},
 			{tag: 'description', value: 'Version ' + JUL.Designer.version},
 			{tag: 'description',
-			 html: 'Copyright &copy; 2014 - 2018 <a target="_blank" href="' + ample.$encodeXMLCharacters(JUL.Designer.config.zb_link) + '">The Zonebuilder</a>'},
+			 html: 'Copyright &copy; 2014 - 2019 <a target="_blank" href="' + ample.$encodeXMLCharacters(JUL.Designer.config.zb_link) + '">The Zonebuilder</a>'},
 			{tag: 'description',
 			 html: 'Powered by <a target="_blank" href="http://www.amplesdk.com/">Ample SDK</a>, <a target="_blank" href="http://nodejs.org/">Node.js</a> &amp; <a target="_blank" href="http://kohanaframework.org/">Kohana PHP</a>'}
 		]}

@@ -1,3 +1,5 @@
+v2.6.1 (2019-01-21):
+  * switched JUL News Reader examples to Feednami because of YQL shutdown; respects Yahoo!
 v2.5.1 (2018-12-10):
   * [Node] increased 'body-parser' request limit to 4M
 v2.5 (2018-11-30):
