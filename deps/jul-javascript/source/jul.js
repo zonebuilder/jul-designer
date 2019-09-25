@@ -1,6 +1,6 @@
 /*
-	JUL - The JavaScript UI Language version 1.6.1
-	Copyright (c) 2012 - 2018 The Zonebuilder <zone.builder@gmx.com>
+	JUL - The JavaScript UI Language version 1.6.7
+	Copyright (c) 2012 - 2019 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-javascript/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-javascript/wiki/License/)
  */
@@ -108,7 +108,7 @@ global.JUL = {};
 
 JUL = {
 	nsRoot: null,
-	version: '1.6.1',
+	version: '1.6.7',
 	Instance: function(oConfig) {
 		if (!(this instanceof JUL.Instance)) { return new JUL.Instance(oConfig); }
 		JUL.apply(this, oConfig || {});
@@ -151,7 +151,7 @@ JUL = {
 		var oCurrent = oRoot || this.nsRoot || global;
 		if (!sPath) { return oCurrent; }
 		if (typeof sPath !== 'string') { return sPath; }
-		var aNames = sPath.replace(/\\\./g, ':::::').split('.');
+		var aNames = this._square2dots(sPath, ':::::').split('.');
 		if (!oRoot && aNames.length > 1 && ('window' === aNames[0] || 'global' === aNames[0])) {
 			aNames.shift();
 			oCurrent = global;
@@ -191,7 +191,7 @@ JUL = {
 		return fCaller;
 	},
 	ns: function(sPath, oInit, oRoot) {
-		var aNames = sPath ? sPath.replace(/\\\./g, ':::::').split('.') : [];
+		var aNames = sPath ? this._square2dots(sPath, ':::::').split('.') : [];
 		var sItem = '';
 		var oRe = /^(\d|[1-9]\d+)$/;
 		var oCurrent = oRoot || this.nsRoot || global;
@@ -255,6 +255,12 @@ JUL = {
 		if (this._autoInstances.length > 1023) { this._autoInstances = this._autoInstances.slice(64, 1024); }
 		this._autoInstances.push({nsRoot: oNSRoot, getInstance: fInstance});
 		return fInstance;
+	},
+	_square2dots: function(sNS, sDotEsc) {
+		sNS = sNS.replace(/\\\./g, sDotEsc || ':::::').replace(/\\\[/g, ';;;;;1').replace(/\\\]/g, ';;;;;2');
+		sNS = sNS.replace(/(\[|\])+/g, '.').replace(/\.+/g, '.');
+		sNS = this.trim(sNS, '.', false).replace(/;{5}2/g, ']').replace(/;{5}1/g, '[');
+		return sDotEsc ? sNS : sNS.replace(/:{5}/g, '\\.');
 	}
 };
 
@@ -378,6 +384,7 @@ jul.ns('JUL.UI');
 
 jul.apply(jul.get('JUL.UI'),  {
 	bindingProperty: 'cid',
+	booleanAttrs: false,
 	childrenProperty: 'children',
 	classProperty: 'xclass',
 	cssProperty: 'css',
@@ -656,7 +663,7 @@ jul.apply(jul.get('JUL.UI'),  {
 			else { oWidget = oDocument.createTextNode(oConfig.value); }
 			return oWidget;
 		}
-		oWidget = oWidget || (sNS === 'html' || typeof oDocument.createElementNS !== 'function' ?
+		oWidget = oWidget || (sNS === 'html' || typeof oDocument.createElementNS !== 'function' && this.xmlNS[sNS] ?
 			oDocument.createElement.apply(oDocument, [nNS > -1 ? oConfig[this.classProperty].substr(nNS + 1) : (this.useTags ? oConfig[this.tagProperty] : oConfig[this.classProperty])].concat(oConfig.is || [])) :
 			oDocument.createElementNS.apply(oDocument, [this.xmlNS[sNS] || null, nNS > -1 ? oConfig[this.classProperty] : sNS + ':' + (this.useTags ? oConfig[this.tagProperty] : oConfig[this.classProperty])].concat(oConfig.is || [] )));
 		if (!oWidget) { return null; }
@@ -692,7 +699,11 @@ jul.apply(jul.get('JUL.UI'),  {
 			{
 				nNS = sItem.indexOf(':');
 				var sAttr = ['Array', 'Date', 'Function', 'Object', 'Null', 'RegExp'].indexOf(JUL.typeOf(oConfig[sItem])) > -1 ? this.obj2str(oConfig[sItem]) : oConfig[sItem];
-				if (nNS > -1 && typeof oWidget.setAttributeNS === 'function') {
+				if (this.booleanAttrs && typeof oConfig[sItem] === 'boolean') {
+					if (oConfig[sItem]) { sAttr = ''; }
+					else { continue; }
+				}
+				if (nNS > -1 && typeof oWidget.setAttributeNS === 'function' && this.xmlNS[sItem.substr(0, nNS)]) {
 					oWidget.setAttributeNS(this.xmlNS[sItem.substr(0, nNS)] || null, sItem, sAttr);
 				}
 				else {
@@ -721,7 +732,7 @@ jul.apply(jul.get('JUL.UI'),  {
 					oConfig[this.htmlProperty] : '<span>' + oConfig[this.htmlProperty] + '</span>');
 			}
 			else {
-				oWidget.innerHTML = oConfig[this.htmlProperty];
+				oWidget.innerHTML = oConfig[this.htmlProperty].replace(this._regExps.xss, '');
 			}
 		}
 		for (sItem in oConfig) {
@@ -779,8 +790,8 @@ jul.apply(jul.get('JUL.UI'),  {
 			if (typeof oConfig[this.htmlProperty] === 'string') {
 				try {
 				this._createDiv = this._createDiv || (global.document || (global.window ? global.window.document : null)).createElement('div');
-				this._createDiv.innerHTML = oConfig[this.htmlProperty].replace(/<script(\s|\S)+?\/script>/g, '');
-				oConfig[this.htmlProperty] = this.xml2jul(this._createDiv, false, true)[this.childrenProperty] || [];
+				this._createDiv.innerHTML = oConfig[this.htmlProperty].replace(this._regExps.xss, '');
+				oConfig[this.htmlProperty] = this.html2jul(this._createDiv, false, true)[this.childrenProperty] || [];
 				this._createDiv.innerHTML = '';
 				}
 				catch (e0) {
@@ -803,7 +814,7 @@ jul.apply(jul.get('JUL.UI'),  {
 		for (var sItem in oConfig) {
 			if (oConfig.hasOwnProperty(sItem) && typeof oConfig[sItem] === 'string' &&
 				oConfig[sItem].substr(0, 2) === '{<' && oConfig[sItem].substr(-2) === '>}') {
-				oConfig[sItem] = this.xml2jul('<' + 'div>' + oConfig[sItem].slice(1, -1) + '<' + '/div>')[this.childrenProperty];
+				oConfig[sItem] = this.xml2jul('<' + 'div>' + oConfig[sItem].slice(1, -1) + '<' + '/div>', false, true)[this.childrenProperty];
 				if (oConfig[sItem].length < 2) { oConfig[sItem] = oConfig[sItem][0]; }
 				oConfig[sItem] = this.create(oConfig[sItem]);
 			}
@@ -867,6 +878,25 @@ jul.apply(jul.get('JUL.UI'),  {
 		if (this.useTags) { aClass.push(oConfig[this.tagProperty]); }
 		var oMappings = this.membersMappings || {};
 		return aMembers.concat(oMappings[aClass.join(':')] || [], oConfig[this.instantiateProperty] || []);
+	},
+	html2jul: function(oXml, bReturnString, bTextNodes) {
+		this._divEncode = this._divEncode || (global.document || (global.window ? global.window.document : null)).createElement('div');
+		if (typeof oXml !== 'object') {
+			oXml = JUL.trim(oXml);
+			this._divEncode.innerHTML = oXml.replace(this._regExps.xss, '');
+			oXml = [].slice.call(this._divEncode.childNodes || []);
+		}
+		oXml = [].concat(oXml);
+		var aJul = [];
+		for (var i = 0; i < oXml.length; i++) {
+			if (oXml[i].nodeType === 1 || (bTextNodes && oXml[i].nodeType === 3)) {
+				aJul.push(this.xml2jul(oXml[i], false, bTextNodes, true));
+			}
+		}
+		this._divEncode.innerHTML = '';
+		if (!aJul.length) { return this.xml2jul(null, bReturnString); }
+		if (aJul.length < 2) { aJul = aJul[0]; }
+		return bReturnString ? this.obj2str(aJul) : aJul;
 	},
 	include: function(oData, fMerger) {
 		var oNew = {};
@@ -1059,7 +1089,7 @@ jul.apply(jul.get('JUL.UI'),  {
 		}
 		return sResult;
 	},
-	xml2jul: function(oXml, bReturnString, bTextNodes) {
+	xml2jul: function(oXml, bReturnString, bTextNodes, bLowerTags) {
 		if (typeof oXml !== 'object') {
 			try {
 			var sXml = oXml.replace(/&(lt|gt|amp);/g, ';;;;~;$1;').replace(/&(#?\w+;)/g, ';;;;0;$1').replace(/[<>&]/g, function(sMatch) {
@@ -1071,7 +1101,7 @@ jul.apply(jul.get('JUL.UI'),  {
 				return sMatch;
 			}).replace(/;{4}0;/g, '&');
 			this._divEncode = this._divEncode || (global.document || (global.window ? global.window.document : null)).createElement('div');
-			this._divEncode.innerHTML = sXml;
+			this._divEncode.innerHTML = sXml.replace(this._regExps.xss, '');
 			oXml = (this._divEncode.textContent || this._divEncode.innerText || '').replace(/;{4}\d;/g, function(sMatch) {
 				switch (parseInt(sMatch.substr(4, 1))) {
 				case 1: return '<';
@@ -1092,21 +1122,25 @@ jul.apply(jul.get('JUL.UI'),  {
 			return bReturnString ? this.obj2str({error: oXml.parseError.reason}) : {error: oXml.parseError.reason};
 		}
 		var oData = {};
+		var _t = function(s) {
+			return bLowerTags ? s.toLowerCase() : s;
+		};
 		var dom2jul = function(oData, oNode, bNoTag) {
+			if (!oNode) { return; }
 			if (oNode.nodeName === 'parsererror') {
 				oData.error = oNode.textContent;
 				return;
-				}
+			}
 			var nNS = oNode.nodeName.indexOf(':');
 			if (!bNoTag && nNS > -1) {
-				if (this.defaultClass !== oNode.nodeName.substr(0, nNS)) {
-					oData[this.classProperty] = oNode.nodeName.substr(0, nNS);
+				if (this.defaultClass !== _t(oNode.nodeName).substr(0, nNS)) {
+					oData[this.classProperty] = _t(oNode.nodeName).substr(0, nNS);
 				}
-				oData[this.tagProperty] = oNode.nodeName.substr(nNS + 1);
+				oData[this.tagProperty] = _t(oNode.nodeName).substr(nNS + 1);
 			}
 			else {
-				if (!bNoTag || this.defaultClass !== oNode.nodeName) {
-					oData[bNoTag ? this.classProperty : this.tagProperty] = oNode.nodeName;
+				if (!bNoTag || this.defaultClass !== _t(oNode.nodeName)) {
+					oData[bNoTag ? this.classProperty : this.tagProperty] = _t(oNode.nodeName);
 				}
 			}
 			if (oNode.nodeType === 3) {
@@ -1149,8 +1183,8 @@ jul.apply(jul.get('JUL.UI'),  {
 				oChild = oNode.childNodes[i];
 				if (oChild.nodeType === 1 || (bTextNodes && oChild.nodeType === 3)) {
 					nNS = oChild.nodeName.indexOf(':');
-					var sTag = !bNoTag && nNS > -1 && this.defaultClass === oChild.nodeName.substr(0, nNS) ?
-						oChild.nodeName.substr(nNS + 1) : oChild.nodeName;
+					var sTag = !bNoTag && nNS > -1 && this.defaultClass === _t(oChild.nodeName).substr(0, nNS) ?
+						_t(oChild.nodeName).substr(nNS + 1) : _t(oChild.nodeName);
 					if (oChild.nodeType === 1 && !oRepeat[oChild.nodeName] &&
 						[].concat(this.childrenProperty, this.membersProperties || []).indexOf(sTag) > -1) {
 						var aMembers = [];
@@ -1191,7 +1225,7 @@ jul.apply(jul.get('JUL.UI'),  {
 		variable: /^[a-z$_][\w$]*$/i, number: /^[\-+]?[0-9]*\.?[0-9]+([eE][\-+]?[0-9]+)?$/, uint: /^(\d|[1-9]\d+)$/,
 		 functionStart: /^function\s*\(/, newStart: /^new\s+[A-Z$_][\w$]*\s*\(/,
 		 isoDateStart: /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d/, regexp: /^\/(\s|\S)+\/[gim]{0,3}$/,
-		 special: /^(true|false|null)$/, autoUseStrict: /(\{)\r?\n?"use strict";\r?\n?/,
+		 special: /^(true|false|null)$/, autoUseStrict: /(\{)\r?\n?"use strict";\r?\n?/, xss: /<script(\s|\S)+?\/script\s*>/g,
 		 keyword: /^(break|case|catch|continue|debugger|default|delete|do|else||finally|for|function|if|in|instanceof|new|return|switch|this|throw|try|typeof|var|void|while|with|class|enum|export|extends|import|super|implements|interface|let|package|private|protected|public|static|yield)$/
 	},
 	_spaceString: ' ',

@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.6.1
+	JUL Designer version 2.6.7
 	Copyright (c) 2014 - 2019 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -50,7 +50,7 @@ JUL.apply(exports, {
 			var sFrom = DOCROOT + 'application' + DIRECTORY_SEPARATOR + aZip[i] + '.zip';
 			if (oFS.existsSync(sFrom)) {
 				this._unzip(sFrom, oConfig.work_dir, false, (function(sItem) {
-					return function() { try { oFS.unlinkSync(sItem); } catch (e) {} };
+					return function() { /* try { oFS.unlinkSync(sItem); } catch (e) {} */ };
 				})(sFrom));
 			}
 		}

@@ -1,3 +1,6 @@
+v2.6.7 (2019-09-25):
+  * added JUL News Reader - Quasar example, integrating Designer with a Node VueJS ES6 project
+  * updated JUL to the current version, support for HTML5 boolean attributes, see the Quasar example
 v2.6.1 (2019-01-21):
   * switched JUL News Reader examples to Feednami because of YQL shutdown; respects Yahoo!
 v2.5.1 (2018-12-10):

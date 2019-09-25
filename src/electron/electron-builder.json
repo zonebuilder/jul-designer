@@ -2,7 +2,7 @@
   "appId": "org.jul.designer",
   "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
   "productName": "JUL Designer",
-  "electronVersion": "3.0.10",
+  "electronVersion": "3.1.13",
   "asar": false,
   "directories": {
     "output": "out",
