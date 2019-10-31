@@ -1,3 +1,5 @@
+v2.6.8 (2019-10-31):
+  * added JUL News Reader - Vuetify example (NuxtJS, ES6)
 v2.6.7 (2019-09-25):
   * added JUL News Reader - Quasar example, integrating Designer with a Node VueJS ES6 project
   * updated JUL to the current version, support for HTML5 boolean attributes, see the Quasar example

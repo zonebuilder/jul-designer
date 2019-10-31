@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.6.7
+	JUL Designer version 2.6.8
 	Copyright (c) 2014 - 2019 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -1413,7 +1413,7 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 	wrapExport: function(sCode, bComment, sRef) {
 		sRef = sRef || 'oProject';
 		return "/* eslint-disable */\n/* globals JUL */\n\n(function(global, module) {\n'use strict';\n" +
-		"if (module && module.exports && typeof require === 'function') { require('jul'); }\n" +
+		"if (typeof JUL === 'undefined' && module && module.exports && typeof require === 'function') { require('jul'); }\n" +
 			(bComment ? "\n/* if in Node, export the instance factory, else apply it to the global namespace  */" : "") +
 			"\nvar fInstance = function(oNSRoot) {" +
 			(bComment ? "\n/* create a JUL instance bound to oNSRoot and make it available to the inner code */" : "") +
