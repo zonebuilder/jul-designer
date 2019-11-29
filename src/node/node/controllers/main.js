@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.6.8
+	JUL Designer version 3.0
 	Copyright (c) 2014 - 2019 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPLv2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -324,6 +324,7 @@ JUL.apply(exports, {
 			aInfo[sType + '_script'] = '<' + 'script type="text/javascript" src="'+ oHtmlSpecialChars(sPrefix) + (bExport ? aInfo.ns : aInfo.ns.replace(/\./g, '/')) + '.js?v=' + aInfo.version + '"><' + '/script>';
 		}
 		aInfo.jul_script = oApp.Helper('assets')('jul.min').js(oApp.Config('main').jul_root + 'jul.js').toString();
+		aInfo.polyfill_script = oApp.Helper('assets')('polyfill.min').js(oApp.Config('main').jul_root + 'polyfill.js').toString();
 		if (aModules) {
 			var aScripts = [];
 			var sDir = oApp.Config('main').work_dir + DIRECTORY_SEPARATOR + 'projects';

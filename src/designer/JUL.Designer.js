@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.6.8
+	JUL Designer version 3.0
 	Copyright (c) 2014 - 2019 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -111,6 +111,9 @@ jul.ns('JUL.Designer.codeUi', {
 		}}
 	],
 	listeners: {
+		windowshown: function() {
+			JUL.Designer.focusText('textbox-code', this);
+		},
 		dialogaccept: function() {
 			JUL.Designer.saveCode();
 			return false;
@@ -140,6 +143,9 @@ jul.ns('JUL.Designer.commentUi', {
 		}}
 	],
 	listeners: {
+		windowshown: function() {
+			JUL.Designer.focusText('textbox-comment', this);
+		},
 		dialogaccept: function() {
 			JUL.Designer.saveComment();
 			return false;
@@ -147,6 +153,111 @@ jul.ns('JUL.Designer.commentUi', {
 		dialogcancel: function() {
 			JUL.Designer.cancelComment();
 			return false;
+		}
+	}
+});
+
+/**
+	UI configuration for the import dialog
+	@type	Object
+	@name	JUL.Designer.importUi
+*/
+jul.ns('JUL.Designer.importUi', {
+	tag: 'dialog',
+	id: 'dialog-import',
+	title: 'Import layout',
+	hidden: true,
+	width: 980,
+	height: 430,
+	children: [
+		{tag: 'hbox', children: [
+			{tag: 'spacer', width: 5},
+			{tag: 'vbox', width: '100%', children: [
+				{tag: 'radiogroup', id: 'radiogroup-import-type', children: [
+					{tag: 'hbox', children: [
+						{tag: 'label', control: 'radio-import-type-xml', value: 'Source type'},
+						{tag: 'spacer', width: 40},
+						{tag: 'radio', id: 'radio-import-type-xml', label: 'XML', selected: true},
+						{tag: 'spacer', width: 40},
+						{tag: 'radio', id: 'radio-import-type-html', label: 'HTML'},
+						{tag: 'spacer', width: 40},
+						{tag: 'radio', id: 'radio-import-type-json', label: 'JUL(JSON)'}
+					]}
+				]},
+				{tag: 'hbox', children: [
+					{tag: 'checkbox', id: 'checkbox-import-empty-to-boolean', label: 'Convert empty attributes to boolean, except '},
+					{tag: 'spacer', width: 5},
+					{tag: 'textbox', id: 'textbox-import-except-attributes', value: 'id, class, style', style: 'width:150px'},
+					{tag: 'spacer', width: 10},
+					{tag: 'checkbox', id: 'checkbox-import-separate-logic', label: 'Object has separate \'ui\' and \'logic\' members'}
+				]}
+			]},
+			{tag: 'vbox', height: 80, width: 140, align: 'stretch', pack: 'stretch', children: [
+				{tag: 'button', id: 'button-import-convert', flex: 1, label: 'Convert'},
+				{tag: 'button', id: 'button-import-clear', flex: 1, label: 'Clear'}
+			]}
+		]},
+		{tag: 'hbox', flex: 1, children: [
+			{tag: 'vbox', flex: 1, children: [
+				{tag: 'description', value: 'Source', css: 'caption'},
+				{tag: 'textbox', id: 'textbox-import-source', css: 'code', style: 'width:100%', flex: 1, multiline: true}
+			]},
+			{tag: 'spacer', width: 5},
+			{tag: 'vbox', flex: 1, children: [
+				{tag: 'description', value: 'Uutput', css: 'caption'},
+				{tag: 'textbox', id: 'textbox-import-output', css: 'code', style: 'width:100%', flex: 1, multiline: true, readonly: true}
+			]}
+		]},
+		{tag: 'hbox', html: '&nbsp;'}
+	]
+});
+
+/**
+	Interface logic for the import dialog
+	@type	Object
+	@name	JUL.Designer.importLogic
+*/
+jul.ns('JUL.Designer.importLogic', {
+	'radiogroup-import-type': {
+		listeners: {
+			click: function() {
+				setTimeout(function() {
+					JUL.Designer.designer.onImportRadios();
+				}, 50);
+			},
+			keypress: function() {
+				setTimeout(function() {
+					JUL.Designer.designer.onImportRadios();
+				}, 50);
+			}
+		}
+	},
+	'button-import-convert': {
+		listeners: {
+			command: function() {
+				JUL.Designer.designer.onImportConvert();
+			}
+		}
+	},
+	'button-import-clear': {
+		listeners: {
+			command: function() {
+				JUL.Designer.designer.onImportClear();
+			}
+		}
+	},
+	'dialog-import': {
+		listeners: {
+			dialogaccept: function() {
+				JUL.Designer.designer.importNode();
+				return false;
+			},
+			windowshown: function() {
+				JUL.Designer.focusText('textbox-import-source', this);
+			},
+			windowhidden: function() {
+				JUL.Designer.designer.onImportClear();
+			}
 		}
 	}
 });
@@ -166,7 +277,12 @@ jul.ns('JUL.Designer.jsUi', {
 	buttons: 'accept',
 	children: [
 		{tag: 'textbox', id: 'textbox-js', css: 'code', readonly: true, width: '100%', multiline: true, flex: 1}
-	]
+	],
+	listeners: {
+		windowshown: function() {
+			JUL.Designer.focusText('textbox-js', this);
+		}
+	}
 });
 
 /**
@@ -218,7 +334,12 @@ jul.ns('JUL.Designer.xmlUi', {
 			]}
 		]},
 		{tag: 'textbox', id: 'textbox-xml', css: 'code', readonly: true, width: '100%', multiline: true, flex: 1}
-	]
+	],
+	listeners: {
+		windowshown: function() {
+			JUL.Designer.focusText('textbox-xml', this);
+		}
+	}
 });
 
 /**
@@ -510,8 +631,8 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 		@type	Object
 	*/
 	parserConfig: {
-		defaultClass: 'xul', useTags: true, customFactory: 'JUL.UI.createDom', topDown: true, includeProperty: '_inc_',
-		 _usePrefixes: true, referencePrefix: '=_ref_:'
+		_tabString: '  ', defaultClass: 'xul', useTags: true, customFactory: 'JUL.UI.createDom', topDown: true,
+		 includeProperty: '_inc_', _usePrefixes: true, referencePrefix: '=_ref_:'
 	},
 	/**
 		Runtime state for the current module
@@ -625,7 +746,10 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 					blur: this.onDateBlur,
 					focus: function() { JUL.Designer.state._lastFocus = this.getAttribute('id'); },
 					keypress: function(oEvent) {
-						if (oEvent.keyIdentifier === 'Enter') { JUL.Designer.onDateBlur.call(this); }
+						if (oEvent.keyIdentifier === 'Enter') {
+							oEvent.preventDefault();
+							JUL.Designer.onDateBlur.call(this);
+						}
 					}
 				}
 			});
@@ -636,7 +760,10 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 					blur: this.onTimeBlur,
 					focus: function() { JUL.Designer.state._lastFocus = this.getAttribute('id'); },
 					keypress: function(oEvent) {
-						if (oEvent.keyIdentifier === 'Enter') { JUL.Designer.onTimeBlur.call(this); }
+						if (oEvent.keyIdentifier === 'Enter') {
+							oEvent.preventDefault();
+							JUL.Designer.onTimeBlur.call(this);
+						}
 					}
 				}
 			});
@@ -646,10 +773,10 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 			oBuild.readonly = true;
 			if (oValue && ['Array', 'Object'].indexOf(JUL.typeOf(oValue)) > -1) {
 				var sObject = this.parser.obj2str({member: [oValue]});
-				sValue = sObject.slice(sObject.indexOf('[') + 1, sObject.lastIndexOf(']')).replace(/(\n|\t)/gm, '');
+				sValue = sObject.slice(sObject.indexOf('[') + 1, sObject.lastIndexOf(']')).replace(/(\n|\t)/g, '');
 			}
 			else {
-				sValue = (oValue ? oValue.toString().replace(JUL.UI._regExps.autoUseStrict, '$1') : '[object Null]').replace(/\n/gm, ' ').replace(/\t/gm, '');
+				sValue = (oValue ? oValue.toString().replace(JUL.UI._regExps.autoUseStrict, '$1') : '[object Null]').replace(/\n/g, ' ').replace(/\t/g, '');
 			}
 			if (sValue.length > 100) { sValue = sValue.substr(0, 100) + ' ...'; }
 			oBuild.value = sValue;
@@ -702,6 +829,7 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 				},
 				keypress: function(oEvent) {
 					if (oEvent.keyIdentifier === 'Enter') {
+						oEvent.preventDefault();
 						JUL.Designer.onBlur.call(this);
 					}
 				}
@@ -887,13 +1015,35 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 				var nStart = oEl.selectionStart || 0;
 				var nEnd = oEl.selectionEnd || 0;
 				var sValue = this.getAttribute('value');
-				this.setAttribute('value', sValue.slice(0, nStart) + '\t' + sValue.substr(nEnd));
-				oEl.selectionEnd = nStart + 1;
-				oEl.selectionStart = nStart + 1;
+				this.setAttribute('value', sValue.slice(0, nStart) + JUL.Designer.parser._tabString + sValue.substr(nEnd));
+				var l = JUL.Designer.parser._tabString.length;
+				oEl.selectionEnd = nStart + l;
+				oEl.selectionStart = nStart + l;
 			}
 			catch(e) {}
 		 return false;
 		}
+	},
+	/**
+		Tries to set focus to a text box and moves the caret to the start
+		@param	{String}	sId	ID of the element or element reference
+		@param	{Object}	[oCrt]	If present, the element that loses the focus
+	*/
+	focusText: function(sId, oCrt) {
+			if (typeof oCrt === 'undefined') { oCrt = this; }
+			var oText = typeof sId === 'string' ? ample.getElementById(sId) : sId;
+			if (!oText) { return; }
+			var oEl = oText.$getContainer('input');
+			if (!oEl) { return; }
+			setTimeout(function() {
+				try { oEl.selectionEnd = oEl.selectionStart = 0; } catch (e) {}
+			}, 50);
+			setTimeout(function() {
+				try { oEl.scrollLeft = oEl.scrollTop = 0; } catch (e) {}
+			}, 100);
+			if (!oCrt) {return; }
+			oCrt.blur();
+			oText.focus();
 	},
 	/**
 		Returns the object reference mapped to an interface element
@@ -922,6 +1072,7 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 			browse: this.parser.create(this.browseUi),
 			js: this.parser.create(this.jsUi),
 			clipboard: this.parser.create(this.clipboardUi, this.clipboardLogic),
+			importDlg: this.parser.create(this.importUi, this.importLogic),
 			xml: this.parser.create(this.xmlUi),
 			help: this.parser.create(this.help.ui),
 			about: this.parser.create(this.about.ui)
@@ -957,7 +1108,7 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 		ample.documentElement.addEventListener('keydown', function(oEvent) {
 			if (oEvent.keyIdentifier === 'U+001B' && oEvent.target.nodeName === 'xul:dialog') {
 				var sId = oEvent.target.getAttribute('id');
-				if (['dialog-app', 'dialog-code', 'dialog-comment', 'dialog-project', 'dialog-framework'].indexOf(sId) > -1) {
+				if (['dialog-app', 'dialog-code', 'dialog-comment', 'dialog-project', 'dialog-framework', 'dialog-import'].indexOf(sId) > -1) {
 					oEvent.stopPropagation();
 				}
 			}
@@ -976,6 +1127,8 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 			ample.getElementById('textbox-code').$getContainer('input').wrap = 'off';
 			ample.getElementById('textbox-js').$getContainer('input').wrap = 'off';
 			ample.getElementById('textbox-xml').$getContainer('input').wrap = 'off';
+			ample.getElementById('textbox-import-source').$getContainer('input').wrap = 'off';
+			ample.getElementById('textbox-import-output').$getContainer('input').wrap = 'off';
 			ample.getElementById('textbox-clipboard-components').$getContainer('input').wrap = 'off';
 			ample.getElementById('textbox-clipboard-members').$getContainer('input').wrap = 'off';
 			ample.getElementById('textbox-project-template').$getContainer('input').wrap = 'off';
@@ -1335,7 +1488,7 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 			}
 		}
 		ample.cookie('jul-designer-prefs', JSON.stringify(oSave), {
-			expires: 7,
+			expires: 30,
 			path: '/'
 		});
 		return oSave;
@@ -1359,13 +1512,11 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 			sPrefix = '/* value is undefined - default pasted */\n';
 		}
 		var sObject = this.parser.obj2str({o: oValue});
-		var sText = sObject.slice(sObject.indexOf(':') + 1, sObject.lastIndexOf('}')).replace(/\n\t/gm, '\n');
+		var sText = sObject.slice(sObject.indexOf(':') + 1, sObject.lastIndexOf('}'))
+			.replace(new RegExp(JSON.stringify(this.parser._newlineString + this.parser._tabString).slice(1, -1), 'g'), this.parser._newlineString);
 		ample.getElementById('textbox-code').setAttribute('value', typeof oValue === 'undefined' ? '' : sPrefix + JUL.trim(sText));
 		if (this.state.lastDialog) { this.state.lastDialog.hide(); }
 		this.panels.code.showModal();
-		setTimeout(function() {
-			ample.getElementById('textbox-code').focus();
-		}, 500);
 	},
 	/**
 		Displays comment editing dialog
@@ -1378,9 +1529,6 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 		ample.getElementById('textbox-comment').setAttribute('value', oValue || '');
 		if (this.state.lastDialog) { this.state.lastDialog.hide(); }
 		this.panels.comment.showModal();
-		setTimeout(function() {
-			ample.getElementById('textbox-comment').focus();
-		}, 500);
 	},
 	/**
 		Shows the last hidden window
@@ -1412,16 +1560,17 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 	*/
 	wrapExport: function(sCode, bComment, sRef) {
 		sRef = sRef || 'oProject';
-		return "/* eslint-disable */\n/* globals JUL */\n\n(function(global, module) {\n'use strict';\n" +
+		var sWrap = "/* eslint-disable */\n/* globals JUL */\n\n(function(global, module) {\n'use strict';\n" +
 		"if (typeof JUL === 'undefined' && module && module.exports && typeof require === 'function') { require('jul'); }\n" +
 			(bComment ? "\n/* if in Node, export the instance factory, else apply it to the global namespace  */" : "") +
 			"\nvar fInstance = function(oNSRoot) {" +
 			(bComment ? "\n/* create a JUL instance bound to oNSRoot and make it available to the inner code */" : "") +
 			"\nvar jul = new JUL.Instance({nsRoot: oNSRoot === null ? {} : oNSRoot || global});" +
-			"\n\n" + sCode + "\nreturn " + sRef + ";\n};" +
+			"\n\n{code}\nreturn " + sRef + ";\n};" +
 			"\n\nif (module && module.exports) {" +
 			"\n\tmodule.exports = fInstance;\n}\nelse if (global) {\n\tfInstance(global);\n}\nreturn fInstance;" +
 			"\n\n})(typeof global !== 'undefined' ? global : window, (typeof window === 'undefined' || !window.module) && typeof module !== 'undefined' ? module : null);\n";
+		return sWrap.replace(/\t/g, this.parser._tabString).replace(/\n/g, this.parser._newlineString).replace('{code}', sCode);
 	},
 	/**
 		A hash between CSS selectors and lists of attributes of the UI elements
@@ -1437,6 +1586,7 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 		'#dialog-comment': ['width', 'height'],
 		'#dialog-framework': ['width', 'height'],
 		'#dialog-help': ['width', 'height'],
+		'#dialog-import': ['width', 'height'],
 		'#dialog-js': ['width', 'height'],
 		'#dialog-project': ['width', 'height'],
 		'#dialog-xml': ['width', 'height'],
@@ -1462,11 +1612,20 @@ window.onbeforeunload = function(oEvent) {
 	if (JUL.Designer.state.oTestAppWnd && !JUL.Designer.state.oTestAppWnd.closed) {
 		JUL.Designer.state.oTestAppWnd.close();
 	}
+	var oDate = new Date();
+	try {
+		JUL.Designer.designer.checkSave('exit');
+	}
+	catch (e) {}
+	if (new Date() - oDate > 50) { return; }
 	if (JUL.Designer.designer.state.notSaved) {
 		setTimeout(function() {
-			JUL.Designer.designer.checkSave('exit');
-			delete JUL.Designer.designer.state.notSaved;
-		}, 0);
+			try {
+				JUL.Designer.designer.checkSave('exit');
+				delete JUL.Designer.designer.state.notSaved;
+			}
+			catch (e) {}
+		}, 50);
 		return 'Unsaved changes to the project will be discarded when you leave the page';
 	}
 };

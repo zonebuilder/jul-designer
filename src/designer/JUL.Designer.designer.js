@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.6.8
+	JUL Designer version 3.0
 	Copyright (c) 2014 - 2019 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -45,6 +45,7 @@ jul.ns('JUL.Designer.designer.ui', {
 			{tag: 'command', id: 'command-close-project'},
 			{tag: 'command', id: 'command-delete-project'},
 			{tag: 'command', id: 'command-no-logic'},
+			{tag: 'command', id: 'command-import-layout'},
 			{tag: 'command', id: 'command-view-js'},
 			{tag: 'command', id: 'command-xml-layout'},
 			{tag: 'command', id: 'command-copy-node'},
@@ -104,6 +105,8 @@ jul.ns('JUL.Designer.designer.ui', {
 					{tag: 'menuseparator'},
 					{tag: 'menuitem', type: 'checkbox', command: 'command-no-logic', label: 'Don\'t separate logic'},
 					{tag: 'menuseparator'},
+					{tag: 'menuitem', command: 'command-import-layout', label: 'Import layout'},
+					{tag: 'menuseparator'},
 					{tag: 'menuitem', command: 'command-view-js', label: 'View JavaScript'},
 					{tag: 'menuitem', command: 'command-xml-layout', label: 'XML layout'}
 				]}
@@ -129,6 +132,22 @@ jul.ns('JUL.Designer.designer.ui', {
 					{tag: 'menuseparator'},
 					{tag: 'menuitem', command: 'command-show-clipboard', label: 'Show clipboard'}
 				]}
+			]},
+			{tag: 'menu', label: 'Test  ', children: [
+				{tag: 'menupopup', children: [
+					{tag: 'menuitem', label: 'Test project', listeners: {
+						command: function() { ample.getElementById('anchor-test').$getContainer().click(); }
+					}},
+					{tag: 'menuitem', label: 'Download project', listeners: {
+						command: function() { ample.getElementById('anchor-download').$getContainer().click(); }
+					}},
+					{tag: 'menuitem', label: 'Test application', listeners: {
+						command: function() { ample.getElementById('anchor-test-app').$getContainer().click(); }
+					}},
+					{tag: 'menuitem', label: 'Download application', listeners: {
+						command: function() { ample.getElementById('anchor-download-app').$getContainer().click(); }
+					}}
+				]}
 			]}
 		]},
 		{tag: 'toolbar', context: 'menupopup-show-bars', children: [
@@ -152,6 +171,7 @@ jul.ns('JUL.Designer.designer.ui', {
 			 command: 'command-delete-project'},
 			{tag: 'toolbarbutton', label: 'NL', type: 'checkbox', css: 'tbutton darkr', tooltiptext: 'Don\'t separate logic',
 			 command: 'command-no-logic'},
+			{tag: 'toolbarbutton', label: 'IL', css: 'tbutton darkr', tooltiptext: 'Import layout', command: 'command-import-layout'},
 			{tag: 'toolbarbutton', label: 'JS', css: 'tbutton darkr', tooltiptext: 'View JavaScript', command: 'command-view-js'},
 			{tag: 'toolbarbutton', label: 'XL', css: 'tbutton darkr', tooltiptext: 'XML layout', command: 'command-xml-layout'},
 			{tag: 'toolbarseparator'},
@@ -388,27 +408,27 @@ jul.ns('JUL.Designer.designer.logic', {
 	'anchor-test': {
 		listeners: {
 			click: function() {
-			var sSrc = this.getAttribute('href');
-			if (sSrc.substr(0, 1) === '#') { return false; }
-			if (JUL.Designer.state.oTestWnd && !JUL.Designer.state.oTestWnd.closed) {
-				JUL.Designer.state.oTestWnd.close();
-			}
-			JUL.Designer.state.oTestWnd = window.open(sSrc, '_test');
-			return false;
-			}
+				var sSrc = this.getAttribute('href');
+				if (sSrc.substr(0, 1) === '#') { return false; }
+				if (JUL.Designer.state.oTestWnd && !JUL.Designer.state.oTestWnd.closed) {
+					JUL.Designer.state.oTestWnd.close();
+				}
+				JUL.Designer.state.oTestWnd = window.open(sSrc, '_test');
+				return false;
+				}
 		}
 	},
 	'anchor-test-app': {
 		listeners: {
 			click: function() {
-			var sSrc = this.getAttribute('href');
-			if (sSrc.substr(0, 1) === '#') { return false; }
-			if (JUL.Designer.state.oTestAppWnd && !JUL.Designer.state.oTestAppWnd.closed) {
-				JUL.Designer.state.oTestAppWnd.close();
-			}
-			JUL.Designer.state.oTestAppWnd = window.open(sSrc, '_test_app');
-			return false;
-			}
+				var sSrc = this.getAttribute('href');
+				if (sSrc.substr(0, 1) === '#') { return false; }
+				if (JUL.Designer.state.oTestAppWnd && !JUL.Designer.state.oTestAppWnd.closed) {
+					JUL.Designer.state.oTestAppWnd.close();
+				}
+				JUL.Designer.state.oTestAppWnd = window.open(sSrc, '_test_app');
+				return false;
+				}
 		}
 	},
 	'button-designer-add': {
@@ -563,6 +583,13 @@ jul.ns('JUL.Designer.designer.logic', {
 			}
 		}
 	},
+	'command-import-layout': {
+		listeners: {
+			command: function() {
+				JUL.Designer.designer.showImport();
+			}
+		}
+	},
 	'command-new-app': {
 		listeners: {
 			command: function() {
@@ -700,8 +727,8 @@ jul.ns('JUL.Designer.designer.logic', {
 	'command-undo': {
 		listeners: {
 			command: function() {
-				JUL.Designer.designer.undo();
-			}
+					JUL.Designer.designer.undo();
+				}
 		}
 	},
 	'command-up-node': {
@@ -877,6 +904,7 @@ jul.ns('JUL.Designer.designer.logic', {
 		listeners: {
 			keypress: function(oEvent) {
 				if (oEvent.keyIdentifier === 'Enter') {
+					oEvent.preventDefault();
 					var nIndex = ample.getElementById('tabbox-designer-members').selectedIndex;
 					var sType = nIndex ? (nIndex < 2 ? 'logic' : 'listeners') : 'ui';
 					var oItems = ample.getElementById('listbox-designer-' + sType).selectedItems;
@@ -895,6 +923,7 @@ jul.ns('JUL.Designer.designer.logic', {
 		listeners: {
 			keypress: function(oEvent) {
 				if (oEvent.keyIdentifier === 'Enter') {
+					oEvent.preventDefault();
 					if (!JUL.Designer.designer.current.ui) { return; }
 					JUL.Designer.designer.searchId(this.getAttribute('value'));
 				}
@@ -964,7 +993,7 @@ jul.ns('JUL.Designer.designer.projectUi', {
 			]},
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'description',
-				 value: 'Testing HTML page. Besides {jul_script} and {project_script}, all {project_<property>} properties are available; page timestamp {ts}.'},
+				 value: 'Testing HTML page. Besides {polyfill_script}, {jul_script} and {project_script}, all {project_<property>} properties are available; page timestamp {ts}.'},
 				{tag: 'textbox', id: 'textbox-project-template', css: 'code', width: '100%', multiline: true, flex: 1}
 			]}
 		]}
@@ -979,6 +1008,9 @@ jul.ns('JUL.Designer.designer.projectUi', {
 jul.ns('JUL.Designer.designer.projectLogic', {
 	'dialog-project': {
 		listeners: {
+			windowshown: function() {
+				JUL.Designer.focusText('textbox-project-template', null);
+			},
 			dialogaccept: function() {
 				JUL.Designer.designer.save();
 				JUL.Designer.cleanMap();
@@ -1062,9 +1094,9 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		init: {
 			tooltip: 'Project instantiation method', id: 'setting-project-init', template: ' function() { ... }', required: true,
 			 defaultValue: function() {
-				var oParser = new JUL.UI.Parser(this.parserConfig);
-				oParser.create(this.ui, this.logic);
-			}
+	var oParser = new JUL.UI.Parser(this.parserConfig);
+	oParser.create(this.ui, this.logic);
+}
 		},
 		suggestedFramework: {
 			tooltip: 'If not empty, will try to open this framework when opening the project', id: 'setting-project-framework',
@@ -2114,56 +2146,56 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		@returns	{String}	Formatted XML string
 	*/
 	formatXml: function (xml) {
-	    var reg = /(>)(<)(\/*)/g;
-	    var wsexp = / *(.*) +\n/g;
-	    var contexp = /(<.+>)(.+\n)/g;
-	    xml = xml.replace(reg, '$1\n$2$3').replace(wsexp, '$1\n').replace(contexp, '$1\n$2');
-	    //var pad = 0;
-	    var formatted = '';
-	    var lines = xml.split('\n');
-	    var indent = 0;
-	    var lastType = 'other';
-	    // 4 types of tags - single, closing, opening, other (text, doctype, comment) - 4*4 = 16 transitions 
-	    var transitions = {
-	        'single->single': 0,
-	        'single->closing': -1,
-	        'single->opening': 0,
-	        'single->other': 0,
-	        'closing->single': 0,
-	        'closing->closing': -1,
-	        'closing->opening': 0,
-	        'closing->other': 0,
-	        'opening->single': 1,
-	        'opening->closing': 0,
-	        'opening->opening': 1,
-	        'opening->other': 1,
-	        'other->single': 0,
-	        'other->closing': -1,
-	        'other->opening': 0,
-	        'other->other': 0
-	    };
-	    for (var i = 0; i < lines.length; i++) {
-	        var ln = lines[i];
-	        var single = Boolean(ln.match(/<.+\/>/)); // is this line a single tag? ex. <br />
-	        var closing = Boolean(ln.match(/<\/.+>/)); // is this a closing tag? ex. </a>
-	        var opening = Boolean(ln.match(/<[^!].*>/)); // is this even a tag (that's not <!something>)
-	        var type = single ? 'single' : closing ? 'closing' : opening ? 'opening' : 'other';
-	        var fromTo = lastType + '->' + type;
-	        lastType = type;
-	        var padding = '';
-	        indent += transitions[fromTo];
-	        for (var j = 0; j < indent; j++) {
-	            padding += '\t';
-	        }
-	        if (fromTo === 'opening->closing') {
-	            formatted = formatted.substr(0, formatted.length - 1) + ln + '\n'; // substr removes line break (\n) from prev loop
-	        }
-				else {
-	            formatted += padding + ln + '\n';
-	        }
-	    }
-	    return formatted;
-	},
+        var reg = /(>)(<)(\/*)/g;
+        var wsexp = / *(.*) +\n/g;
+        var contexp = /(<.+>)(.+\n)/g;
+        xml = xml.replace(reg, '$1\n$2$3').replace(wsexp, '$1\n').replace(contexp, '$1\n$2');
+        //var pad = 0;
+        var formatted = '';
+        var lines = xml.split('\n');
+        var indent = 0;
+        var lastType = 'other';
+        // 4 types of tags - single, closing, opening, other (text, doctype, comment) - 4*4 = 16 transitions 
+        var transitions = {
+            'single->single': 0,
+            'single->closing': -1,
+            'single->opening': 0,
+            'single->other': 0,
+            'closing->single': 0,
+            'closing->closing': -1,
+            'closing->opening': 0,
+            'closing->other': 0,
+            'opening->single': 1,
+            'opening->closing': 0,
+            'opening->opening': 1,
+            'opening->other': 1,
+            'other->single': 0,
+            'other->closing': -1,
+            'other->opening': 0,
+            'other->other': 0
+        };
+        for (var i = 0; i < lines.length; i++) {
+            var ln = lines[i];
+            var single = Boolean(ln.match(/<.+\/>/)); // is this line a single tag? ex. <br />
+            var closing = Boolean(ln.match(/<\/.+>/)); // is this a closing tag? ex. </a>
+            var opening = Boolean(ln.match(/<[^!].*>/)); // is this even a tag (that's not <!something>)
+            var type = single ? 'single' : closing ? 'closing' : opening ? 'opening' : 'other';
+            var fromTo = lastType + '->' + type;
+            lastType = type;
+            var padding = '';
+            indent += transitions[fromTo];
+            for (var j = 0; j < indent; j++) {
+                padding += '\t';
+            }
+            if (fromTo === 'opening->closing') {
+                formatted = formatted.substr(0, formatted.length - 1) + ln + '\n'; // substr removes line break (\n) from prev loop
+            }
+			else {
+                formatted += padding + ln + '\n';
+            }
+        }
+        return formatted;
+    },
 	/**
 		Returns a list of property names that should not be altered by the user interaction
 		@param	{Object}	[oParserConfig]	Parser config object, defaults to project's parser
@@ -2272,6 +2304,34 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		sId = sId || this.getId(oConfig, oParserConfig);
 		oLogic = oLogic || this.current.logic;
 		return sId && oLogic[sId] ? oLogic[sId] : oConfig;
+	},
+	/**
+		Imports the output code from the output dialog
+	*/
+	importNode: function() {
+		var oNode = this.state._importNodes;
+		if (!oNode) {
+			window.alert('Nothing to import. Please perform a conversion');
+			return;
+		}
+		if (typeof oNode.ui !== 'object' || typeof oNode.logic !== 'object') {
+			window.alert('Import UI & logic must be of type `object ');
+			return;
+		}
+		delete this.state._importNodes;
+		ample.getElementById('dialog-import').hide();
+		var oClipboard = this.state.clipboard;
+		var oSave = JUL.apply({}, oClipboard, false, null, ['contentNodes', 'pasteStart', 'pasteEnd', 'mapClass' ]);
+		oClipboard.contentNodes = [];
+		[].concat(oNode.ui).map(function(oItem, i) {
+		oClipboard.contentNodes[i] = {ui: oItem, logic: oNode.logic};
+		});
+		delete oClipboard.pasteStart;
+		delete oClipboard.pasteEnd;
+		delete oClipboard.mapClass;
+		this.onPasteNode();
+		delete oClipboard.contentNodes;
+		JUL.apply(oClipboard, oSave);
 	},
 	/**
 		Augments a config object for editing in the interface
@@ -2501,6 +2561,91 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		this.setCellLabel(this.currentNode, 'id');
 		var sBinding = oWhere.ref()[this.currentParser.bindingProperty];
 		this.swapLogic(null, sValue || sBinding, oWhere.oldValue || sBinding);
+	},
+	/**
+		Clears the output code in the import dialog
+	*/
+	onImportClear: function() {
+		delete this.state._importNodes;
+		ample.getElementById('textbox-import-output').setAttribute('value', '');
+	},
+	/**
+		Convers the import source code the output
+	*/
+	onImportConvert: function() {
+		var sText = ample.getElementById('textbox-import-source').getAttribute('value');
+		if (!JUL.trim(sText)) { return; }
+		var sType = this.state._importType;
+		this.state._importNodes = {ui: null, logic: null};
+		var oData = null;
+		var bSeparate = false;
+		if (sType === 'html' || sType === 'xml') {
+			sText = sText.replace(/<\?(\s|\S)*?\?>/g, '').replace(/xmlns=(\x22(\s|\S)*?\x22)/g, 'xmlns="custom#$1"');
+			oData = sType === 'html' ?
+				this.currentParser.html2jul('<div>' + sText + '</div>') : this.currentParser.xml2jul('<root>' + sText + '</root>');
+			oData = oData[this.currentParser.childrenProperty] || [{error: oData.error || 'Invalid tags encountered'}];
+			if (oData.length === 1) { oData = oData[0]; }
+		}
+		else if (sType === 'json') {
+			var BLogic = ample.getElementById('checkbox-import-separate-logic').getAttribute('checked') === 'true';
+			try {
+				oData = JSON.parse(sText);
+				if (BLogic) {
+					if (oData.ui) { bSeparate = true; }
+					else { 	oData = {error: 'Object must have the `ui` member'}; }
+				}
+			}
+			catch (e) {
+				oData = {error: e.toString()};
+			}
+		}
+		if ((sType === 'xml' || sType === 'html') &&
+			ample.getElementById('checkbox-import-empty-to-boolean').getAttribute('checked') === 'true') {
+			var aList = ample.getElementById('textbox-import-except-attributes').getAttribute('value');
+			aList = JUL.trim(aList) ? aList.split(',').map(JUL.trim) : [];
+			var nPos = aList.indexOf('class');
+			if (nPos > -1) { aList[nPos] = this.currentParser.cssProperty; }
+			var fChange = function(oConfig) {
+				var aExclude = this.getExclude(null, oConfig).concat(aList);
+				for (var sItem in oConfig) {
+					if (aExclude.indexOf(sItem) < 0 && oConfig[sItem] === '') { oConfig[sItem] = true; }
+				}
+				var aMembers = this.currentParser.getMembers(oConfig) || [];
+				for (var i = 0; i < aMembers.length; i++) {
+					var sName = aMembers[i];
+					if (oConfig[sName] && typeof oConfig[sName] === 'object') {
+						[].concat(oConfig[sName]).map(fChange, this);
+					}
+				}
+			};
+			[].concat(oData).map(fChange, this);
+		}
+		JUL.apply(this.state._importNodes, bSeparate ? oData : {ui: oData}, false, null, ['ui', 'logic']);
+		oData = this.state._importNodes;
+		var sOut = '/* import UI */\n' + JUL.Designer.parser.obj2str(oData.ui) + '\n\n' +
+			'/* import logic */\n' + JUL.Designer.parser.obj2str(oData.logic) + '\n\n';
+		ample.getElementById('textbox-import-output').setAttribute('value', sOut);
+	},
+	/**
+		Performs the Import dialog UI behavior
+	*/
+	onImportRadios: function() {
+			var sType = this.state._importType;
+			if (ample.getElementById('radio-import-type-' + sType).getAttribute('selected') === 'true') { return; }
+			var aTypes = ['xml', 'html', 'json'];
+			for (var i = 0; i < aTypes.length; i++) {
+				sType = aTypes[i];
+				if (ample.getElementById('radio-import-type-' + sType).getAttribute('selected') === 'true') {
+					this.state._importType = sType;
+					break;
+				}
+			}
+		var bXml = sType === 'xml' || sType === 'html';
+		ample.getElementById('checkbox-import-empty-to-boolean').setAttribute('disabled', !bXml);
+		ample.getElementById('checkbox-import-separate-logic').setAttribute('disabled', bXml);
+		ample.getElementById('textbox-import-except-attributes').setAttribute('disabled', !bXml);
+		ample.getElementById('checkbox-import-separate-logic').setAttribute('checked', !bXml);
+		if (!bXml) { ample.getElementById('checkbox-import-empty-to-boolean').setAttribute('checked', false); }
 	},
 	onInstantiateUpdated: function(oWhere) {
 		if (oWhere.val() === oWhere.oldValue) { return; }
@@ -3277,7 +3422,8 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		JUL.Designer.empty(ample.getElementById('listbox-project-settings').body);
 		JUL.Designer.empty(ample.getElementById('listbox-project-parser').body);
 		if (!oCurrent.template) {
-			oCurrent.template = JUL.Designer.config.defaultTemplate;
+			oCurrent.template = JUL.Designer.config.defaultTemplate
+				.replace(/\t/g, JUL.Designer.parser._tabString).replace(/\n\r?/g, JUL.Designer.parser._newlineString);
 		}
 		ample.getElementById('textbox-project-template').setAttribute('value', oCurrent.template);
 		JUL.Designer.fillListbox('listbox-project-settings', this.fields, oCurrent);
@@ -3355,6 +3501,23 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		JUL.Designer.panels.clipboard.showModal();
 	},
 	/**
+		Displays the Import dialog
+	*/
+	showImport: function() {
+		if (!this.current.ns) { return; }
+		ample.getElementById('textbox-import-source').setAttribute('value', '');
+		ample.getElementById('textbox-import-output').setAttribute('value', '');
+		ample.getElementById('textbox-import-except-attributes').setAttribute('value', 'id, class, style');
+		ample.getElementById('checkbox-import-empty-to-boolean').setAttribute('checked', (this.current.parserConfig._otherProperties || {}).booleanAttrs === true);
+		ample.getElementById('checkbox-import-separate-logic').setAttribute('checked', false);
+		ample.getElementById('radio-import-type-xml').setAttribute('selected', true);
+		this.state._importType = 'json';
+		this.onImportRadios();
+		var oDialog = JUL.Designer.panels.importDlg;
+		oDialog.setAttribute('title', this.current.title + ' - Import layout');
+		oDialog.showModal();
+	},
+	/**
 		Shows the JavaScript window
 	*/
 	showJs: function() {
@@ -3380,9 +3543,6 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		var oDialog = JUL.Designer.panels.js;
 		oDialog.setAttribute('title', this.current.title + ' - JavaScript');
 		oDialog.showModal();
-		setTimeout(function() {
-			ample.getElementById('textbox-js').focus();
-		}, 500);
 	},
 	/**
 		Changes the 'members' collection displayed under a component in the UI tree panel
@@ -3551,9 +3711,6 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		var oDialog = JUL.Designer.panels.xml;
 		oDialog.setAttribute('title', this.current.title + ' - XML layout');
 		oDialog.showModal();
-		setTimeout(function() {
-			ample.getElementById('textbox-xml').focus();
-		}, 500);
 	},
 	/**
 		Moves the logic members of a component between the main config and its logic part, depending on the presence of a component ID
@@ -3634,7 +3791,8 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		@returns	{String}	JAvaScrtipt code
 	*/
 	testJs: function(oJs, bComment) {
-		var sJs = '/* generated by ' + JUL.Designer.title + ' version ' + JUL.Designer.version + ' */\n';
+		var r = JUL.Designer.parser._newlineString;
+		var sJs = '/* generated by ' + JUL.Designer.title + ' version ' + JUL.Designer.version + ' */'+ r;
 		oJs.parserConfig = JUL.apply(JUL.apply({}, oJs.parserConfig), oJs.parserConfig._otherProperties || {}, true);
 		if (bComment) {
 			var oProject = JUL.Designer.keySort(oJs);
@@ -3655,20 +3813,20 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 				{suf: '.ui', ref: oJs.ui, desc: ' UI'},
 				{suf: '.logic', ref: oJs.logic, desc: ' logic'}
 			];
-			sJs = sJs + '/* \'' + oProject.title + '\' namespace */\n';
-			sJs = sJs + "var oProject = jul.ns('" + oProject.ns + "');\n\n";
+			sJs = sJs + '/* \'' + oProject.title + '\' namespace */' + r;
+			sJs = sJs + "var oProject = jul.ns('" + oProject.ns + "');" + r + r;
 			for (var i = 0; i < aItems.length; i++) {
 				var oItem = aItems[i];
-				sJs = sJs + (oItem.suf ? 'oProject' + oItem.suf + ' =\n' : 'jul.apply(oProject' + ',\n' );
-				sJs = sJs + '/* begin \'' + oProject.title + "'" + oItem.desc + ' */\n';
-				sJs = sJs + JUL.Designer.parser.obj2str(oItem.ref) + '\n';
-				sJs = sJs + '/* end \'' + oProject.title + "'" + oItem.desc + ' */\n';
-				sJs = sJs + (oItem.suf ? '' : ')') + ';\n\n';
+				sJs = sJs + (oItem.suf ? 'oProject' + oItem.suf + ' =' + r : 'jul.apply(oProject' + ',' + r);
+				sJs = sJs + '/* begin \'' + oProject.title + "'" + oItem.desc + ' */' + r;
+				sJs = sJs + JUL.Designer.parser.obj2str(oItem.ref) + r;
+				sJs = sJs + '/* end \'' + oProject.title + "'" + oItem.desc + ' */' + r;
+				sJs = sJs + (oItem.suf ? '' : ')') + ';' + r + r;
 			}
 		}
 		else {
-			sJs = sJs + "var oProject = jul.ns('" + oJs.ns + "');\n";
-			sJs = sJs + 'jul.apply(oProject, ' + JUL.Designer.parser.obj2str(oJs) + ');\n';
+			sJs = sJs + "var oProject = jul.ns('" + oJs.ns + "');" + r;
+			sJs = sJs + 'jul.apply(oProject, ' + JUL.Designer.parser.obj2str(oJs) + ');' + r;
 		}
 		return JUL.Designer.wrapExport(sJs, bComment, 'oProject');
 	},
@@ -3711,6 +3869,8 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 			if (oOptions.xmlNS.hasOwnProperty(sPos)) { oOptions.xmlNS[sPos] = '#customXMLns:' + oOptions.xmlNS[sPos]; }
 		}
 		oOptions.customFactory = this.createXml;
+		oOptions._tabString = JUL.Designer.parser._tabString;
+		oOptions._newlineString = JUL.Designer.parser._newlineString;
 		var oParser = new JUL.UI.Parser(oOptions);
 		var oUi = oOptions.expandMembers ? (bArray ?
 			this.current.ui.map(oParser.expand, oParser) : oParser.expand(this.current.ui)) : this.current.ui;
@@ -3748,9 +3908,13 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		var aXml = this.formatXml(sXml.replace(/\t/g, '&#9;').replace(/\n/g, '&#10;')).split('\n');
 		for (var i = 0; i < aXml.length; i++) {
 			n = aXml[i].indexOf('<');
-			aXml[i] = aXml[i].replace(/&#10;/g, '\n' + (n > 0 ? aXml[i].substr(0, n) : '')).replace(/&#9;/g, '\t');
+			if (n > 0) {
+				aXml[i] = aXml[i].replace(/&#10;/g, '&#10;' + aXml[i].slice(0, n));
+			}
 		}
-		return (sHeader + '\n' + aXml.join('\n')).replace(/\t/g, JUL.Designer.parser._tabString);
+		return (sHeader + '\n' + aXml.join('\n'))
+			.replace(/\t/g, JUL.Designer.parser._tabString).replace(/\n/g, JUL.Designer.parser._newlineString)
+			.replace(/&#9;/g, '\t').replace(/&#10;/g, '\n');
 	},
 	/**
 		Manages all undo operations

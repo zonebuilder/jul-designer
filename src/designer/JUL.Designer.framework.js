@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.6.8
+	JUL Designer version 3.0
 	Copyright (c) 2014 - 2019 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -296,6 +296,7 @@ jul.ns('JUL.Designer.framework.logic', {
 		listeners: {
 			keypress: function(oEvent) {
 				if (oEvent.keyIdentifier === 'Enter') {
+					oEvent.preventDefault();
 					var oItems = ample.getElementById('listbox-framework-components').selectedItems;
 					if (oItems.length && !oEvent.shiftKey) {
 				var oItem = oItems.item(oItems.length - 1);
@@ -312,6 +313,7 @@ jul.ns('JUL.Designer.framework.logic', {
 		listeners: {
 			keypress: function(oEvent) {
 				if (oEvent.keyIdentifier === 'Enter') {
+					oEvent.preventDefault();
 					var nIndex = ample.getElementById('tabbox-current-component').selectedIndex;
 					var sType = nIndex ? 'events' : 'members';
 					var oItems = ample.getElementById('listbox-framework-component-' + sType).selectedItems;

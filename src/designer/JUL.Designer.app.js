@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 2.6.8
+	JUL Designer version 3.0
 	Copyright (c) 2014 - 2019 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -102,7 +102,7 @@ jul.ns('JUL.Designer.app.ui', {
 			]},
 			{tag: 'vbox', flex: 1, children: [
 				{tag: 'description',
-				 value: 'Testing HTML page. Besides {jul_script}, {app_script} and {modules_scripts}, all {app_<property>} properties are available; page timestamp {ts}.'},
+				 value: 'Testing HTML page. Besides {polyfill_script}, {jul_script}, {app_script} and {modules_scripts}, all {app_<property>} properties are available; page timestamp {ts}.'},
 				{tag: 'textbox', id: 'textbox-app-template', css: 'code', width: '100%', multiline: true, flex: 1}
 			]}
 		]}
@@ -153,6 +153,10 @@ jul.ns('JUL.Designer.app.logic', {
 	},
 	'dialog-app': {
 		listeners: {
+			windowshown: function() {
+				JUL.Designer.focusText('textbox-app-js', null);
+				JUL.Designer.focusText('textbox-app-template', null);
+			},
 			dialogaccept: function() {
 				JUL.Designer.app.save();
 				JUL.Designer.cleanMap();
@@ -203,6 +207,7 @@ jul.ns('JUL.Designer.app.logic', {
 		listeners: {
 			keypress: function(oEvent) {
 				if (oEvent.keyIdentifier === 'Enter') {
+					oEvent.preventDefault();
 					var oItems = ample.getElementById('listbox-app-modules').selectedItems;
 					if (oItems.length && !oEvent.shiftKey) { JUL.Designer.app.changeModule(); }
 					else { JUL.Designer.app.addModule(); }
@@ -629,7 +634,8 @@ jul.apply(jul.get('JUL.Designer.app'), /** @lends JUL.Designer.app */ {
 		JUL.Designer.empty(ample.getElementById('listbox-app-parser').body);
 		JUL.Designer.empty(ample.getElementById('listbox-app-modules').body);
 		if (!oCurrent.template) {
-			oCurrent.template = JUL.Designer.config.defaultAppTemplate;
+			oCurrent.template = JUL.Designer.config.defaultAppTemplate
+				.replace(/\t/g, JUL.Designer.parser._tabString).replace(/\n\r?/g, JUL.Designer.parser._newlineString);
 		}
 		ample.getElementById('textbox-app-template').setAttribute('value', oCurrent.template);
 		JUL.Designer.fillListbox('listbox-app-settings', this.fields, oCurrent);

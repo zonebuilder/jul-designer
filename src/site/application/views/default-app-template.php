@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta charset="UTF-8" />
 	<title>{app_title}</title>
+	{polyfill_script}
 	<!-- Custom includes -->
 	{jul_script}
 	{app_script}
