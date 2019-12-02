@@ -1,3 +1,5 @@
+v3.0.1 (2019-12-02):
+  * fixed a bug in wrapExport() method
 v3.0 (2019-11-30):
   * integrated https://cdnjs.com/libraries/babel-polyfill to improve ES6 browser compliance
   * added import functionality (Import Layout - IL)

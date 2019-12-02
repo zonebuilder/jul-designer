@@ -1,5 +1,5 @@
 /*
-	JUL Designer version 3.0
+	JUL Designer version 3.0.1
 	Copyright (c) 2014 - 2019 The Zonebuilder <zone.builder@gmx.com>
 	http://sourceforge.net/projects/jul-designer/
 	Licenses: GNU GPL2 or later; GNU LGPLv3 or later (http://sourceforge.net/p/jul-designer/wiki/License/)
@@ -1570,7 +1570,8 @@ jul.apply(jul.get('JUL.Designer'), /** @lends JUL.Designer */ {
 			"\n\nif (module && module.exports) {" +
 			"\n\tmodule.exports = fInstance;\n}\nelse if (global) {\n\tfInstance(global);\n}\nreturn fInstance;" +
 			"\n\n})(typeof global !== 'undefined' ? global : window, (typeof window === 'undefined' || !window.module) && typeof module !== 'undefined' ? module : null);\n";
-		return sWrap.replace(/\t/g, this.parser._tabString).replace(/\n/g, this.parser._newlineString).replace('{code}', sCode);
+		return sWrap.replace(/\t/g, this.parser._tabString).replace(/\n/g, this.parser._newlineString)
+			.split('{code}', 2).join(sCode);
 	},
 	/**
 		A hash between CSS selectors and lists of attributes of the UI elements
