@@ -173,16 +173,20 @@ jul.ns('JUL.Designer.importUi', {
 		{tag: 'hbox', children: [
 			{tag: 'spacer', width: 5},
 			{tag: 'vbox', width: '100%', children: [
-				{tag: 'radiogroup', id: 'radiogroup-import-type', children: [
-					{tag: 'hbox', children: [
-						{tag: 'label', control: 'radio-import-type-xml', value: 'Source type'},
-						{tag: 'spacer', width: 40},
-						{tag: 'radio', id: 'radio-import-type-xml', label: 'XML', selected: true},
-						{tag: 'spacer', width: 40},
-						{tag: 'radio', id: 'radio-import-type-html', label: 'HTML'},
-						{tag: 'spacer', width: 40},
-						{tag: 'radio', id: 'radio-import-type-json', label: 'JUL(JSON)'}
-					]}
+				{tag: 'hbox', children: [
+					{tag: 'label', control: 'radio-import-type-xml', value: 'Source type'},
+					{tag: 'spacer', width: 50},
+					{tag: 'radiogroup', id: 'radiogroup-import-type', children: [
+						{tag: 'hbox', children: [
+							{tag: 'radio', id: 'radio-import-type-xml', label: 'XML', selected: true},
+							{tag: 'spacer', width: 50},
+							{tag: 'radio', id: 'radio-import-type-html', label: 'HTML'},
+							{tag: 'spacer', width: 50},
+							{tag: 'radio', id: 'radio-import-type-json', label: 'JUL(JSON)'}
+						]}
+					]},
+					{tag: 'spacer', width: 32},
+					{tag: 'checkbox', id: 'checkbox-import-use-prefixes', label: 'Use JSON prefixes when reviving JUL types'}
 				]},
 				{tag: 'hbox', children: [
 					{tag: 'checkbox', id: 'checkbox-import-empty-to-boolean', label: 'Convert empty attributes to boolean, except '},

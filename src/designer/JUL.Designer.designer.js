@@ -2588,15 +2588,25 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		}
 		else if (sType === 'json') {
 			var BLogic = ample.getElementById('checkbox-import-separate-logic').getAttribute('checked') === 'true';
+			var bError = false;
 			try {
 				oData = JSON.parse(sText);
 				if (BLogic) {
 					if (oData.ui) { bSeparate = true; }
-					else { 	oData = {error: 'Object must have the `ui` member'}; }
+					else {
+						bError = true;
+						oData = {error: 'Object must have the `ui` member'};
+					}
 				}
 			}
 			catch (e) {
+				bError = true;
 				oData = {error: e.toString()};
+			}
+			if (!bError) {
+				JUL.Designer.parser._usePrefixes = ample.getElementById('checkbox-import-use-prefixes').getAttribute('checked') === 'true';
+				oData = JSON.parse(sText, JUL.makeCaller(JUL.Designer.parser, JUL.Designer.jsonReviver));
+				JUL.Designer.parser._usePrefixes = true;
 			}
 		}
 		if ((sType === 'xml' || sType === 'html') &&
@@ -2642,10 +2652,12 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 			}
 		var bXml = sType === 'xml' || sType === 'html';
 		ample.getElementById('checkbox-import-empty-to-boolean').setAttribute('disabled', !bXml);
+		ample.getElementById('checkbox-import-use-prefixes').setAttribute('disabled', bXml);
 		ample.getElementById('checkbox-import-separate-logic').setAttribute('disabled', bXml);
 		ample.getElementById('textbox-import-except-attributes').setAttribute('disabled', !bXml);
 		ample.getElementById('checkbox-import-separate-logic').setAttribute('checked', !bXml);
-		if (!bXml) { ample.getElementById('checkbox-import-empty-to-boolean').setAttribute('checked', false); }
+		if (bXml) { ample.getElementById('checkbox-import-use-prefixes').setAttribute('checked', false); }
+		else { ample.getElementById('checkbox-import-empty-to-boolean').setAttribute('checked', false); }
 	},
 	onInstantiateUpdated: function(oWhere) {
 		if (oWhere.val() === oWhere.oldValue) { return; }
@@ -3509,6 +3521,7 @@ jul.apply(jul.get('JUL.Designer.designer'), /** @lends JUL.Designer.designer */ 
 		ample.getElementById('textbox-import-output').setAttribute('value', '');
 		ample.getElementById('textbox-import-except-attributes').setAttribute('value', 'id, class, style');
 		ample.getElementById('checkbox-import-empty-to-boolean').setAttribute('checked', (this.current.parserConfig._otherProperties || {}).booleanAttrs === true);
+		ample.getElementById('checkbox-import-use-prefixes').setAttribute('checked', false);
 		ample.getElementById('checkbox-import-separate-logic').setAttribute('checked', false);
 		ample.getElementById('radio-import-type-xml').setAttribute('selected', true);
 		this.state._importType = 'json';
