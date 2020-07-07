@@ -55,7 +55,7 @@
     "@electron-forge/maker-squirrel": "6.0.0-beta.30",
     "@electron-forge/maker-zip": "6.0.0-beta.30",
     "del-cli": "^1.1.0",
-    "electron": "3.1.13",
+    "electron": "9.1.0",
     "electron-builder": "^20.38.0"
   },
   "config": {
